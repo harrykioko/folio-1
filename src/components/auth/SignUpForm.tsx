@@ -6,13 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Lock, Mail } from "lucide-react";
+import { Lock, Mail, User } from "lucide-react";
 
-interface LoginFormProps {
-  onLoginSuccess?: () => void;
+interface SignUpFormProps {
+  onSignUpSuccess?: () => void;
 }
 
-const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
+const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUpSuccess }) => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -22,18 +23,18 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate login delay
+    // Simulate sign up delay
     setTimeout(() => {
-      // For demo purposes, we'll allow any login
+      // For demo purposes, we'll allow any sign up
       toast({
-        title: "Login successful",
-        description: "Welcome to Folio!",
+        title: "Account created",
+        description: "Welcome to Folio! Your account has been created successfully.",
       });
       setIsLoading(false);
       
       // Navigate to dashboard
-      if (onLoginSuccess) {
-        onLoginSuccess();
+      if (onSignUpSuccess) {
+        onSignUpSuccess();
       } else {
         navigate("/dashboard");
       }
@@ -43,13 +44,28 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
   return (
     <Card className="w-full max-w-md shadow-lg backdrop-blur-xl bg-black/30 border border-white/10 text-white animate-scale-in">
       <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl font-bold text-center">Sign In</CardTitle>
+        <CardTitle className="text-2xl font-bold text-center">Create Account</CardTitle>
         <CardDescription className="text-center text-white/70">
-          Enter your credentials to access the platform
+          Enter your details to create a new account
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="name" className="text-white">Full Name</Label>
+            <div className="relative">
+              <User className="absolute left-3 top-3 h-4 w-4 text-white/70" />
+              <Input
+                id="name"
+                type="text"
+                placeholder="John Doe"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-white/40 focus-visible:ring-primary"
+                required
+              />
+            </div>
+          </div>
           <div className="space-y-2">
             <Label htmlFor="email" className="text-white">Email</Label>
             <div className="relative">
@@ -66,12 +82,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
             </div>
           </div>
           <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="password" className="text-white">Password</Label>
-              <Button variant="link" className="px-0 text-xs text-white/70 hover:text-white" type="button">
-                Forgot password?
-              </Button>
-            </div>
+            <Label htmlFor="password" className="text-white">Password</Label>
             <div className="relative">
               <Lock className="absolute left-3 top-3 h-4 w-4 text-white/70" />
               <Input
@@ -90,17 +101,17 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
             className="w-full bg-primary hover:bg-primary/90 text-white transition-all shadow-[0_0_15px_rgba(139,92,246,0.3)] hover:shadow-[0_0_25px_rgba(139,92,246,0.5)]" 
             disabled={isLoading}
           >
-            {isLoading ? "Signing in..." : "Sign in"}
+            {isLoading ? "Creating account..." : "Create account"}
           </Button>
         </form>
       </CardContent>
       <CardFooter className="flex justify-center">
         <p className="text-sm text-white/60">
-          Secure internal access only
+          Already have an account? <a href="/login" className="text-primary hover:text-primary/90 underline">Sign in</a>
         </p>
       </CardFooter>
     </Card>
   );
 };
 
-export default LoginForm;
+export default SignUpForm;

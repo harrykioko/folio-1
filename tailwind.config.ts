@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -19,6 +18,10 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				sans: ['Inter', 'sans-serif'],
+				inter: ['Inter', 'sans-serif'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -115,6 +118,32 @@ export default {
 						opacity: '1',
 						transform: 'scale(1)'
 					}
+				},
+				'pulse-glow': {
+					'0%, 100%': { 
+						opacity: '1',
+						filter: 'brightness(1)'
+					},
+					'50%': { 
+						opacity: '0.8',
+						filter: 'brightness(1.2)'
+					},
+				},
+				'float': {
+					'0%, 100%': {
+						transform: 'translateY(0)'
+					},
+					'50%': {
+						transform: 'translateY(-10px)'
+					}
+				},
+				'orbit': {
+					'0%': {
+						transform: 'rotate(0deg) translateX(10px) rotate(0deg)'
+					},
+					'100%': {
+						transform: 'rotate(360deg) translateX(10px) rotate(-360deg)'
+					}
 				}
 			},
 			animation: {
@@ -122,7 +151,15 @@ export default {
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'fade-in': 'fade-in 0.2s ease-out',
 				'fade-out': 'fade-out 0.2s ease-out',
-				'scale-in': 'scale-in 0.2s ease-out'
+				'scale-in': 'scale-in 0.2s ease-out',
+				'pulse-glow': 'pulse-glow 3s ease-in-out infinite',
+				'float': 'float 6s ease-in-out infinite',
+				'orbit': 'orbit 15s linear infinite'
+			},
+			backgroundImage: {
+				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+				'hero-pattern': 'url("/src/assets/constellation-bg.svg")',
+				'landing-gradient': 'linear-gradient(to bottom right, #111827, #0F172A, #1E3A8A)',
 			}
 		}
 	},

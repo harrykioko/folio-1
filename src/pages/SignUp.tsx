@@ -1,10 +1,10 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import LoginForm from "@/components/auth/LoginForm";
+import SignUpForm from "@/components/auth/SignUpForm";
 import { ArrowLeft } from "lucide-react";
 
-const Login: React.FC = () => {
+const SignUp: React.FC = () => {
   return (
     <div 
       className="min-h-screen flex flex-col bg-landing-gradient font-inter relative overflow-hidden"
@@ -45,15 +45,15 @@ const Login: React.FC = () => {
               <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-white">Folio</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-white">Join Folio</h1>
           <p className="text-lg text-white/70 mt-2">
-            Internal SaaS Management Platform
+            Create your account to get started
           </p>
         </div>
-        <LoginForm />
+        <SignUpForm />
       </div>
     </div>
   );
 };
 
-export default Login;
+export default SignUp;
