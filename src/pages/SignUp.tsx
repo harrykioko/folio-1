@@ -7,10 +7,10 @@ import { ArrowLeft } from "lucide-react";
 const SignUp: React.FC = () => {
   return (
     <div 
-      className="min-h-screen flex flex-col bg-landing-gradient font-inter relative overflow-hidden"
+      className="min-h-screen flex flex-col bg-landing-image bg-cover bg-center font-inter relative overflow-hidden"
     >
-      {/* Animated background elements - simplified version of landing page */}
-      <div className="absolute inset-0 overflow-hidden">
+      {/* Animated background overlay */}
+      <div className="absolute inset-0 overflow-hidden bg-black/30">
         <div className="absolute top-20 left-1/4 w-2 h-2 rounded-full bg-blue-400 opacity-60 animate-pulse-glow"></div>
         <div className="absolute top-40 right-1/3 w-3 h-3 rounded-full bg-indigo-400 opacity-70 animate-pulse-glow" style={{ animationDelay: '1s' }}></div>
         <div className="absolute bottom-1/4 left-1/5 w-2 h-2 rounded-full bg-purple-400 opacity-60 animate-pulse-glow" style={{ animationDelay: '2s' }}></div>

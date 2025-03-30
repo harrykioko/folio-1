@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -160,6 +161,7 @@ export default {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
 				'hero-pattern': 'url("/src/assets/constellation-bg.svg")',
 				'landing-gradient': 'linear-gradient(to bottom right, #111827, #0F172A, #1E3A8A)',
+				'landing-image': 'url("/lovable-uploads/3fafdbe9-5566-4218-8441-e326c0384c7b.png")',
 			}
 		}
 	},

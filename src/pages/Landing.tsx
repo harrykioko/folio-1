@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -6,9 +5,9 @@ import { ArrowRight, Command, Zap } from "lucide-react";
 
 const Landing: React.FC = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-landing-gradient font-inter relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
+    <div className="min-h-screen flex flex-col bg-landing-image bg-cover bg-center font-inter relative overflow-hidden">
+      {/* Animated overlay elements - keeping stars and glowing elements */}
+      <div className="absolute inset-0 overflow-hidden bg-black/30">
         <div className="absolute top-20 left-1/4 w-2 h-2 rounded-full bg-blue-400 opacity-60 animate-pulse-glow"></div>
         <div className="absolute top-40 right-1/3 w-3 h-3 rounded-full bg-indigo-400 opacity-70 animate-pulse-glow" style={{ animationDelay: '1s' }}></div>
         <div className="absolute bottom-1/4 left-1/5 w-2 h-2 rounded-full bg-purple-400 opacity-60 animate-pulse-glow" style={{ animationDelay: '2s' }}></div>
