@@ -6,8 +6,9 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarNav,
-  SidebarNavLink,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -58,77 +59,91 @@ const AppSidebar = () => {
         </div>
       </SidebarHeader>
       <SidebarContent className="px-3 py-2">
-        <SidebarNav className="grid gap-1">
-          <SidebarNavLink asChild>
-            <NavLink 
-              to="/dashboard" 
-              className={({ isActive }) => isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"}
-            >
-              <BarChart2 className="h-4 w-4 mr-3" />
-              Dashboard
-            </NavLink>
-          </SidebarNavLink>
-          <SidebarNavLink asChild>
-            <NavLink 
-              to="/projects" 
-              className={({ isActive }) => isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"}
-            >
-              <FolderGit className="h-4 w-4 mr-3" />
-              Projects
-            </NavLink>
-          </SidebarNavLink>
-          <SidebarNavLink asChild>
-            <NavLink 
-              to="/accounts" 
-              className={({ isActive }) => isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"}
-            >
-              <KeySquare className="h-4 w-4 mr-3" />
-              Accounts
-            </NavLink>
-          </SidebarNavLink>
-          <SidebarNavLink asChild>
-            <NavLink 
-              to="/prompts" 
-              className={({ isActive }) => isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"}
-            >
-              <Lightbulb className="h-4 w-4 mr-3" />
-              Prompt Library
-            </NavLink>
-          </SidebarNavLink>
-        </SidebarNav>
+        <SidebarMenu className="grid gap-1">
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild tooltip="Dashboard">
+              <NavLink 
+                to="/dashboard" 
+                className={({ isActive }) => isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"}
+              >
+                <BarChart2 className="h-4 w-4 mr-3" />
+                <span>Dashboard</span>
+              </NavLink>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild tooltip="Projects">
+              <NavLink 
+                to="/projects" 
+                className={({ isActive }) => isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"}
+              >
+                <FolderGit className="h-4 w-4 mr-3" />
+                <span>Projects</span>
+              </NavLink>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild tooltip="Accounts">
+              <NavLink 
+                to="/accounts" 
+                className={({ isActive }) => isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"}
+              >
+                <KeySquare className="h-4 w-4 mr-3" />
+                <span>Accounts</span>
+              </NavLink>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild tooltip="Prompt Library">
+              <NavLink 
+                to="/prompts" 
+                className={({ isActive }) => isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"}
+              >
+                <Lightbulb className="h-4 w-4 mr-3" />
+                <span>Prompt Library</span>
+              </NavLink>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
 
         <div className="mt-6">
           <h3 className="text-xs font-medium text-muted-foreground mb-2 px-2">Tools</h3>
-          <SidebarNav className="grid gap-1">
-            <SidebarNavLink asChild>
-              <NavLink 
-                to="/tasks" 
-                className={({ isActive }) => isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"}
-              >
-                <CheckSquare className="h-4 w-4 mr-3" />
-                Tasks
-              </NavLink>
-            </SidebarNavLink>
-            <SidebarNavLink asChild>
-              <NavLink 
-                to="/messages" 
-                className={({ isActive }) => isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"}
-              >
-                <MessageSquare className="h-4 w-4 mr-3" />
-                Messages
-                <Badge className="ml-auto bg-primary text-white h-5 px-1">3</Badge>
-              </NavLink>
-            </SidebarNavLink>
-            <SidebarNavLink asChild>
-              <NavLink 
-                to="/team" 
-                className={({ isActive }) => isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"}
-              >
-                <Users className="h-4 w-4 mr-3" />
-                Team
-              </NavLink>
-            </SidebarNavLink>
-          </SidebarNav>
+          <SidebarMenu className="grid gap-1">
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Tasks">
+                <NavLink 
+                  to="/tasks" 
+                  className={({ isActive }) => isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"}
+                >
+                  <CheckSquare className="h-4 w-4 mr-3" />
+                  <span>Tasks</span>
+                </NavLink>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Messages">
+                <NavLink 
+                  to="/messages" 
+                  className={({ isActive }) => isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"}
+                >
+                  <MessageSquare className="h-4 w-4 mr-3" />
+                  <span>Messages</span>
+                  <Badge className="ml-auto bg-primary text-white h-5 px-1">3</Badge>
+                </NavLink>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Team">
+                <NavLink 
+                  to="/team" 
+                  className={({ isActive }) => isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"}
+                >
+                  <Users className="h-4 w-4 mr-3" />
+                  <span>Team</span>
+                </NavLink>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
         </div>
       </SidebarContent>
 

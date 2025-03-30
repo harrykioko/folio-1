@@ -6,8 +6,8 @@ const Index: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Redirect to login page when the app loads
-    navigate("/login");
+    // Redirect to dashboard page when the app loads on the index route
+    navigate("/dashboard");
   }, [navigate]);
 
   return (
