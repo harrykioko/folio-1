@@ -19,7 +19,7 @@ export const WorkspaceLayout: React.FC = () => {
       <PageHeader 
         heading="AI Workspace"
         subheading="Ask anything about your projects, tasks, or prompts"
-        icon={<Logo showText={false} size="sm" className="mr-2" />}
+        icon={<Logo size="sm" />}
       />
       
       <motion.div 

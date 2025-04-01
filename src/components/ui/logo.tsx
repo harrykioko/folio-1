@@ -1,42 +1,38 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 interface LogoProps {
   className?: string;
-  showText?: boolean;
   size?: "sm" | "md" | "lg";
-  textClassName?: string;
+  linkTo?: string;
 }
 
 export const Logo: React.FC<LogoProps> = ({ 
   className, 
-  showText = true, 
   size = "md",
-  textClassName
+  linkTo = "/dashboard"
 }) => {
   const sizeClasses = {
-    sm: "h-6 w-6",
-    md: "h-8 w-8",
-    lg: "h-10 w-10"
+    sm: "h-6",
+    md: "h-8",
+    lg: "h-10"
   };
 
-  return (
-    <div className={cn("flex items-center", className)}>
-      <img 
-        src="/lovable-uploads/fab58717-50ce-43d5-b3e7-cb5bf5b92c0f.png" 
-        alt="Folio Logo" 
-        className={cn(sizeClasses[size])}
-      />
-      {showText && (
-        <span className={cn("font-bold", textClassName, {
-          "text-lg ml-2": size === "md",
-          "text-base ml-1.5": size === "sm",
-          "text-xl ml-2.5": size === "lg"
-        })}>
-          Folio
-        </span>
-      )}
-    </div>
+  const logo = (
+    <img 
+      src="/lovable-uploads/143cb188-cc01-4f31-ab7f-685cba076570.png" 
+      alt="Folio Logo" 
+      className={cn(sizeClasses[size], "w-auto", className)}
+    />
+  );
+
+  return linkTo ? (
+    <Link to={linkTo} className="flex items-center">
+      {logo}
+    </Link>
+  ) : (
+    logo
   );
 };

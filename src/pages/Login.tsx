@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link } from "react-router-dom";
 import LoginForm from "@/components/auth/LoginForm";
@@ -32,9 +33,8 @@ const Login: React.FC = () => {
       <div className="flex-1 flex items-center justify-center p-4 z-10">
         <div className="w-full max-w-md text-center mb-8">
           <div className="inline-flex items-center justify-center bg-primary/10 backdrop-blur-md p-3 rounded-2xl mb-6 border border-white/10">
-            <Logo showText={false} size="lg" />
+            <Logo size="lg" />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-white">Folio</h1>
           <p className="text-lg text-white/70 mt-2">
             Internal SaaS Management Platform
           </p>

@@ -17,7 +17,7 @@ const AppLayout: React.FC = () => {
         <div className="flex-1 flex flex-col">
           <header className="border-b h-14 flex items-center px-4 sm:px-6">
             <SidebarTrigger className="mr-4" />
-            <Logo />
+            <Logo size="md" />
             <div className="ml-auto flex items-center gap-2">
               <div className="text-sm text-muted-foreground hidden md:block">
                 Press{" "}

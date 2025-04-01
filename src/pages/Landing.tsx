@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -30,7 +31,7 @@ const Landing: React.FC = () => {
       {/* Header */}
       <header className="container z-10 pt-6 px-4 md:px-6">
         <div className="flex items-center justify-between">
-          <Logo size="lg" textClassName="text-white" />
+          <Logo size="lg" />
           <div className="flex items-center gap-4">
             <Link to="/login">
               <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10">

@@ -11,7 +11,7 @@ const SidebarHeader: React.FC = () => {
 
   return (
     <div className="p-4 space-y-4">
-      <Logo showText={!isCollapsed} size="md" />
+      <Logo size={isCollapsed ? "sm" : "md"} className={isCollapsed ? "mx-auto" : ""} />
       
       {/* Search input or icon depending on sidebar state */}
       {isCollapsed ? (
