@@ -83,6 +83,57 @@
     --sidebar-border: 240 8% 16%;
     --sidebar-ring: 255 70% 56%;
   }
+
+  /* Purple theme variations */
+  .theme-purple {
+    --primary: 265 70% 60%;
+    --primary-foreground: 0 0% 98%;
+    --ring: 265 70% 60%;
+    --sidebar-primary: 265 70% 60%;
+    --sidebar-ring: 265 70% 60%;
+    --accent: 265 60% 97%;
+    --sidebar-accent: 265 60% 97%;
+  }
+
+  /* Green theme variations */
+  .theme-green {
+    --primary: 150 60% 40%;
+    --primary-foreground: 0 0% 98%;
+    --ring: 150 60% 40%;
+    --sidebar-primary: 150 60% 40%;
+    --sidebar-ring: 150 60% 40%;
+    --accent: 150 60% 97%;
+    --sidebar-accent: 150 60% 97%;
+  }
+
+  /* High contrast theme variations */
+  .theme-contrast {
+    --primary: 0 0% 0%;
+    --primary-foreground: 0 0% 100%;
+    --ring: 0 0% 0%;
+    --sidebar-primary: 0 0% 0%;
+    --sidebar-ring: 0 0% 0%;
+    --accent: 0 0% 90%;
+    --sidebar-accent: 0 0% 90%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 85%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+  }
+
+  .dark.theme-contrast {
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 0%;
+    --ring: 0 0% 100%;
+    --sidebar-primary: 0 0% 100%;
+    --sidebar-ring: 0 0% 100%;
+    --accent: 0 0% 20%;
+    --sidebar-accent: 0 0% 20%;
+    --muted: 0 0% 30%;
+    --muted-foreground: 0 0% 90%;
+    --border: 0 0% 40%;
+    --input: 0 0% 40%;
+  }
 }
 
 @layer base {
@@ -106,5 +157,18 @@
 
   .glassmorphism {
     @apply bg-white/10 backdrop-blur-md border border-white/20 shadow-[0_4px_16px_rgba(255,255,255,0.1)];
+  }
+
+  /* Font size utility classes */
+  .text-size-small {
+    font-size: 0.875rem;
+  }
+  
+  .text-size-medium {
+    font-size: 1rem;
+  }
+  
+  .text-size-large {
+    font-size: 1.125rem;
   }
 }
