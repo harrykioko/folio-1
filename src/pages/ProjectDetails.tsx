@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { 
@@ -42,8 +43,8 @@ import { toast } from "sonner";
 import ProjectForm from "@/components/projects/ProjectForm";
 import { ProjectFormValues } from "@/components/projects/ProjectForm";
 
-// Import mock data from the Projects component
-import { projects } from "@/utils/projectUtils";
+// Import mock data and utility function
+import { projects, getProjectById } from "@/utils/projectUtils";
 
 const ProjectDetails: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>();
@@ -52,20 +53,22 @@ const ProjectDetails: React.FC = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
   
+  const isNewProject = projectId === "new";
+  
   // Find the project in our dummy data
-  const project = projects.find(p => p.id.toString() === projectId);
+  const project = isNewProject ? null : getProjectById(projectId as string);
   
   // Check if this is a new project or if the project was not found
   useEffect(() => {
-    // Only redirect if projectId is NOT "new" AND project is not found
-    if (!project && projectId !== "new") {
+    // Only redirect if it's NOT a new project AND project is not found
+    if (!project && !isNewProject) {
       navigate("/projects");
       toast.error("Project not found");
     }
-  }, [project, projectId, navigate]);
+  }, [project, isNewProject, navigate]);
 
   // Handle the case when we're creating a new project
-  if (projectId === "new") {
+  if (isNewProject) {
     return (
       <div className="max-w-4xl mx-auto">
         <div className="mb-6">
