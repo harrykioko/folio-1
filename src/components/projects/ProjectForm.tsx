@@ -32,6 +32,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   const form = useForm<ProjectFormValues>({
     resolver: zodResolver(projectSchema),
     defaultValues,
+    mode: "onChange" // Enable validation on change for better user experience
   });
 
   const handleSubmit = (data: ProjectFormValues) => {
@@ -63,6 +64,16 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
                   {form.formState.errors.root.message}
+                </AlertDescription>
+              </Alert>
+            )}
+            
+            {/* Display the date validation error if it exists */}
+            {form.formState.errors.dueDate?.message && form.formState.errors.dueDate.type === "custom" && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  {form.formState.errors.dueDate.message}
                 </AlertDescription>
               </Alert>
             )}
