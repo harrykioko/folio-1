@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { useNavigate } from 'react-router-dom';
@@ -118,15 +117,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     fullName?: string
   ) => {
     try {
-      const { error } = await supabase.from('users').upsert(
-        {
-          id: userId,
-          email,
-          full_name: fullName || null,
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: 'id' }
-      );
+      const { error } = await supabase
+        .from('users')
+        .upsert(
+          {
+            id: userId,
+            email,
+            full_name: fullName || null,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: 'id' }
+        );
 
       if (error) {
         console.error('Error upserting user metadata:', error);
@@ -277,7 +278,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         title: "MFA verified",
         description: "Multi-factor authentication has been enabled for your account",
       });
-      return data.challenge_verified; // Fix the property name here
+      return data.challenge_id !== undefined;
     } catch (error) {
       console.error('Error verifying MFA:', error);
       toast({
