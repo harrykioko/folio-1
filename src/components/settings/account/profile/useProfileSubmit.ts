@@ -9,8 +9,16 @@ export const useProfileSubmit = (userId: string | undefined, userMetadata: any) 
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (data: ProfileFormValues) => {
+    // Enhanced debug logging
+    console.log("Profile update attempt:", { 
+      userId,
+      userMetadata: userMetadata ? "present" : "missing",
+      formData: data
+    });
+    
     // Check authentication
     if (!userId) {
+      console.error("Authentication error: userId is undefined or null");
       toast({
         variant: "destructive",
         title: "Authentication Error",
@@ -20,6 +28,7 @@ export const useProfileSubmit = (userId: string | undefined, userMetadata: any) 
     }
 
     if (!userMetadata) {
+      console.error("Profile error: userMetadata is undefined or null");
       toast({
         variant: "destructive",
         title: "Profile Error",
@@ -30,6 +39,8 @@ export const useProfileSubmit = (userId: string | undefined, userMetadata: any) 
 
     setIsLoading(true);
     try {
+      console.log("Updating user metadata:", { userId, ...data });
+      
       // Update user metadata including bio
       const success = await upsertUserMetadata(
         userId,
@@ -44,6 +55,7 @@ export const useProfileSubmit = (userId: string | undefined, userMetadata: any) 
 
       // If email changed, update it through auth API
       if (data.email !== userMetadata.email) {
+        console.log("Updating email through auth API");
         const { error: emailError } = await supabase.auth.updateUser({
           email: data.email
         });
@@ -57,6 +69,10 @@ export const useProfileSubmit = (userId: string | undefined, userMetadata: any) 
         title: "Profile updated",
         description: "Your profile has been updated successfully.",
       });
+      
+      // Force reload to reflect changes immediately
+      window.location.reload();
+      
     } catch (error) {
       console.error("Error updating profile:", error);
       toast({

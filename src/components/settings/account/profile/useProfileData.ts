@@ -32,11 +32,25 @@ export const useProfileData = () => {
       .substring(0, 2);
   };
 
+  // Get display name for the UI
+  const getDisplayName = () => {
+    if (userMetadata?.fullName) return userMetadata.fullName;
+    if (user?.email) return user.email.split('@')[0];
+    return "User";
+  };
+
+  // Get user email
+  const getEmail = () => {
+    return userMetadata?.email || user?.email || "";
+  };
+
   return {
     user,
     userMetadata,
     session,
     authStatus,
-    getInitials
+    getInitials,
+    getDisplayName,
+    getEmail
   };
 };
