@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { useNavigate } from 'react-router-dom';
@@ -100,9 +101,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (data) {
         setUserMetadata({
           id: data.id,
-          email: data.email,
-          fullName: data.full_name,
-          role: data.role,
+          email: data.email || '',
+          fullName: data.full_name || undefined,
+          role: data.role || undefined,
         });
       }
     } catch (error) {
@@ -278,7 +279,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         title: "MFA verified",
         description: "Multi-factor authentication has been enabled for your account",
       });
-      return data.challenge_id !== undefined;
+      
+      // The response structure has id rather than challenge_id or challenge_verified
+      return !!data.id;
     } catch (error) {
       console.error('Error verifying MFA:', error);
       toast({
