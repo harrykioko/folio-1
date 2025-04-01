@@ -45,17 +45,17 @@ const App = () => (
             <Route path="/team" element={<Dashboard />} />
             <Route path="/settings" element={<Dashboard />} />
             
-            {/* Project details routes */}
-            <Route path="/projects/:projectId" element={<ProjectDetails />} />
+            {/* Project details routes - Order matters! Put specific routes first */}
             <Route path="/projects/new" element={<ProjectDetails />} />
+            <Route path="/projects/:projectId" element={<ProjectDetails />} />
             
             {/* Account details routes */}
-            <Route path="/accounts/:accountId" element={<AccountDetails />} />
             <Route path="/accounts/new" element={<AccountDetails />} />
+            <Route path="/accounts/:accountId" element={<AccountDetails />} />
             
             {/* Prompt details routes */}
-            <Route path="/prompts/:promptId" element={<Prompts />} />
             <Route path="/prompts/new" element={<Prompts />} />
+            <Route path="/prompts/:promptId" element={<Prompts />} />
             <Route path="/prompts/:promptId/edit" element={<Prompts />} />
           </Route>
           

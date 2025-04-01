@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import ProjectHeader from "@/components/projects/ProjectHeader";
 import ProjectTabs from "@/components/projects/ProjectTabs";
 import DeleteProjectDialog from "@/components/projects/DeleteProjectDialog";
-import NewProjectView from "@/components/projects/NewProjectView";
+import ProjectForm from "@/components/projects/ProjectForm";
 import { ProjectFormValues } from "@/components/projects/form/ProjectFormSchema";
 
 // Import utility function
@@ -35,22 +35,18 @@ const ProjectDetails: React.FC = () => {
     }
   }, [project, isNewProject, navigate]);
 
-  // Handle the case when we're creating a new project
-  if (isNewProject) {
-    return <NewProjectView />;
-  }
-
-  // If project is not found and we're not creating a new one, return null
-  // The useEffect above will handle redirecting
-  if (!project) {
-    return null;
-  }
-
-  const handleEditSubmit = (data: ProjectFormValues) => {
-    console.log("Updated project data:", data);
-    // In a real app, we would update this in the database
-    toast.success("Project updated successfully!");
-    setIsEditDialogOpen(false);
+  const handleSubmit = (data: ProjectFormValues) => {
+    if (isNewProject) {
+      console.log("New project data:", data);
+      // In a real app, we would save this to the database
+      toast.success("Project created successfully!");
+      navigate("/projects");
+    } else {
+      console.log("Updated project data:", data);
+      // In a real app, we would update this in the database
+      toast.success("Project updated successfully!");
+      setIsEditDialogOpen(false);
+    }
   };
 
   const handleDeleteProject = () => {
@@ -58,6 +54,27 @@ const ProjectDetails: React.FC = () => {
     toast.success("Project deleted successfully!");
     navigate("/projects");
   };
+
+  // Handle the case when we're creating a new project
+  if (isNewProject) {
+    return (
+      <div className="max-w-4xl mx-auto">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold">Create New Project</h1>
+          <p className="text-muted-foreground mt-2">
+            Fill out the form below to create a new project.
+          </p>
+        </div>
+        <ProjectForm onSubmit={handleSubmit} />
+      </div>
+    );
+  }
+
+  // If project is not found and we're not creating a new one, return null
+  // The useEffect above will handle redirecting
+  if (!project) {
+    return null;
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">
