@@ -8,15 +8,17 @@ import {
   AuthenticationStatus,
   useProfileData
 } from "./profile";
+import { useProfileSubmit } from "./profile/useProfileSubmit";
 
 const ProfileSection = () => {
   const { 
+    user, 
     userMetadata, 
-    isLoading, 
     authStatus, 
-    getInitials, 
-    handleSubmit 
+    getInitials 
   } = useProfileData();
+  
+  const { isLoading, handleSubmit } = useProfileSubmit(user?.id, userMetadata);
 
   // If we're not authenticated, show a friendly message
   if (authStatus !== "Authenticated" && !userMetadata) {
