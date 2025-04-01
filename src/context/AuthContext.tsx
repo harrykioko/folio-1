@@ -277,7 +277,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         title: "MFA verified",
         description: "Multi-factor authentication has been enabled for your account",
       });
-      return data.verified;
+      return data.challenge_verified; // Fix the property name here
     } catch (error) {
       console.error('Error verifying MFA:', error);
       toast({

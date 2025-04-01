@@ -1,39 +1,58 @@
 
-import React from "react";
-import { CircleUser, LogOut, Settings } from "lucide-react";
-import { SidebarMenu } from "@/components/ui/sidebar";
-import { useAuth } from "@/context/AuthContext";
+import React from 'react';
+import { UserIcon, Lock, LogOut } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
 
-const AccountMenu: React.FC = () => {
-  const { signOut, userMetadata } = useAuth();
+// Import NavigationMenu components
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
 
-  const handleSignOut = () => {
-    signOut();
-  };
+const AccountMenu = () => {
+  const navigate = useNavigate();
+  const { signOut } = useAuth();
 
   return (
-    <div className="px-3 py-2">
-      <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
-        Account
-      </h2>
-      <SidebarMenu>
-        <SidebarMenu.Item
-          title={userMetadata?.fullName || "Profile"}
-          icon={<CircleUser className="h-4 w-4" />}
-          href="/settings"
-        />
-        <SidebarMenu.Item
-          title="Settings"
-          icon={<Settings className="h-4 w-4" />}
-          href="/settings"
-        />
-        <SidebarMenu.Item
-          title="Sign Out"
-          icon={<LogOut className="h-4 w-4" />}
-          onClick={handleSignOut}
-        />
-      </SidebarMenu>
-    </div>
+    <NavigationMenu>
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger>Account</NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <div className="p-2 min-w-[220px]">
+              <NavigationMenuLink 
+                className="flex items-center gap-2 p-2 rounded-md hover:bg-muted cursor-pointer"
+                onClick={() => navigate('/settings')}
+              >
+                <UserIcon size={16} />
+                <span>Profile</span>
+              </NavigationMenuLink>
+              
+              <NavigationMenuLink 
+                className="flex items-center gap-2 p-2 rounded-md hover:bg-muted cursor-pointer"
+                onClick={() => navigate('/settings')}
+              >
+                <Lock size={16} />
+                <span>Security</span>
+              </NavigationMenuLink>
+              
+              <NavigationMenuLink 
+                className="flex items-center gap-2 p-2 rounded-md hover:bg-muted cursor-pointer"
+                onClick={() => signOut()}
+              >
+                <LogOut size={16} />
+                <span>Logout</span>
+              </NavigationMenuLink>
+            </div>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
   );
 };
 
