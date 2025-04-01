@@ -4,6 +4,7 @@ import { Outlet } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import AppSidebar from "./AppSidebar";
 import CommandPalette from "../CommandPalette";
+import { Toaster } from "@/components/ui/toaster";
 
 const AppLayout: React.FC = () => {
   const [commandOpen, setCommandOpen] = useState(false);
@@ -40,6 +41,7 @@ const AppLayout: React.FC = () => {
         </div>
       </div>
       <CommandPalette open={commandOpen} onOpenChange={setCommandOpen} />
+      <Toaster />
     </SidebarProvider>
   );
 };
