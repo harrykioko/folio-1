@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { UserIcon, Lock, LogOut, Settings } from 'lucide-react';
+import { UserIcon, Settings, Bell, LogOut } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -24,24 +24,24 @@ const AccountMenu = () => {
       )}
       <SidebarMenu className="grid gap-1">
         <SidebarMenuItem>
-          <SidebarMenuButton asChild tooltip="Profile">
+          <SidebarMenuButton asChild tooltip="Account">
             <NavLink 
-              to="/settings" 
+              to="/settings?tab=account" 
               className={({ isActive }) => isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"}
             >
               <UserIcon className="h-4 w-4 mr-3" />
-              <span>{!isCollapsed && "Profile"}</span>
+              <span>{!isCollapsed && "Account"}</span>
             </NavLink>
           </SidebarMenuButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
-          <SidebarMenuButton asChild tooltip="Security">
+          <SidebarMenuButton asChild tooltip="Notifications">
             <NavLink 
-              to="/settings?tab=security" 
+              to="/settings?tab=notifications" 
               className={({ isActive }) => isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"}
             >
-              <Lock className="h-4 w-4 mr-3" />
-              <span>{!isCollapsed && "Security"}</span>
+              <Bell className="h-4 w-4 mr-3" />
+              <span>{!isCollapsed && "Notifications"}</span>
             </NavLink>
           </SidebarMenuButton>
         </SidebarMenuItem>

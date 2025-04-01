@@ -6,6 +6,7 @@ import PageHeader from "@/components/ui/page-header";
 import AccountSettings from "@/components/settings/AccountSettings";
 import IntegrationSettings from "@/components/settings/IntegrationSettings";
 import AppearanceSettings from "@/components/settings/AppearanceSettings";
+import NotificationSettings from "@/components/settings/NotificationSettings";
 
 const Settings = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -39,7 +40,7 @@ const Settings = () => {
       >
         <TabsList>
           <TabsTrigger value="account">Account</TabsTrigger>
-          <TabsTrigger value="security">Security</TabsTrigger>
+          <TabsTrigger value="notifications">Notifications</TabsTrigger>
           <TabsTrigger value="integrations">Integrations</TabsTrigger>
           <TabsTrigger value="appearance">Appearance</TabsTrigger>
         </TabsList>
@@ -48,8 +49,8 @@ const Settings = () => {
           <AccountSettings />
         </TabsContent>
         
-        <TabsContent value="security" className="space-y-4">
-          <AccountSettings focusSection="security" />
+        <TabsContent value="notifications" className="space-y-4">
+          <NotificationSettings />
         </TabsContent>
         
         <TabsContent value="integrations" className="space-y-4">
