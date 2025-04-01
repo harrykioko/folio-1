@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -11,7 +10,7 @@ import TaskDetail from "@/components/tasks/TaskDetail";
 import DeleteTaskDialog from "@/components/tasks/DeleteTaskDialog";
 import { TaskFormValues } from "@/components/tasks/form/TaskFormSchema";
 import { Card } from "@/components/ui/card";
-import { createTask, updateTask, deleteTask } from "@/utils/supabaseTasks";
+import { createTask, updateTask, deleteTask, parseTaskStatus, parseTaskPriority } from "@/utils/supabaseTasks";
 
 const TaskDetails: React.FC = () => {
   const { taskId } = useParams<{ taskId: string }>();
@@ -22,27 +21,22 @@ const TaskDetails: React.FC = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  // Get the projectId from URL query parameters
   const projectIdFromQuery = searchParams.get('projectId');
   
   console.log("Current taskId param:", taskId);
   console.log("Current path:", location.pathname);
   console.log("Project ID from query:", projectIdFromQuery);
   
-  // Check if we're on the new task route
   const isNewTask = location.pathname === "/tasks/new" || taskId === "new";
   
   console.log("Is new task:", isNewTask);
   
-  // Find the task in our data
   const task = isNewTask ? null : getTaskById(taskId);
   
-  // If projectId is in query, get the project details
   const linkedProject = projectIdFromQuery ? getProjectById(projectIdFromQuery) : null;
   
   console.log("Linked project:", linkedProject);
   
-  // Check if task was not found
   useEffect(() => {
     if (!task && !isNewTask) {
       console.log("Task not found, taskId:", taskId);
@@ -55,13 +49,12 @@ const TaskDetails: React.FC = () => {
     try {
       setIsSubmitting(true);
       
-      // Map form values to the expected Supabase field structure
       const formattedData = {
         title: data.title,
-        description: data.description,
+        description: data.description || "",
         project_id: data.projectId ? Number(data.projectId) : null,
         assigned_to: data.assignee === "unassigned" ? null : data.assignee,
-        priority: data.priority.toLowerCase(),
+        priority: parseTaskPriority(data.priority),
         deadline: data.dueDate || null,
         status: parseTaskStatus(data.status)
       };
@@ -69,18 +62,15 @@ const TaskDetails: React.FC = () => {
       console.log("New task data:", formattedData);
       
       if (isNewTask) {
-        // Create new task in Supabase
         await createTask(formattedData);
         toast.success("Task created successfully!");
         
-        // If the task was created from a project page, redirect back to that project
         if (projectIdFromQuery) {
           navigate(`/projects/${projectIdFromQuery}`);
         } else {
           navigate("/tasks");
         }
       } else {
-        // Update existing task in Supabase
         if (taskId) {
           await updateTask(Number(taskId), formattedData);
           toast.success("Task updated successfully!");
@@ -108,7 +98,6 @@ const TaskDetails: React.FC = () => {
     }
   };
 
-  // Helper function to convert UI-friendly format back to database status
   const parseTaskStatus = (status: string): string => {
     switch (status.toLowerCase()) {
       case "to do": return "todo";
@@ -118,7 +107,15 @@ const TaskDetails: React.FC = () => {
     }
   };
 
-  // Render new task form
+  const parseTaskPriority = (priority: string): string => {
+    switch (priority.toLowerCase()) {
+      case "low": return "low";
+      case "medium": return "medium";
+      case "high": return "high";
+      default: return "low";
+    }
+  };
+
   if (isNewTask) {
     return (
       <div className="max-w-4xl mx-auto animate-fade-in">
@@ -133,7 +130,6 @@ const TaskDetails: React.FC = () => {
     );
   }
 
-  // If task is not found and we're not creating a new one, return null
   if (!task) {
     return null;
   }

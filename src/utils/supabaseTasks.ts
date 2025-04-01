@@ -8,7 +8,7 @@ export type Task = {
   description: string | null;
   project_id: number | null;
   assigned_to: string | null;
-  priority: 'low' | 'medium' | 'high';
+  priority: 'low' | 'medium' | 'high' | 'urgent';
   deadline: string | null;
   status: 'todo' | 'in_progress' | 'done';
   created_at: string;
@@ -21,7 +21,7 @@ export type TaskFormData = {
   description?: string;
   project_id?: number | null;
   assigned_to?: string | null;
-  priority: 'low' | 'medium' | 'high';
+  priority: 'low' | 'medium' | 'high' | 'urgent';
   deadline?: string | null;
   status: 'todo' | 'in_progress' | 'done';
 }
@@ -206,5 +206,16 @@ export const parseTaskStatus = (status: string): Task['status'] => {
     case 'in progress': return 'in_progress';
     case 'done': return 'done';
     default: return 'todo';
+  }
+};
+
+// Helper function to convert UI-friendly priority to database priority
+export const parseTaskPriority = (priority: string): Task['priority'] => {
+  switch (priority.toLowerCase()) {
+    case 'low': return 'low';
+    case 'medium': return 'medium';
+    case 'high': return 'high';
+    case 'urgent': return 'urgent';
+    default: return 'medium';
   }
 };
