@@ -3,7 +3,8 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import ProjectForm, { ProjectFormValues } from "./ProjectForm";
+import ProjectForm from "./ProjectForm";
+import { ProjectFormValues } from "./form/ProjectFormSchema";
 
 const NewProjectView: React.FC = () => {
   const navigate = useNavigate();
