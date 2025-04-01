@@ -22,6 +22,7 @@ export const fetchUserMetadata = async (userId: string): Promise<AuthUser | null
         fullName: data.full_name || undefined,
         role: data.role || undefined,
         bio: data.bio || undefined,
+        avatarUrl: data.avatar_url || undefined, // Add support for avatarUrl
       };
     }
     
@@ -36,7 +37,8 @@ export const upsertUserMetadata = async (
   userId: string,
   email: string,
   fullName?: string,
-  bio?: string
+  bio?: string,
+  avatarUrl?: string // Add avatarUrl parameter
 ): Promise<boolean> => {
   try {
     const { error } = await supabase
@@ -47,6 +49,7 @@ export const upsertUserMetadata = async (
           email,
           full_name: fullName || null,
           bio: bio || null,
+          avatar_url: avatarUrl || null, // Add support for avatarUrl
           updated_at: new Date().toISOString(),
         },
         { onConflict: 'id' }

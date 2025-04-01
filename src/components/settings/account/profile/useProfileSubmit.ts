@@ -41,12 +41,13 @@ export const useProfileSubmit = (userId: string | undefined, userMetadata: any) 
     try {
       console.log("Updating user metadata:", { userId, ...data });
       
-      // Update user metadata including bio
+      // Update user metadata including bio, preserve avatarUrl if it exists
       const success = await upsertUserMetadata(
         userId,
         data.email,
         data.name,
-        data.bio
+        data.bio,
+        userMetadata.avatarUrl // Pass the existing avatarUrl
       );
 
       if (!success) {

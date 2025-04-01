@@ -43,7 +43,7 @@ const ProfileSection = () => {
       <CardContent className="space-y-6">
         <ProfileAvatar 
           initials={getInitials()} 
-          avatarUrl={userMetadata.avatarUrl} 
+          avatarUrl={userMetadata.avatarUrl || "/placeholder.svg"} 
         />
 
         <ProfileForm

@@ -13,6 +13,7 @@ export type AuthUser = {
   fullName?: string;
   role?: string;
   bio?: string;
+  avatarUrl?: string; // Adding the avatarUrl property
 };
 
 export type OAuthProvider = Provider;
