@@ -52,19 +52,6 @@ const TaskForm: React.FC<TaskFormProps> = ({
 
   const handleSubmit = async (data: TaskFormValues) => {
     try {
-      // Map form values to the expected Supabase field structure
-      const formattedData = {
-        title: data.title,
-        description: data.description || "",
-        project_id: data.projectId ? Number(data.projectId) : null,
-        assigned_to: data.assignee === "unassigned" ? null : data.assignee,
-        priority: parseTaskPriority(data.priority),
-        deadline: data.dueDate || null,
-        status: parseTaskStatus(data.status)
-      };
-
-      console.log("Formatted task data for Supabase:", formattedData);
-      
       // Call onSubmit with the original form data for component usage
       onSubmit(data);
     } catch (error) {

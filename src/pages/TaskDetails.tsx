@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -10,7 +11,14 @@ import TaskDetail from "@/components/tasks/TaskDetail";
 import DeleteTaskDialog from "@/components/tasks/DeleteTaskDialog";
 import { TaskFormValues } from "@/components/tasks/form/TaskFormSchema";
 import { Card } from "@/components/ui/card";
-import { createTask, updateTask, deleteTask, parseTaskStatus, parseTaskPriority } from "@/utils/supabaseTasks";
+import { 
+  createTask, 
+  updateTask, 
+  deleteTask, 
+  parseTaskStatus, 
+  parseTaskPriority,
+  type Task
+} from "@/utils/supabaseTasks";
 
 const TaskDetails: React.FC = () => {
   const { taskId } = useParams<{ taskId: string }>();
@@ -49,14 +57,18 @@ const TaskDetails: React.FC = () => {
     try {
       setIsSubmitting(true);
       
+      // Use the helper functions to ensure correct typing
+      const priority = parseTaskPriority(data.priority);
+      const status = parseTaskStatus(data.status);
+      
       const formattedData = {
         title: data.title,
         description: data.description || "",
         project_id: data.projectId ? Number(data.projectId) : null,
         assigned_to: data.assignee === "unassigned" ? null : data.assignee,
-        priority: parseTaskPriority(data.priority),
+        priority,
         deadline: data.dueDate || null,
-        status: parseTaskStatus(data.status)
+        status
       };
       
       console.log("New task data:", formattedData);
@@ -95,24 +107,6 @@ const TaskDetails: React.FC = () => {
     } catch (error) {
       console.error("Error deleting task:", error);
       toast.error("Failed to delete task. Please try again.");
-    }
-  };
-
-  const parseTaskStatus = (status: string): string => {
-    switch (status.toLowerCase()) {
-      case "to do": return "todo";
-      case "in progress": return "in_progress";
-      case "completed": return "done";
-      default: return "todo";
-    }
-  };
-
-  const parseTaskPriority = (priority: string): string => {
-    switch (priority.toLowerCase()) {
-      case "low": return "low";
-      case "medium": return "medium";
-      case "high": return "high";
-      default: return "low";
     }
   };
 
