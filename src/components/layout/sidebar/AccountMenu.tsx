@@ -4,7 +4,6 @@ import { Settings, Bell, LogOut } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import NotificationsPanel from '@/components/notifications/NotificationsPanel';
 import { 
@@ -13,12 +12,10 @@ import {
   SidebarMenuButton,
   useSidebar
 } from '@/components/ui/sidebar';
-import { useProfileData } from '@/components/settings/account/profile/useProfileData';
 
 const AccountMenu = () => {
   const { signOut } = useAuth();
   const { state } = useSidebar();
-  const { getInitials, getDisplayName, getEmail } = useProfileData();
   const isCollapsed = state === "collapsed";
   const [notificationsOpen, setNotificationsOpen] = useState(false);
 
@@ -27,21 +24,6 @@ const AccountMenu = () => {
 
   return (
     <>
-      {!isCollapsed && (
-        <div className="px-3 py-2 mb-4">
-          <div className="flex items-center gap-3">
-            <Avatar className="h-9 w-9">
-              <AvatarImage src="/placeholder.svg" alt="Profile" />
-              <AvatarFallback>{getInitials()}</AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col">
-              <span className="text-sm font-medium">{getDisplayName()}</span>
-              <span className="text-xs text-muted-foreground truncate max-w-[140px]">{getEmail()}</span>
-            </div>
-          </div>
-        </div>
-      )}
-    
       <div className={`${!isCollapsed ? 'mt-1' : 'mt-4'}`}>
         {!isCollapsed && (
           <h3 className="text-xs font-medium text-muted-foreground mb-2 px-2">Account</h3>
