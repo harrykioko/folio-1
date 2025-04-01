@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -17,31 +17,47 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
-  const { signIn } = useAuth();
+  const { signIn, user } = useAuth();
 
   // Get the intended destination
   const from = (location.state as { from?: { pathname: string } })?.from?.pathname || "/dashboard";
 
+  // If user is already logged in, redirect them
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [user, navigate]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setLoginError(null);
 
     try {
       const { error } = await signIn(email, password);
       
-      if (!error) {
+      if (error) {
+        console.error("Login error:", error);
+        setLoginError(error.message || "Failed to sign in");
+        toast({
+          variant: "destructive",
+          title: "Login failed",
+          description: error.message || "Invalid email or password",
+        });
+      } else {
         // On successful login
         if (onLoginSuccess) {
           onLoginSuccess();
-        } else {
-          // Navigate to the page the user was trying to access, or dashboard as fallback
-          navigate(from);
         }
+        // The navigation is now handled in AuthContext
       }
     } catch (err) {
       console.error("Login error:", err);
+      setLoginError("An unexpected error occurred");
       toast({
         variant: "destructive",
         title: "Login failed",
@@ -62,6 +78,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
+          {loginError && (
+            <div className="p-3 bg-destructive/20 border border-destructive/50 rounded-md text-sm text-destructive-foreground">
+              {loginError}
+            </div>
+          )}
           <div className="space-y-2">
             <Label htmlFor="email" className="text-white">Email</Label>
             <div className="relative">
@@ -74,6 +95,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
                 onChange={(e) => setEmail(e.target.value)}
                 className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-white/40 focus-visible:ring-primary"
                 required
+                disabled={isLoading}
               />
             </div>
           </div>
@@ -94,6 +116,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
                 onChange={(e) => setPassword(e.target.value)}
                 className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-white/40 focus-visible:ring-primary"
                 required
+                disabled={isLoading}
               />
             </div>
           </div>

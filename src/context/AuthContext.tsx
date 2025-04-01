@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase, AuthUser } from '@/lib/supabase';
 import { useAuthHooks } from '@/hooks/useAuthHooks';
 import { AuthContextType } from '@/types/auth';
@@ -16,7 +16,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [userMetadata, setUserMetadata] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [authInitialized, setAuthInitialized] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   
   // Use our custom hook for auth functionality
   const { 
@@ -36,16 +38,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     unenrollMFA
   } = useMFA();
 
+  // Handle auth state changes
   useEffect(() => {
-    // Set up Supabase auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
 
-        // Fetch additional user metadata
+        // Avoid triggering state updates during component unmounting
         if (currentSession?.user) {
-          await fetchUserMetadata(currentSession.user.id);
+          // Use setTimeout to prevent potential deadlocks with Supabase auth
+          setTimeout(async () => {
+            await fetchUserMetadata(currentSession.user.id);
+          }, 0);
         } else {
           setUserMetadata(null);
           setIsAdmin(false);
@@ -53,30 +58,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         setLoading(false);
 
-        // Redirect based on auth events
-        if (event === 'SIGNED_IN') {
-          // Stay on current page or redirect to dashboard if on auth pages
-          const currentPath = window.location.pathname;
-          if (currentPath === '/login' || currentPath === '/signup' || currentPath === '/') {
-            navigate('/dashboard');
+        // Only redirect based on auth events after initialization
+        if (authInitialized) {
+          if (event === 'SIGNED_IN') {
+            // Stay on current page or redirect to dashboard if on auth pages
+            const authPaths = ['/login', '/signup', '/'];
+            if (authPaths.includes(location.pathname)) {
+              navigate('/dashboard', { replace: true });
+            }
+          } else if (event === 'SIGNED_OUT') {
+            navigate('/login', { replace: true });
           }
-        } else if (event === 'SIGNED_OUT') {
-          navigate('/login');
         }
+
+        console.log(`Auth event: ${event}, user: ${currentSession?.user?.email || 'none'}`);
       }
     );
 
     // Initial session check
     const initializeAuth = async () => {
-      const { data: { session: initialSession } } = await supabase.auth.getSession();
-      setSession(initialSession);
-      setUser(initialSession?.user ?? null);
+      try {
+        const { data: { session: initialSession } } = await supabase.auth.getSession();
+        
+        setSession(initialSession);
+        setUser(initialSession?.user ?? null);
 
-      if (initialSession?.user) {
-        await fetchUserMetadata(initialSession.user.id);
+        if (initialSession?.user) {
+          await fetchUserMetadata(initialSession.user.id);
+        }
+      } catch (error) {
+        console.error("Error initializing auth:", error);
+      } finally {
+        setLoading(false);
+        setAuthInitialized(true);
       }
-
-      setLoading(false);
     };
 
     initializeAuth();
@@ -84,7 +99,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => {
       subscription.unsubscribe();
     };
-  }, [navigate, fetchUserMetadata]);
+  }, [navigate, fetchUserMetadata, location.pathname, authInitialized]);
 
   // Update isAdmin state when userMetadata changes
   useEffect(() => {
