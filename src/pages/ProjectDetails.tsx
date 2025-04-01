@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Dialog } from "@/components/ui/dialog";
 import { toast } from "sonner";
 
@@ -16,14 +16,20 @@ import { getProjectById } from "@/utils/projectUtils";
 
 const ProjectDetails: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>();
+  const location = useLocation();
   const navigate = useNavigate();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
   
-  console.log("Current projectId param:", projectId); // Debugging log
+  console.log("Current projectId param:", projectId);
+  console.log("Current path:", location.pathname);
   
-  const isNewProject = projectId === "new";
+  // Check if we're on the new project route, either by checking the URL directly
+  // or by checking if projectId equals "new"
+  const isNewProject = location.pathname === "/projects/new" || projectId === "new";
+  
+  console.log("Is new project:", isNewProject);
   
   // Safely find the project in our dummy data
   const project = isNewProject ? null : getProjectById(projectId);

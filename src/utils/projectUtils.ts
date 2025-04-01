@@ -80,10 +80,15 @@ export const projects = [
   }
 ];
 
-// Fixed the getProjectById function to properly handle string IDs
+// Improved getProjectById function with better handling of edge cases
 export const getProjectById = (id: string | number | undefined | null) => {
   // Return undefined if id is undefined or null
   if (id === undefined || id === null) {
+    return undefined;
+  }
+  
+  // If id is "new", return undefined as this is a special case
+  if (id === "new") {
     return undefined;
   }
   
