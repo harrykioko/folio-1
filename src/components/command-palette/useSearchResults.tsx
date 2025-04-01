@@ -60,7 +60,7 @@ export const useSearchResults = ({ open, query }: UseSearchResultsProps) => {
 
   useEffect(() => {
     if (!open) {
-      setQuery("");
+      // Don't try to modify query here since it's a prop
       setResults({
         pages: defaultPages,
         projects: [],
