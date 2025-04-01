@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -11,7 +10,6 @@ import {
   MoreHorizontal, 
   Plus, 
   Search, 
-  SlidersHorizontal, 
   Globe, 
   Github,
   Twitter, 
@@ -33,120 +31,58 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "@/hooks/use-toast";
-
-// Mock data
-const accounts = [
-  { 
-    id: 1, 
-    name: "Project Alpha Website", 
-    type: "domain",
-    url: "https://alpha-project.com", 
-    username: "admin", 
-    expiryDate: "Dec 15, 2023",
-    projectId: 1,
-    projectName: "Project Alpha"
-  },
-  { 
-    id: 2, 
-    name: "Project Alpha GitHub", 
-    type: "github",
-    url: "https://github.com/org/project-alpha", 
-    username: "developer", 
-    expiryDate: null,
-    projectId: 1,
-    projectName: "Project Alpha"
-  },
-  { 
-    id: 3, 
-    name: "Project Alpha Twitter", 
-    type: "twitter",
-    url: "https://twitter.com/projectalpha", 
-    username: "projectalpha", 
-    expiryDate: null,
-    projectId: 1,
-    projectName: "Project Alpha"
-  },
-  { 
-    id: 4, 
-    name: "Dashboard X Website", 
-    type: "domain",
-    url: "https://dashboardx.io", 
-    username: "admin", 
-    expiryDate: "Mar 22, 2024",
-    projectId: 2,
-    projectName: "Dashboard X"
-  },
-  { 
-    id: 5, 
-    name: "LMS Portal Primary Domain", 
-    type: "domain",
-    url: "https://learn-portal.com", 
-    username: "admin", 
-    expiryDate: "Oct 5, 2023",
-    projectId: 3,
-    projectName: "LMS Portal"
-  },
-  { 
-    id: 6, 
-    name: "LMS Portal GitHub", 
-    type: "github",
-    url: "https://github.com/org/lms-portal", 
-    username: "developer", 
-    expiryDate: null,
-    projectId: 3,
-    projectName: "LMS Portal"
-  },
-  { 
-    id: 7, 
-    name: "LMS Portal Instagram", 
-    type: "instagram",
-    url: "https://instagram.com/lmsportal", 
-    username: "lmsportal", 
-    expiryDate: null,
-    projectId: 3,
-    projectName: "LMS Portal"
-  },
-  { 
-    id: 8, 
-    name: "Analytics Engine LinkedIn", 
-    type: "linkedin",
-    url: "https://linkedin.com/company/analytics-engine", 
-    username: "analytics-engine", 
-    expiryDate: null,
-    projectId: 5,
-    projectName: "Analytics Engine"
-  },
-  { 
-    id: 9, 
-    name: "Email Marketing Service", 
-    type: "service",
-    url: "https://emailprovider.com", 
-    username: "marketing@company.com", 
-    expiryDate: "Feb 1, 2024",
-    projectId: null,
-    projectName: null
-  },
-  { 
-    id: 10, 
-    name: "Cloud Hosting Account", 
-    type: "service",
-    url: "https://cloudprovider.com", 
-    username: "admin@company.com", 
-    expiryDate: "Jan 15, 2024",
-    projectId: null,
-    projectName: null
-  }
-];
+import AccountFilters from "@/components/accounts/AccountFilters";
+import { AccountFilters as AccountFiltersType } from "@/schemas/accountSchema";
+import { accountsData } from "@/utils/accountUtils";
 
 const Accounts: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [passwordVisibility, setPasswordVisibility] = useState<Record<string, boolean>>({});
+  const [filters, setFilters] = useState<AccountFiltersType>({
+    type: null,
+    projectId: null,
+    expiryStatus: null
+  });
   
-  const filteredAccounts = accounts.filter(account => 
-    account.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    account.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (account.projectName && account.projectName.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  const filteredAccounts = accountsData.filter(account => {
+    // Search filter
+    const matchesSearch = 
+      account.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      account.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (account.projectName && account.projectName.toLowerCase().includes(searchQuery.toLowerCase()));
+    
+    if (!matchesSearch) return false;
+    
+    // Type filter
+    if (filters.type && account.type !== filters.type) return false;
+    
+    // Project filter
+    if (filters.projectId) {
+      if (filters.projectId === "none" && account.projectId) return false;
+      if (filters.projectId !== "none" && account.projectId?.toString() !== filters.projectId) return false;
+    }
+    
+    // Expiry status filter
+    if (filters.expiryStatus) {
+      const today = new Date();
+      const thirtyDaysFromNow = new Date(today);
+      thirtyDaysFromNow.setDate(today.getDate() + 30);
+      
+      if (filters.expiryStatus === "expired") {
+        if (!account.expiryDate || new Date(account.expiryDate) >= today) return false;
+      } else if (filters.expiryStatus === "expiring-soon") {
+        if (!account.expiryDate || 
+            new Date(account.expiryDate) < today || 
+            new Date(account.expiryDate) > thirtyDaysFromNow) return false;
+      } else if (filters.expiryStatus === "active") {
+        if (!account.expiryDate || new Date(account.expiryDate) < today) return false;
+      } else if (filters.expiryStatus === "no-expiry") {
+        if (account.expiryDate) return false;
+      }
+    }
+    
+    return true;
+  });
 
   const togglePasswordVisibility = (id: string) => {
     setPasswordVisibility(prev => ({
@@ -181,6 +117,9 @@ const Accounts: React.FC = () => {
         return <Bookmark className="h-4 w-4" />;
     }
   };
+  
+  // Calculate active filters count for badge
+  const activeFiltersCount = Object.values(filters).filter(Boolean).length;
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -204,10 +143,11 @@ const Accounts: React.FC = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <Button variant="outline" className="shrink-0">
-          <SlidersHorizontal className="mr-2 h-4 w-4" />
-          Filters
-        </Button>
+        <AccountFilters 
+          filters={filters} 
+          setFilters={setFilters} 
+          activeFiltersCount={activeFiltersCount}
+        />
       </div>
 
       <Tabs defaultValue="all" className="space-y-4">

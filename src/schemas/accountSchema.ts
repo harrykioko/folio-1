@@ -15,3 +15,10 @@ export const accountFormSchema = z.object({
 });
 
 export type AccountFormValues = z.infer<typeof accountFormSchema>;
+
+// Filtering types
+export interface AccountFilters {
+  type: string | null;
+  projectId: string | null;
+  expiryStatus: string | null;
+}
