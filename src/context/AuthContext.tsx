@@ -14,14 +14,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [userMetadata, setUserMetadata] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
   
   // Use our custom hook for auth functionality
   const { 
     fetchUserMetadata, 
     handleSignIn, 
-    handleSignUp, 
     handleSignOut,
+    handleInviteUser
   } = useAuthHooks(setUserMetadata);
 
   useEffect(() => {
@@ -36,6 +37,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           await fetchUserMetadata(currentSession.user.id);
         } else {
           setUserMetadata(null);
+          setIsAdmin(false);
         }
 
         setLoading(false);
@@ -73,15 +75,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, [navigate, fetchUserMetadata]);
 
+  // Update isAdmin state when userMetadata changes
+  useEffect(() => {
+    if (userMetadata?.role === 'admin') {
+      setIsAdmin(true);
+    } else {
+      setIsAdmin(false);
+    }
+  }, [userMetadata]);
+
   // Provide the auth context value
   const contextValue: AuthContextType = {
     session,
     user,
     userMetadata,
     signIn: handleSignIn,
-    signUp: handleSignUp,
     signOut: handleSignOut,
     loading,
+    isAdmin,
+    inviteUser: handleInviteUser,
   };
 
   return (

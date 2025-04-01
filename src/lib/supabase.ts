@@ -19,3 +19,14 @@ export type OAuthProvider = Provider;
 // Define types for the database tables based on the Database type
 export type Tables = Database['public']['Tables'];
 export type UserRow = Tables['users']['Row'];
+
+// Invitation type definition
+export type Invitation = {
+  id: string;
+  email: string;
+  invited_by: string;
+  role: string;
+  created_at: string;
+  accepted: boolean;
+  accepted_at: string | null;
+};

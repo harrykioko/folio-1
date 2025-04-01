@@ -1,1 +1,38 @@
+
 project_id = "lfqzzjbmcfgbhczeyrjq"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage", "graphql_public"]
+
+[db]
+port = 54322
+
+[studio]
+enabled = true
+port = 54323
+api_url = "http://127.0.0.1:54321"
+
+[inbucket]
+enabled = true
+port = 54324
+
+[auth]
+enabled = true
+port = 54325
+
+[realtime]
+enabled = true
+port = 54326
+
+[storage]
+enabled = true
+port = 54327
+
+[edge_functions]
+enabled = true
+port = 54328
+
+[functions.invite-user]
+verify_jwt = true

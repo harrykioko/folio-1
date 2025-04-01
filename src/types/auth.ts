@@ -10,10 +10,18 @@ export interface AuthContextType {
     error: Error | null;
     data: Session | null;
   }>;
-  signUp: (email: string, password: string, fullName: string) => Promise<{
-    error: Error | null;
-    data: { user: User | null; session: Session | null };
-  }>;
   signOut: () => Promise<void>;
   loading: boolean;
+  isAdmin: boolean;
+  inviteUser: (email: string, role?: string) => Promise<{
+    error: Error | null;
+    data: any;
+  }>;
+}
+
+export interface InvitationResponse {
+  success: boolean;
+  user?: User;
+  error?: string;
+  details?: string;
 }

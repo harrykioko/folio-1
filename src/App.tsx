@@ -27,6 +27,7 @@ import NewPrompt from "./pages/NewPrompt";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import Workspace from "./pages/Workspace";
+import UserManagement from "./pages/UserManagement";
 
 const queryClient = new QueryClient();
 
@@ -71,6 +72,9 @@ const App = () => (
                   
                   {/* Team page */}
                   <Route path="/team" element={<Dashboard />} />
+                  
+                  {/* User Management - Admin only */}
+                  <Route path="/users" element={<UserManagement />} />
                   
                   {/* Settings page */}
                   <Route path="/settings" element={<Settings />} />
