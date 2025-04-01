@@ -1,6 +1,17 @@
 
 import { useState, useEffect } from "react";
 import { searchAll, SearchResult } from "@/services/searchService";
+import { 
+  BarChart2, 
+  Users, 
+  FolderGit, 
+  KeySquare, 
+  Lightbulb, 
+  CheckSquare, 
+  Settings,
+  Search,
+  PlusCircle,
+} from "lucide-react";
 
 // Default pages and actions
 const defaultPages: SearchResult[] = [
@@ -21,19 +32,7 @@ const defaultActions: SearchResult[] = [
   { id: "new-account", type: "action", title: "Add Account", icon: <PlusCircle className="h-4 w-4" />, route: "/accounts/new" }
 ];
 
-import { 
-  BarChart2, 
-  Users, 
-  FolderGit, 
-  KeySquare, 
-  Lightbulb, 
-  CheckSquare, 
-  Settings,
-  Search,
-  PlusCircle,
-} from "lucide-react";
-
-interface SearchResultsState {
+export interface SearchResultsState {
   pages: SearchResult[];
   projects: SearchResult[];
   tasks: SearchResult[];
@@ -42,7 +41,7 @@ interface SearchResultsState {
   actions: SearchResult[];
 }
 
-interface UseSearchResultsProps {
+export interface UseSearchResultsProps {
   open: boolean;
   query: string;
 }
@@ -131,5 +130,8 @@ export const useSearchResults = ({ open, query }: UseSearchResultsProps) => {
 
   return { loading, results };
 };
+
+// Export default pages and actions for reuse
+export { defaultPages, defaultActions };
 
 export default useSearchResults;

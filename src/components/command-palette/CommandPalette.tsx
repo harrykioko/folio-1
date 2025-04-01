@@ -36,6 +36,13 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onOpenChange }) =
     return () => document.removeEventListener("keydown", down);
   }, [onOpenChange, open]);
 
+  // Reset query when dialog closes
+  useEffect(() => {
+    if (!open) {
+      setQuery("");
+    }
+  }, [open]);
+
   const handleResultSelect = (result: SearchResult) => {
     onOpenChange(false);
     
