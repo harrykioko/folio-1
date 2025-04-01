@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -240,7 +241,7 @@ const Accounts: React.FC = () => {
 };
 
 interface AccountsTableProps {
-  accounts: typeof accounts;
+  accounts: typeof accountsData;
   passwordVisibility: Record<string, boolean>;
   togglePasswordVisibility: (id: string) => void;
   copyToClipboard: (text: string, type: string) => void;

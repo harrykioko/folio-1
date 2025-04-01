@@ -84,15 +84,15 @@ const AccountFilters: React.FC<AccountFiltersProps> = ({
           <div className="space-y-2">
             <Label htmlFor="type-filter">Account Type</Label>
             <Select
-              value={filters.type || ""}
-              onValueChange={(value) => setFilters(prev => ({ ...prev, type: value || null }))}
+              value={filters.type || "all-types"}
+              onValueChange={(value) => setFilters(prev => ({ ...prev, type: value === "all-types" ? null : value }))}
             >
               <SelectTrigger id="type-filter">
                 <SelectValue placeholder="All types" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="">All types</SelectItem>
+                  <SelectItem value="all-types">All types</SelectItem>
                   {accountTypes.map((type) => (
                     <SelectItem key={type.id} value={type.id}>{type.name}</SelectItem>
                   ))}
@@ -104,15 +104,15 @@ const AccountFilters: React.FC<AccountFiltersProps> = ({
           <div className="space-y-2">
             <Label htmlFor="project-filter">Project</Label>
             <Select
-              value={filters.projectId || ""}
-              onValueChange={(value) => setFilters(prev => ({ ...prev, projectId: value || null }))}
+              value={filters.projectId || "all-projects"}
+              onValueChange={(value) => setFilters(prev => ({ ...prev, projectId: value === "all-projects" ? null : value }))}
             >
               <SelectTrigger id="project-filter">
                 <SelectValue placeholder="All projects" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="">All projects</SelectItem>
+                  <SelectItem value="all-projects">All projects</SelectItem>
                   <SelectItem value="none">No project</SelectItem>
                   {projects.map((project) => (
                     <SelectItem key={project.id} value={project.id.toString()}>{project.name}</SelectItem>
@@ -128,15 +128,15 @@ const AccountFilters: React.FC<AccountFiltersProps> = ({
               Expiry Status
             </Label>
             <Select
-              value={filters.expiryStatus || ""}
-              onValueChange={(value) => setFilters(prev => ({ ...prev, expiryStatus: value || null }))}
+              value={filters.expiryStatus || "all-statuses"}
+              onValueChange={(value) => setFilters(prev => ({ ...prev, expiryStatus: value === "all-statuses" ? null : value }))}
             >
               <SelectTrigger id="expiry-filter">
                 <SelectValue placeholder="All statuses" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="">All statuses</SelectItem>
+                  <SelectItem value="all-statuses">All statuses</SelectItem>
                   <SelectItem value="expired">Expired</SelectItem>
                   <SelectItem value="expiring-soon">Expiring Soon (30 days)</SelectItem>
                   <SelectItem value="active">Active</SelectItem>
