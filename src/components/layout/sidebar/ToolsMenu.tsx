@@ -5,10 +5,11 @@ import { CheckSquare, MessageSquare, Users } from "lucide-react";
 import { 
   SidebarMenu, 
   SidebarMenuItem, 
-  SidebarMenuButton 
+  SidebarMenuButton,
+  SidebarMenuBadge,
+  useSidebar
 } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
-import { useSidebar } from "@/components/ui/sidebar";
 
 const ToolsMenu: React.FC = () => {
   const { state } = useSidebar();

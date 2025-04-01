@@ -5,9 +5,9 @@ import { BarChart2, FolderGit, KeySquare, Lightbulb } from "lucide-react";
 import { 
   SidebarMenu, 
   SidebarMenuItem, 
-  SidebarMenuButton 
+  SidebarMenuButton,
+  useSidebar
 } from "@/components/ui/sidebar";
-import { useSidebar } from "@/components/ui/sidebar";
 
 const GeneralMenu: React.FC = () => {
   const { state } = useSidebar();

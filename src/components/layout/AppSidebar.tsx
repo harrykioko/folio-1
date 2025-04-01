@@ -6,10 +6,10 @@ import {
   SidebarContent,
   SidebarHeader as SidebarHeaderContainer,
   SidebarFooter as SidebarFooterContainer,
+  useSidebar
 } from "@/components/ui/sidebar";
-import { useSidebar } from "@/components/ui/sidebar";
 
-// Import our new components
+// Import our components
 import SidebarHeader from "./sidebar/SidebarHeader";
 import GeneralMenu from "./sidebar/GeneralMenu";
 import ToolsMenu from "./sidebar/ToolsMenu";
