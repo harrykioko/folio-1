@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { 
@@ -56,13 +55,16 @@ const ProjectDetails: React.FC = () => {
   // Find the project in our dummy data
   const project = projects.find(p => p.id.toString() === projectId);
   
+  // Check if this is a new project or if the project was not found
   useEffect(() => {
+    // Only redirect if projectId is NOT "new" AND project is not found
     if (!project && projectId !== "new") {
       navigate("/projects");
       toast.error("Project not found");
     }
   }, [project, projectId, navigate]);
 
+  // Handle the case when we're creating a new project
   if (projectId === "new") {
     return (
       <div className="max-w-4xl mx-auto">
@@ -84,8 +86,10 @@ const ProjectDetails: React.FC = () => {
     );
   }
 
+  // If project is not found and we're not creating a new one, return null
+  // The useEffect above will handle redirecting
   if (!project) {
-    return null; // Will redirect via useEffect
+    return null;
   }
 
   const handleEditSubmit = (data: ProjectFormValues) => {
