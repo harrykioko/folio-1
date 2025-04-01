@@ -1,12 +1,26 @@
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { ProfileSection, PasswordSection, MFASection, DangerZoneSection } from "./account";
 
-const AccountSettings = () => {
+interface AccountSettingsProps {
+  focusSection?: "profile" | "security" | "mfa" | "danger";
+}
+
+const AccountSettings: React.FC<AccountSettingsProps> = ({ focusSection }) => {
+  const securityRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    if (focusSection === "security" && securityRef.current) {
+      securityRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [focusSection]);
+
   return (
     <div className="space-y-6">
       <ProfileSection />
-      <PasswordSection />
+      <div ref={securityRef}>
+        <PasswordSection />
+      </div>
       <MFASection />
       <DangerZoneSection />
     </div>

@@ -40,7 +40,7 @@ const AppSidebar = () => {
       <SidebarHeaderContainer>
         <SidebarHeader onSearchClick={() => {}} />
       </SidebarHeaderContainer>
-      <SidebarContent className="px-3 py-2">
+      <SidebarContent className="px-3 py-2 flex flex-col space-y-1">
         <GeneralMenu />
         <ToolsMenu />
         <AccountMenu />

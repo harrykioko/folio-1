@@ -1,66 +1,71 @@
 
 import React from 'react';
-import { UserIcon, Lock, LogOut } from 'lucide-react';
+import { UserIcon, Lock, LogOut, Settings } from 'lucide-react';
+import { NavLink } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ChevronDown } from 'lucide-react';
-import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
+import { 
+  SidebarMenu, 
+  SidebarMenuItem, 
+  SidebarMenuButton,
+  useSidebar
+} from '@/components/ui/sidebar';
 
 const AccountMenu = () => {
   const navigate = useNavigate();
   const { signOut } = useAuth();
-  const [isOpen, setIsOpen] = React.useState(false);
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
 
   return (
-    <div className="px-2 py-2">
-      <Collapsible
-        open={isOpen}
-        onOpenChange={setIsOpen}
-        className="w-full"
-      >
-        <CollapsibleTrigger className="flex items-center justify-between w-full px-2 py-2 text-sm font-medium rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
-          <span>Account</span>
-          <ChevronDown
-            className={`h-4 w-4 transition-transform duration-200 ${
-              isOpen ? 'transform rotate-180' : ''
-            }`}
-          />
-        </CollapsibleTrigger>
-        <CollapsibleContent className="pt-1">
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton 
-                onClick={() => navigate('/settings')}
-                tooltip="Profile"
-              >
-                <UserIcon className="h-4 w-4" />
-                <span>Profile</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            
-            <SidebarMenuItem>
-              <SidebarMenuButton 
-                onClick={() => navigate('/settings')}
-                tooltip="Security"
-              >
-                <Lock className="h-4 w-4" />
-                <span>Security</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            
-            <SidebarMenuItem>
-              <SidebarMenuButton 
-                onClick={() => signOut()}
-                tooltip="Logout"
-              >
-                <LogOut className="h-4 w-4" />
-                <span>Logout</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </CollapsibleContent>
-      </Collapsible>
+    <div className={`${!isCollapsed ? 'mt-6' : 'mt-4'}`}>
+      {!isCollapsed && (
+        <h3 className="text-xs font-medium text-muted-foreground mb-2 px-2">Account</h3>
+      )}
+      <SidebarMenu className="grid gap-1">
+        <SidebarMenuItem>
+          <SidebarMenuButton asChild tooltip="Profile">
+            <NavLink 
+              to="/settings" 
+              className={({ isActive }) => isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"}
+            >
+              <UserIcon className="h-4 w-4 mr-3" />
+              <span>{!isCollapsed && "Profile"}</span>
+            </NavLink>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+        <SidebarMenuItem>
+          <SidebarMenuButton asChild tooltip="Security">
+            <NavLink 
+              to="/settings?tab=security" 
+              className={({ isActive }) => isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"}
+            >
+              <Lock className="h-4 w-4 mr-3" />
+              <span>{!isCollapsed && "Security"}</span>
+            </NavLink>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+        <SidebarMenuItem>
+          <SidebarMenuButton asChild tooltip="Settings">
+            <NavLink 
+              to="/settings" 
+              className={({ isActive }) => isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"}
+            >
+              <Settings className="h-4 w-4 mr-3" />
+              <span>{!isCollapsed && "Settings"}</span>
+            </NavLink>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+        <SidebarMenuItem>
+          <SidebarMenuButton 
+            onClick={() => signOut()}
+            tooltip="Logout"
+          >
+            <LogOut className="h-4 w-4 mr-3" />
+            <span>{!isCollapsed && "Logout"}</span>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
     </div>
   );
 };
