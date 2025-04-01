@@ -16,16 +16,19 @@ interface OverviewTabProps {
     team: number;
     domains: string[];
     hasGithub: boolean;
-    social: string[];
+    social: string[] | undefined;
   };
 }
 
 const OverviewTab: React.FC<OverviewTabProps> = ({ project }) => {
-  // Calculate social accounts for display
+  // Calculate social accounts for display - ensure social is an array
   const socialAccounts = [];
-  if (project.social.includes("twitter")) socialAccounts.push({ name: "Twitter", icon: Twitter });
-  if (project.social.includes("instagram")) socialAccounts.push({ name: "Instagram", icon: Instagram });
-  if (project.social.includes("linkedin")) socialAccounts.push({ name: "LinkedIn", icon: Linkedin });
+  // Safely check if social array exists before using includes method
+  const socialArray = Array.isArray(project.social) ? project.social : [];
+  
+  if (socialArray.includes("twitter")) socialAccounts.push({ name: "Twitter", icon: Twitter });
+  if (socialArray.includes("instagram")) socialAccounts.push({ name: "Instagram", icon: Instagram });
+  if (socialArray.includes("linkedin")) socialAccounts.push({ name: "LinkedIn", icon: Linkedin });
 
   return (
     <div className="space-y-4">
@@ -95,7 +98,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ project }) => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {project.domains.length > 0 && (
+              {project.domains && project.domains.length > 0 && (
                 <div>
                   <h4 className="text-sm font-medium mb-2 flex items-center">
                     <Globe className="mr-2 h-4 w-4" /> Domains

@@ -8,6 +8,7 @@ import ProjectDetailLoading from "@/components/projects/ProjectDetailLoading";
 import ProjectNotFound from "@/components/projects/ProjectNotFound";
 import NewProjectView from "@/components/projects/NewProjectView";
 import ProjectContent from "@/components/projects/ProjectContent";
+import { getProjectById } from "@/utils/projectUtils"; // Import for fallback data
 
 const ProjectDetailsContainer: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>();
@@ -36,8 +37,36 @@ const ProjectDetailsContainer: React.FC = () => {
           throw new Error("Invalid project ID");
         }
         
+        // Fetch from Supabase
         const data = await fetchProjectById(numericId);
-        setProject(data);
+        
+        // Enhance the project data with UI required fields if they're missing
+        // This ensures we always have the required properties for the OverviewTab
+        const enhancedProject = {
+          ...data,
+          // Add UI-specific fields with default values if they don't exist
+          progress: 0, // Default progress
+          startDate: "Not set", // Default start date
+          dueDate: "Not set", // Default due date
+          team: 1, // Default team size
+          domains: [], // Default empty domains array
+          hasGithub: false, // Default GitHub status
+          social: [], // Default empty social array
+        };
+        
+        // If available, get additional UI data from local utility (for demo purposes)
+        const mockProject = getProjectById(numericId);
+        if (mockProject) {
+          enhancedProject.progress = mockProject.progress;
+          enhancedProject.startDate = mockProject.startDate;
+          enhancedProject.dueDate = mockProject.dueDate;
+          enhancedProject.team = mockProject.team;
+          enhancedProject.domains = mockProject.domains;
+          enhancedProject.hasGithub = mockProject.hasGithub;
+          enhancedProject.social = mockProject.social;
+        }
+        
+        setProject(enhancedProject);
         setError(null);
       } catch (err) {
         console.error("Error loading project:", err);
@@ -94,7 +123,18 @@ const ProjectDetailsContainer: React.FC = () => {
       
       // Refresh project data
       const updatedProject = await fetchProjectById(project.id);
-      setProject(updatedProject);
+      
+      // Maintain the UI-specific fields when updating
+      setProject({
+        ...updatedProject,
+        progress: project.progress,
+        startDate: project.startDate,
+        dueDate: project.dueDate,
+        team: project.team,
+        domains: project.domains,
+        hasGithub: project.hasGithub,
+        social: project.social,
+      });
     } catch (error) {
       console.error("Error updating project:", error);
       toast.error("Failed to update project");
