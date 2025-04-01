@@ -3,7 +3,6 @@ import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Bell, CheckSquare, FolderGit, Clock } from "lucide-react";
 import { projects } from "@/utils/projectUtils";
@@ -209,7 +208,7 @@ const NotificationsPanel: React.FC<NotificationsPanelProps> = ({ onClose }) => {
         
         <div className="border-t p-2">
           <Button variant="outline" className="w-full text-xs" size="sm" asChild>
-            <Link to="/settings/notifications" onClick={onClose}>
+            <Link to="/settings?tab=notifications" onClick={onClose}>
               Manage notification settings
             </Link>
           </Button>
