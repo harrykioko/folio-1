@@ -178,7 +178,7 @@ export const AssigneeField = ({ form, users, isLoading }: AssigneeFieldProps) =>
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              <SelectItem value="">Unassigned</SelectItem>
+              <SelectItem key="unassigned" value="unassigned">Unassigned</SelectItem>
               {users.map((user) => (
                 <SelectItem key={user.id} value={user.id}>
                   {user.full_name || user.email || user.id}

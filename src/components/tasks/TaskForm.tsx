@@ -43,13 +43,18 @@ const TaskForm: React.FC<TaskFormProps> = ({
       status: task?.status || "To Do",
       priority: task?.priority || "Medium",
       projectId: task?.projectId || defaultProjectId || "",
-      assignee: task?.assignee || "",
+      assignee: task?.assignee || "unassigned",
       dueDate: task?.dueDate || "",
     },
   });
 
   const handleSubmit = (data: TaskFormValues) => {
-    onSubmit(data);
+    // Convert "unassigned" value to null for the assignee field
+    const formattedData = {
+      ...data,
+      assignee: data.assignee === "unassigned" ? null : data.assignee
+    };
+    onSubmit(formattedData);
   };
 
   return (
