@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { GithubIcon, Globe } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
-import { ProjectFormValues } from "../ProjectForm";
+import { ProjectFormValues } from "./ProjectFormSchema";
 
 interface ProjectTechnicalFieldsProps {
   form: UseFormReturn<ProjectFormValues>;

@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
-import { ProjectFormValues } from "../ProjectForm";
+import { ProjectFormValues } from "./ProjectFormSchema";
 
 interface ProjectBasicInfoFieldsProps {
   form: UseFormReturn<ProjectFormValues>;

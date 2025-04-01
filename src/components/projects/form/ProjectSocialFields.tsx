@@ -4,7 +4,7 @@ import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/comp
 import { Input } from "@/components/ui/input";
 import { Twitter, Instagram, Linkedin } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
-import { ProjectFormValues } from "../ProjectForm";
+import { ProjectFormValues } from "./ProjectFormSchema";
 
 interface ProjectSocialFieldsProps {
   form: UseFormReturn<ProjectFormValues>;

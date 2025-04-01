@@ -9,7 +9,7 @@ import ProjectHeader from "@/components/projects/ProjectHeader";
 import ProjectTabs from "@/components/projects/ProjectTabs";
 import DeleteProjectDialog from "@/components/projects/DeleteProjectDialog";
 import NewProjectView from "@/components/projects/NewProjectView";
-import { ProjectFormValues } from "@/components/projects/ProjectForm";
+import { ProjectFormValues } from "@/components/projects/form/ProjectFormSchema";
 
 // Import utility function
 import { getProjectById } from "@/utils/projectUtils";
