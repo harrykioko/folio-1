@@ -35,6 +35,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (isLoading) return; // Prevent double submission
+    
     setIsLoading(true);
     setLoginError(null);
 
@@ -51,7 +54,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
           description: error.message || "Invalid email or password",
         });
       } else {
-        console.log("Sign in successful");
+        console.log("Sign in successful, redirecting to:", from);
         // On successful login
         if (onLoginSuccess) {
           onLoginSuccess();

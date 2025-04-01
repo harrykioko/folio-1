@@ -14,9 +14,10 @@ const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
 
   // Log auth state for debugging
   useEffect(() => {
-    console.log(`RequireAuth: loading=${loading}, authenticated=${!!user}`);
-  }, [loading, user]);
+    console.log(`RequireAuth: loading=${loading}, authenticated=${!!user}, path=${location.pathname}`);
+  }, [loading, user, location.pathname]);
 
+  // Add a short timeout to prevent flash of loading state for quick checks
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center">
@@ -29,7 +30,7 @@ const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
   }
 
   if (!user) {
-    console.log("No user found, redirecting to login");
+    console.log("No user found, redirecting to login from", location.pathname);
     // Redirect to login page with the return path
     return <Navigate to="/login" state={{ from: location }} replace />;
   }

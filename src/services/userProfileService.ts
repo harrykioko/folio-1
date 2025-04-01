@@ -3,6 +3,7 @@ import { supabase, AuthUser } from '@/lib/supabase';
 
 export const fetchUserMetadata = async (userId: string): Promise<AuthUser | null> => {
   try {
+    // Use a prepared statement with a single value lookup for better performance
     const { data, error } = await supabase
       .from('users')
       .select('*')

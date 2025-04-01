@@ -6,6 +6,7 @@ import { supabase, AuthUser } from '@/lib/supabase';
 import { useAuthHooks } from '@/hooks/useAuthHooks';
 import { AuthContextType } from '@/types/auth';
 import { useMFA } from '@/hooks/useMFA';
+import { toast } from '@/hooks/use-toast';
 
 // Create the context with undefined as initial value
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -38,11 +39,48 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     unenrollMFA
   } = useMFA();
 
+  // Optimized metadata fetch with retry logic
+  const fetchMetadataWithRetry = async (userId: string, retries = 3, delay = 500) => {
+    let attempts = 0;
+    
+    const fetchWithBackoff = async (): Promise<AuthUser | null> => {
+      try {
+        attempts++;
+        const metadata = await fetchUserMetadata(userId);
+        
+        if (metadata) {
+          return metadata;
+        }
+        
+        if (attempts >= retries) {
+          console.warn(`Failed to fetch user metadata after ${retries} attempts`);
+          return null;
+        }
+        
+        await new Promise(resolve => setTimeout(resolve, delay * attempts));
+        return fetchWithBackoff();
+      } catch (error) {
+        console.error("Error in fetchMetadataWithRetry:", error);
+        
+        if (attempts >= retries) {
+          return null;
+        }
+        
+        await new Promise(resolve => setTimeout(resolve, delay * attempts));
+        return fetchWithBackoff();
+      }
+    };
+    
+    return fetchWithBackoff();
+  };
+
   // Handle auth state changes
   useEffect(() => {
+    console.log("Setting up auth state listener");
+    
     // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, currentSession) => {
+      async (event, currentSession) => {
         console.log(`Auth event: ${event}, user: ${currentSession?.user?.email || 'none'}`);
         
         setSession(currentSession);
@@ -50,13 +88,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         // Handle different auth events
         if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-          // Defer metadata fetch to prevent Supabase auth deadlocks
           if (currentSession?.user) {
-            setTimeout(() => {
-              fetchUserMetadata(currentSession.user.id)
-                .catch(error => console.error("Error fetching user metadata:", error));
+            try {
+              // Fetch metadata immediately but don't block rendering
+              const metadata = await fetchMetadataWithRetry(currentSession.user.id);
+              
+              if (!metadata && event === 'SIGNED_IN') {
+                // If we can't get metadata after a fresh login, something is wrong
+                toast({
+                  variant: "destructive",
+                  title: "Account setup incomplete",
+                  description: "Unable to fetch your account details. Please try again later."
+                });
+              }
+            } catch (error) {
+              console.error("Error fetching user metadata:", error);
+            } finally {
               setLoading(false);
-            }, 0);
+            }
           }
         } else if (event === 'SIGNED_OUT') {
           setUserMetadata(null);
@@ -82,6 +131,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Initial session check
     const initializeAuth = async () => {
       try {
+        console.log("Initializing auth state");
         const { data: { session: initialSession } } = await supabase.auth.getSession();
         
         setSession(initialSession);
@@ -89,9 +139,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         if (initialSession?.user) {
           try {
-            await fetchUserMetadata(initialSession.user.id);
+            await fetchMetadataWithRetry(initialSession.user.id);
           } catch (error) {
-            console.error("Error fetching user metadata:", error);
+            console.error("Error fetching initial user metadata:", error);
           }
         }
       } catch (error) {
@@ -99,6 +149,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } finally {
         setLoading(false);
         setAuthInitialized(true);
+        console.log("Auth initialized");
       }
     };
 
