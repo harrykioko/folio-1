@@ -6,6 +6,7 @@ import { SidebarMenuButton } from "./sidebar-menu-button"
 import { SidebarMenuAction } from "./sidebar-menu-action"
 import { SidebarMenuBadge } from "./sidebar-menu-badge"
 import { SidebarMenuSkeleton } from "./sidebar-menu-skeleton"
+import { SidebarMenuTooltip } from "./sidebar-menu-tooltip"
 
 export const SidebarMenu = React.forwardRef<
   HTMLUListElement,
@@ -25,5 +26,6 @@ export {
   SidebarMenuButton,
   SidebarMenuAction,
   SidebarMenuBadge,
-  SidebarMenuSkeleton
+  SidebarMenuSkeleton,
+  SidebarMenuTooltip
 }
