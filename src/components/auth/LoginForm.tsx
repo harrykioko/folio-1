@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
@@ -53,6 +52,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
           title: "Login failed",
           description: error.message || "Invalid email or password",
         });
+        setIsLoading(false); // Only set loading to false on error
       } else {
         console.log("Sign in successful, redirecting to:", from);
         // On successful login
@@ -60,6 +60,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
           onLoginSuccess();
         }
         // The navigation is now handled in AuthContext
+        // We keep isLoading true for a better UX as the redirect happens
       }
     } catch (err) {
       console.error("Login error:", err);
@@ -69,7 +70,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
         title: "Login failed",
         description: "An unexpected error occurred",
       });
-    } finally {
       setIsLoading(false);
     }
   };

@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { Loader2 } from 'lucide-react';
@@ -11,14 +11,24 @@ interface RequireAuthProps {
 const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
   const { user, loading } = useAuth();
   const location = useLocation();
+  const [delayedLoading, setDelayedLoading] = useState(true);
+  
+  // Add a short timeout to prevent flash of loading state for quick checks
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDelayedLoading(loading);
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, [loading]);
 
   // Log auth state for debugging
   useEffect(() => {
     console.log(`RequireAuth: loading=${loading}, authenticated=${!!user}, path=${location.pathname}`);
   }, [loading, user, location.pathname]);
 
-  // Add a short timeout to prevent flash of loading state for quick checks
-  if (loading) {
+  // Only show loading if it persists longer than the timeout
+  if (delayedLoading && loading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />

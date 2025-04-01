@@ -40,7 +40,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   } = useMFA();
 
   // Optimized metadata fetch with retry logic
-  const fetchMetadataWithRetry = async (userId: string, retries = 3, delay = 500) => {
+  const fetchMetadataWithRetry = async (userId: string, retries = 2, delay = 300) => {
     let attempts = 0;
     
     const fetchWithBackoff = async (): Promise<AuthUser | null> => {
@@ -77,11 +77,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Handle auth state changes
   useEffect(() => {
     console.log("Setting up auth state listener");
+    let isSubscribed = true;
     
     // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
         console.log(`Auth event: ${event}, user: ${currentSession?.user?.email || 'none'}`);
+        
+        if (!isSubscribed) return;
         
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
@@ -134,6 +137,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.log("Initializing auth state");
         const { data: { session: initialSession } } = await supabase.auth.getSession();
         
+        if (!isSubscribed) return;
+        
         setSession(initialSession);
         setUser(initialSession?.user ?? null);
 
@@ -147,15 +152,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } catch (error) {
         console.error("Error initializing auth:", error);
       } finally {
-        setLoading(false);
-        setAuthInitialized(true);
-        console.log("Auth initialized");
+        if (isSubscribed) {
+          setLoading(false);
+          setAuthInitialized(true);
+          console.log("Auth initialized");
+        }
       }
     };
 
     initializeAuth();
 
     return () => {
+      isSubscribed = false;
       subscription.unsubscribe();
     };
   }, [navigate, fetchUserMetadata, location.pathname]);
