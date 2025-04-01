@@ -80,6 +80,16 @@ export const projects = [
   }
 ];
 
-export const getProjectById = (id: string | number) => {
-  return projects.find(project => project.id.toString() === id.toString());
+// Fixed the getProjectById function to handle null/undefined projectId
+export const getProjectById = (id: string | number | undefined | null) => {
+  // Return undefined if id is undefined or null
+  if (id === undefined || id === null) {
+    return undefined;
+  }
+  
+  // Safely convert id to string for comparison
+  const idStr = String(id);
+  
+  // Find the project with the matching id
+  return projects.find(project => project.id.toString() === idStr);
 };

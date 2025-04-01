@@ -55,8 +55,8 @@ const ProjectDetails: React.FC = () => {
   
   const isNewProject = projectId === "new";
   
-  // Find the project in our dummy data
-  const project = isNewProject ? null : getProjectById(projectId as string);
+  // Safely find the project in our dummy data
+  const project = isNewProject ? null : getProjectById(projectId);
   
   // Check if this is a new project or if the project was not found
   useEffect(() => {
