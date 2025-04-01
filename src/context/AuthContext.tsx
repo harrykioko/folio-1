@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase, AuthUser } from '@/lib/supabase';
 import { useAuthHooks } from '@/hooks/useAuthHooks';
 import { AuthContextType } from '@/types/auth';
+import { useMFA } from '@/hooks/useMFA';
 
 // Create the context with undefined as initial value
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,8 +23,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     fetchUserMetadata, 
     handleSignIn, 
     handleSignOut,
+    handleSignUp,
     handleInviteUser
   } = useAuthHooks(setUserMetadata);
+
+  // Use MFA hooks
+  const {
+    setupMFA,
+    verifyMFA,
+    checkMFA,
+    getMFAFactors,
+    unenrollMFA
+  } = useMFA();
 
   useEffect(() => {
     // Set up Supabase auth state listener
@@ -90,10 +101,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     user,
     userMetadata,
     signIn: handleSignIn,
+    signUp: handleSignUp,
     signOut: handleSignOut,
     loading,
     isAdmin,
     inviteUser: handleInviteUser,
+    setupMFA,
+    verifyMFA,
+    getMFAFactors,
+    unenrollMFA,
   };
 
   return (

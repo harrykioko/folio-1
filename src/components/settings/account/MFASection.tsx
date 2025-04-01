@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -27,7 +26,7 @@ const MFASection = () => {
     setIsLoading(true);
     try {
       const data = await getMFAFactors();
-      setMfaFactors(data.totp || []);
+      setMfaFactors(data);
     } catch (error) {
       console.error("Error fetching MFA status:", error);
     } finally {

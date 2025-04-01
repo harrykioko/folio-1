@@ -52,6 +52,48 @@ export const useAuthHooks = (setUserMetadata: React.Dispatch<React.SetStateActio
     }
   };
 
+  const handleSignUp = async (email: string, password: string, name: string) => {
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: name,
+          },
+        },
+      });
+
+      if (error) {
+        toast({
+          variant: "destructive",
+          title: "Registration failed",
+          description: error.message,
+        });
+        return { error, data: { user: null, session: null } };
+      }
+
+      // If user is created successfully, add to our users table
+      if (data.user) {
+        await upsertUserMetadata(data.user.id, email, name);
+        
+        toast({
+          title: "Account created",
+          description: data.session ? "You are now signed in." : "Please check your email to confirm your account.",
+        });
+      }
+
+      return { error: null, data };
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Registration failed",
+        description: "An unexpected error occurred",
+      });
+      return { error: error as Error, data: { user: null, session: null } };
+    }
+  };
+
   const handleSignOut = async () => {
     try {
       await supabase.auth.signOut();
@@ -129,6 +171,7 @@ export const useAuthHooks = (setUserMetadata: React.Dispatch<React.SetStateActio
     upsertUserMetadata,
     handleSignIn,
     handleSignOut,
+    handleSignUp,
     handleInviteUser,
   };
 };
