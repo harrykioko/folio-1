@@ -4,13 +4,17 @@ import React from "react";
 interface PageHeaderProps {
   heading: string;
   subheading?: string;
+  icon?: React.ReactNode;
   children?: React.ReactNode;
 }
 
-const PageHeader = ({ heading, subheading, children }: PageHeaderProps) => {
+const PageHeader = ({ heading, subheading, icon, children }: PageHeaderProps) => {
   return (
     <div className="flex flex-col gap-1 pb-4">
-      <h1 className="text-2xl font-semibold tracking-tight">{heading}</h1>
+      <div className="flex items-center gap-2">
+        {icon}
+        <h1 className="text-2xl font-semibold tracking-tight">{heading}</h1>
+      </div>
       {subheading && (
         <p className="text-muted-foreground">{subheading}</p>
       )}
