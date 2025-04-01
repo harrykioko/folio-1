@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
@@ -52,7 +53,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
           title: "Login failed",
           description: error.message || "Invalid email or password",
         });
-        setIsLoading(false); // Only set loading to false on error
+        setIsLoading(false);
       } else {
         console.log("Sign in successful, redirecting to:", from);
         // On successful login
