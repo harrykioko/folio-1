@@ -1,8 +1,9 @@
 
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { getTaskById } from "@/utils/taskUtils";
+import { getProjectById } from "@/utils/projectUtils";
 import TaskForm from "@/components/tasks/TaskForm";
 import TaskHeader from "@/components/tasks/TaskHeader";
 import { TaskFormValues } from "@/components/tasks/form/TaskFormSchema";
@@ -12,11 +13,16 @@ const TaskDetails: React.FC = () => {
   const { taskId } = useParams<{ taskId: string }>();
   const location = useLocation();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [isEditMode, setIsEditMode] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   
+  // Get the projectId from URL query parameters
+  const projectIdFromQuery = searchParams.get('projectId');
+  
   console.log("Current taskId param:", taskId);
   console.log("Current path:", location.pathname);
+  console.log("Project ID from query:", projectIdFromQuery);
   
   // Check if we're on the new task route
   const isNewTask = location.pathname === "/tasks/new" || taskId === "new";
@@ -25,6 +31,11 @@ const TaskDetails: React.FC = () => {
   
   // Find the task in our data
   const task = isNewTask ? null : getTaskById(taskId);
+  
+  // If projectId is in query, get the project details
+  const linkedProject = projectIdFromQuery ? getProjectById(projectIdFromQuery) : null;
+  
+  console.log("Linked project:", linkedProject);
   
   // Check if task was not found
   useEffect(() => {
@@ -40,7 +51,13 @@ const TaskDetails: React.FC = () => {
       console.log("New task data:", data);
       // In a real app, we would save this to the database
       toast.success("Task created successfully!");
-      navigate("/tasks");
+      
+      // If the task was created from a project page, redirect back to that project
+      if (projectIdFromQuery) {
+        navigate(`/projects/${projectIdFromQuery}`);
+      } else {
+        navigate("/tasks");
+      }
     } else {
       console.log("Updated task data:", data);
       // In a real app, we would update this in the database
@@ -61,12 +78,20 @@ const TaskDetails: React.FC = () => {
       <div className="max-w-4xl mx-auto animate-fade-in">
         <div className="mb-6">
           <h1 className="text-3xl font-bold">Create New Task</h1>
+          {linkedProject && (
+            <p className="text-muted-foreground mt-2">
+              Creating task for project: <span className="font-medium">{linkedProject.name}</span>
+            </p>
+          )}
           <p className="text-muted-foreground mt-2">
             Fill out the form below to create a new task.
           </p>
         </div>
         <Card className="p-6">
-          <TaskForm onSubmit={handleSubmit} />
+          <TaskForm 
+            onSubmit={handleSubmit} 
+            defaultProjectId={projectIdFromQuery || undefined}
+          />
         </Card>
       </div>
     );

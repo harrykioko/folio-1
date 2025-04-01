@@ -8,6 +8,7 @@ export const tasks = [
     status: "In Progress",
     priority: "High",
     project: "Project Alpha",
+    projectId: "1",
     assignee: "John Doe",
     dueDate: "Tomorrow",
     created: "2 days ago"
@@ -19,6 +20,7 @@ export const tasks = [
     status: "To Do",
     priority: "Urgent",
     project: "AI Tools",
+    projectId: "3",
     assignee: "Emily Chen",
     dueDate: "Today",
     created: "Yesterday"
@@ -30,6 +32,7 @@ export const tasks = [
     status: "In Progress",
     priority: "Medium",
     project: "Dashboard X",
+    projectId: "2",
     assignee: "Alex Smith",
     dueDate: "Next week",
     created: "3 days ago"
@@ -41,6 +44,7 @@ export const tasks = [
     status: "To Do",
     priority: "High",
     project: "LMS Portal",
+    projectId: "4",
     assignee: "Sarah Johnson",
     dueDate: "In 2 days",
     created: "1 day ago"
@@ -52,6 +56,7 @@ export const tasks = [
     status: "To Do",
     priority: "Medium",
     project: "Project Alpha",
+    projectId: "1",
     assignee: "Tom Wilson",
     dueDate: "Today",
     created: "Yesterday"
@@ -80,4 +85,14 @@ export const getTaskById = (id: string | number | undefined | null) => {
   
   // Find the task with the matching id
   return tasks.find(task => task.id === idNum);
+};
+
+// Function to get tasks by project ID
+export const getTasksByProjectId = (projectId: string | number | undefined | null) => {
+  if (projectId === undefined || projectId === null) {
+    return [];
+  }
+  
+  const projectIdString = projectId.toString();
+  return tasks.filter(task => task.projectId === projectIdString);
 };

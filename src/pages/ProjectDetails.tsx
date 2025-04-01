@@ -93,6 +93,7 @@ const ProjectDetails: React.FC = () => {
             name={project.name}
             description={project.description}
             status={project.status}
+            projectId={project.id}
             setIsEditDialogOpen={setIsEditDialogOpen}
             setIsDeleteDialogOpen={setIsDeleteDialogOpen}
           />

@@ -12,12 +12,18 @@ import { projects } from "@/utils/projectUtils";
 
 interface TaskFormProps {
   task?: any;
+  defaultProjectId?: string;
   onSubmit: (data: TaskFormValues) => void;
   onCancel?: () => void;
 }
 
-const TaskForm: React.FC<TaskFormProps> = ({ task, onSubmit, onCancel }) => {
-  // Set up form with default values from task if editing
+const TaskForm: React.FC<TaskFormProps> = ({ 
+  task, 
+  defaultProjectId,
+  onSubmit, 
+  onCancel 
+}) => {
+  // Set up form with default values from task if editing, or use defaultProjectId if provided
   const form = useForm<TaskFormValues>({
     resolver: zodResolver(TaskFormSchema),
     defaultValues: {
@@ -25,7 +31,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSubmit, onCancel }) => {
       description: task?.description || "",
       status: task?.status || "To Do",
       priority: task?.priority || "Medium",
-      projectId: task?.projectId || "",
+      projectId: task?.projectId || defaultProjectId || "",
       assignee: task?.assignee || "",
       dueDate: task?.dueDate || "",
     },

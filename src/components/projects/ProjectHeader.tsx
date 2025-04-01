@@ -16,6 +16,7 @@ interface ProjectHeaderProps {
   name: string;
   description: string;
   status: string;
+  projectId: string | number;
   setIsEditDialogOpen: (value: boolean) => void;
   setIsDeleteDialogOpen: (value: boolean) => void;
 }
@@ -24,10 +25,16 @@ const ProjectHeader: React.FC<ProjectHeaderProps> = ({
   name,
   description,
   status,
+  projectId,
   setIsEditDialogOpen,
   setIsDeleteDialogOpen,
 }) => {
   const navigate = useNavigate();
+
+  const handleAddTask = () => {
+    // Navigate to new task form with project ID in the URL as a query parameter
+    navigate(`/tasks/new?projectId=${projectId}`);
+  };
 
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -73,7 +80,7 @@ const ProjectHeader: React.FC<ProjectHeaderProps> = ({
           </DropdownMenuContent>
         </DropdownMenu>
         
-        <Button>
+        <Button onClick={handleAddTask}>
           <Plus className="mr-2 h-4 w-4" />
           Add Task
         </Button>

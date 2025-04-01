@@ -1,5 +1,6 @@
 
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import OverviewTab from "./OverviewTab";
 import EmptyTabContent from "./EmptyTabContent";
@@ -15,6 +16,12 @@ const ProjectTabs: React.FC<ProjectTabsProps> = ({
   setActiveTab,
   project,
 }) => {
+  const navigate = useNavigate();
+
+  const handleAddTask = () => {
+    navigate(`/tasks/new?projectId=${project.id}`);
+  };
+
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
       <TabsList>
@@ -35,7 +42,7 @@ const ProjectTabs: React.FC<ProjectTabsProps> = ({
           description="No tasks have been added to this project yet."
           buttonText="Add Task"
           buttonLink=""
-          onButtonClick={() => {}}
+          onButtonClick={handleAddTask}
         />
       </TabsContent>
       
