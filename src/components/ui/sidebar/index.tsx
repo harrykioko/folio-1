@@ -2,7 +2,7 @@
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 import * as React from "react"
-import { SidebarContext, SidebarProvider, useSidebar } from "./sidebar-context"
+import { SidebarProvider, useSidebar } from "./sidebar-context"
 import { 
   Sidebar, 
   SidebarInset, 
