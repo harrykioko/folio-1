@@ -13,6 +13,7 @@ import SignUp from "./pages/SignUp";
 import Dashboard from "./pages/Dashboard";
 import Projects from "./pages/Projects";
 import Accounts from "./pages/Accounts";
+import AccountDetails from "./pages/AccountDetails";
 import Prompts from "./pages/Prompts";
 import NotFound from "./pages/NotFound";
 
@@ -48,9 +49,8 @@ const App = () => (
             <Route path="/projects/new" element={<Projects />} />
             
             {/* Account details routes */}
-            <Route path="/accounts/:accountId" element={<Accounts />} />
-            <Route path="/accounts/new" element={<Accounts />} />
-            <Route path="/accounts/:accountId/edit" element={<Accounts />} />
+            <Route path="/accounts/:accountId" element={<AccountDetails />} />
+            <Route path="/accounts/new" element={<AccountDetails />} />
             
             {/* Prompt details routes */}
             <Route path="/prompts/:promptId" element={<Prompts />} />
