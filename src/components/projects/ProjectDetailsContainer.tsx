@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "sonner";
-import { fetchProjectById, deleteProject, updateProject, Project } from "@/utils/supabaseProjects";
+import { fetchProjectById, deleteProject, updateProject, createProject, Project } from "@/utils/supabaseProjects";
 import { ProjectFormValues } from "@/components/projects/form/ProjectFormSchema";
 import ProjectDetailLoading from "@/components/projects/ProjectDetailLoading";
 import ProjectNotFound from "@/components/projects/ProjectNotFound";
@@ -51,9 +51,29 @@ const ProjectDetailsContainer: React.FC = () => {
   }, [projectId, isNewProject]);
 
   const handleCreateProject = async (data: ProjectFormValues) => {
-    console.log("New project data:", data);
-    // Form submission is handled by the ProjectForm component
-    // navigate is also handled there
+    try {
+      setLoading(true);
+      
+      // Format the data for Supabase - include all necessary fields
+      const projectData = {
+        name: data.name,
+        description: data.description,
+        status: data.status,
+        // Store additional form data as metadata or in separate tables if needed
+      };
+      
+      // Call the createProject function from supabaseProjects utility
+      const newProject = await createProject(projectData);
+      
+      toast.success("Project created successfully!");
+      // Navigate to the new project page
+      navigate(`/projects/${newProject.id}`);
+    } catch (error) {
+      console.error("Error creating project:", error);
+      toast.error("Failed to create project. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleUpdateProject = async (data: ProjectFormValues) => {

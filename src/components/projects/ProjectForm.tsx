@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,7 +10,6 @@ import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { createProject, updateProject } from "@/utils/supabaseProjects";
 
 // Import our extracted components and schemas
 import ProjectBasicInfoFields from "./form/ProjectBasicInfoFields";
@@ -21,7 +21,7 @@ interface ProjectFormProps {
   defaultValues?: Partial<ProjectFormValues>;
   isEditing?: boolean;
   projectId?: number;
-  onSubmit?: (data: ProjectFormValues) => void;
+  onSubmit?: (data: ProjectFormValues) => Promise<void>;
 }
 
 const ProjectForm: React.FC<ProjectFormProps> = ({
@@ -40,29 +40,16 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   const handleSubmit = async (data: ProjectFormValues) => {
     try {
       if (onSubmit) {
-        onSubmit(data);
+        await onSubmit(data);
         return;
       }
-
-      // Map form data to the structure expected by Supabase
-      const projectData = {
-        name: data.name,
-        description: data.description,
-        status: data.status,
-        // Other fields can be stored as JSON in the description or in separate tables
-      };
-
-      if (isEditing && projectId) {
-        await updateProject(projectId, projectData);
-        toast.success("Project updated successfully");
-      } else {
-        await createProject(projectData);
-        toast.success("Project created successfully");
-      }
       
+      // If no onSubmit provided, we should navigate back - this shouldn't happen
+      // but provides a fallback
+      toast.error("Form submission handler not provided");
       navigate("/projects");
     } catch (error) {
-      console.error("Error saving project:", error);
+      console.error("Error submitting form:", error);
       toast.error("Failed to save project. Please try again.");
     }
   };
@@ -108,7 +95,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             <Button variant="outline" type="button" onClick={() => navigate("/projects")}>
               Cancel
             </Button>
-            <Button type="submit">
+            <Button type="submit" disabled={form.formState.isSubmitting}>
               {isEditing ? "Update Project" : "Create Project"}
             </Button>
           </CardFooter>
