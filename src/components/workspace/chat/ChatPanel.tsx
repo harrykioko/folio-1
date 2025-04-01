@@ -1,105 +1,48 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
-import { Send } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ChatMessage } from "./ChatMessage";
+import { Button } from "@/components/ui/button";
+import { Send } from "lucide-react";
 import { SuggestedActions } from "./SuggestedActions";
 
-type Message = {
-  id: string;
-  type: "user" | "assistant";
-  content: string;
-  timestamp: Date;
-};
-
-export const ChatPanel: React.FC = () => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "1",
-      type: "assistant",
-      content: "Welcome to Folio Workspace! How can I help you today?",
-      timestamp: new Date(),
-    },
-  ]);
-  const [inputValue, setInputValue] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
-
-  const handleSendMessage = () => {
-    if (!inputValue.trim()) return;
-
-    // Add user message
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      type: "user",
-      content: inputValue,
-      timestamp: new Date(),
-    };
-    
-    setMessages((prev) => [...prev, userMessage]);
-    setInputValue("");
-    setIsTyping(true);
-
-    // Simulate AI response
-    setTimeout(() => {
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        type: "assistant",
-        content: `I understand you're asking about "${inputValue}". Let me help you with that.`,
-        timestamp: new Date(),
-      };
-      
-      setMessages((prev) => [...prev, aiMessage]);
-      setIsTyping(false);
-    }, 1500);
-  };
-
+export const ChatPanel: React.FC<{ onActionClick?: (action: string) => void }> = ({ 
+  onActionClick 
+}) => {
   return (
     <motion.div 
-      className="glassmorphism w-full md:w-2/5 flex flex-col h-full rounded-lg shadow-lg overflow-hidden"
+      className="w-full md:w-2/5 h-full flex flex-col bg-card rounded-lg shadow-lg overflow-hidden mr-4"
       initial={{ x: -20, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="p-4 border-b bg-background/20 backdrop-blur-sm">
-        <h2 className="text-lg font-semibold">AI Workspace</h2>
-        <p className="text-sm text-muted-foreground">Ask anything about your projects</p>
-      </div>
-      
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((message) => (
-          <ChatMessage key={message.id} message={message} />
-        ))}
-        
-        {isTyping && (
-          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-            <div className="typing-indicator">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-            <span>AI is thinking...</span>
+      <div className="flex-1 overflow-y-auto p-4">
+        {/* Chat messages will appear here */}
+        <div className="flex items-start mb-4">
+          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-2">
+            <span className="text-primary text-sm">AI</span>
           </div>
-        )}
+          <div className="bg-secondary rounded-lg p-3 max-w-[85%]">
+            <p className="text-sm">Welcome to the Folio Workspace! How can I help you today?</p>
+            <span className="text-xs text-muted-foreground">2:45 PM</span>
+          </div>
+        </div>
       </div>
       
-      <SuggestedActions />
+      <SuggestedActions onActionClick={onActionClick} />
       
-      <div className="p-4 border-t bg-background/20 backdrop-blur-sm">
-        <div className="flex space-x-2">
-          <Input
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+      <div className="p-4 border-t">
+        <div className="flex">
+          <Input 
+            className="flex-1 mr-2" 
             placeholder="Ask anything..."
-            className="flex-1"
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                handleSendMessage();
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                console.log("Message sent");
               }
             }}
           />
-          <Button onClick={handleSendMessage} className="shrink-0">
+          <Button size="icon">
             <Send className="h-4 w-4" />
           </Button>
         </div>
