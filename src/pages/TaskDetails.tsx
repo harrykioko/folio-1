@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -18,7 +17,7 @@ import {
   parseTaskStatus, 
   parseTaskPriority,
   type Task
-} from "@/utils/supabaseTasks";
+} from "@/utils/tasks";
 
 const TaskDetails: React.FC = () => {
   const { taskId } = useParams<{ taskId: string }>();

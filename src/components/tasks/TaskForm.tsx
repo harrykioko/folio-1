@@ -16,7 +16,7 @@ import {
 import FormActions from "./form/FormActions";
 import { useProjects } from "@/hooks/useProjects";
 import { useUsers } from "@/hooks/useUsers";
-import { parseTaskStatus, parseTaskPriority } from "@/utils/supabaseTasks";
+import { parseTaskStatus, parseTaskPriority } from "@/utils/tasks";
 import { toast } from "sonner";
 
 interface TaskFormProps {
