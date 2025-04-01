@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,17 +19,107 @@ import {
   Search,
   SlidersHorizontal,
   CheckCircle2,
-  Clock
+  Clock,
+  AlertCircle
 } from "lucide-react";
-import { projects } from "@/utils/projectUtils";
+import { fetchProjects, Project } from "@/utils/supabaseProjects";
 
 const Projects: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  useEffect(() => {
+    const loadProjects = async () => {
+      try {
+        setLoading(true);
+        const data = await fetchProjects();
+        setProjects(data);
+        setError(null);
+      } catch (err) {
+        console.error("Error loading projects:", err);
+        setError("Failed to load projects. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadProjects();
+  }, []);
   
   const filteredProjects = projects.filter(project => 
     project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    project.description.toLowerCase().includes(searchQuery.toLowerCase())
+    (project.description && project.description.toLowerCase().includes(searchQuery.toLowerCase()))
   );
+
+  // Helper function to get status display info
+  const getStatusInfo = (status: Project["status"]) => {
+    switch(status) {
+      case 'active':
+        return { 
+          label: 'Active',
+          icon: <CheckCircle2 className="mr-1 h-3 w-3" />,
+          variant: 'default' as const
+        };
+      case 'development':
+        return { 
+          label: 'In Development',
+          icon: <Clock className="mr-1 h-3 w-3" />,
+          variant: 'default' as const
+        };
+      case 'ideation':
+        return { 
+          label: 'Ideation',
+          icon: <AlertCircle className="mr-1 h-3 w-3" />,
+          variant: 'secondary' as const
+        };
+      case 'archive':
+        return { 
+          label: 'Archived',
+          icon: <AlertCircle className="mr-1 h-3 w-3" />,
+          variant: 'outline' as const
+        };
+      default:
+        return { 
+          label: 'Unknown',
+          icon: <AlertCircle className="mr-1 h-3 w-3" />,
+          variant: 'outline' as const
+        };
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading projects...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h1 className="text-3xl font-bold tracking-tight">Projects</h1>
+          <Button asChild>
+            <Link to="/projects/new">
+              <Plus className="mr-2 h-4 w-4" />
+              New Project
+            </Link>
+          </Button>
+        </div>
+        
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -62,13 +153,14 @@ const Projects: React.FC = () => {
         <TabsList>
           <TabsTrigger value="all">All Projects</TabsTrigger>
           <TabsTrigger value="active">Active</TabsTrigger>
-          <TabsTrigger value="completed">Completed</TabsTrigger>
+          <TabsTrigger value="development">Development</TabsTrigger>
+          <TabsTrigger value="archive">Archived</TabsTrigger>
         </TabsList>
 
         <TabsContent value="all" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {filteredProjects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
+              <ProjectCard key={project.id} project={project} getStatusInfo={getStatusInfo} />
             ))}
           </div>
           {filteredProjects.length === 0 && (
@@ -83,7 +175,7 @@ const Projects: React.FC = () => {
             {filteredProjects
               .filter((project) => project.status === 'active')
               .map((project) => (
-                <ProjectCard key={project.id} project={project} />
+                <ProjectCard key={project.id} project={project} getStatusInfo={getStatusInfo} />
               ))}
           </div>
           {filteredProjects.filter(p => p.status === 'active').length === 0 && (
@@ -93,17 +185,32 @@ const Projects: React.FC = () => {
           )}
         </TabsContent>
 
-        <TabsContent value="completed" className="space-y-4">
+        <TabsContent value="development" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {filteredProjects
-              .filter((project) => project.status === 'completed')
+              .filter((project) => project.status === 'development')
               .map((project) => (
-                <ProjectCard key={project.id} project={project} />
+                <ProjectCard key={project.id} project={project} getStatusInfo={getStatusInfo} />
               ))}
           </div>
-          {filteredProjects.filter(p => p.status === 'completed').length === 0 && (
+          {filteredProjects.filter(p => p.status === 'development').length === 0 && (
             <div className="text-center py-10">
-              <p className="text-muted-foreground">No completed projects found</p>
+              <p className="text-muted-foreground">No development projects found</p>
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="archive" className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {filteredProjects
+              .filter((project) => project.status === 'archive')
+              .map((project) => (
+                <ProjectCard key={project.id} project={project} getStatusInfo={getStatusInfo} />
+              ))}
+          </div>
+          {filteredProjects.filter(p => p.status === 'archive').length === 0 && (
+            <div className="text-center py-10">
+              <p className="text-muted-foreground">No archived projects found</p>
             </div>
           )}
         </TabsContent>
@@ -113,76 +220,52 @@ const Projects: React.FC = () => {
 };
 
 interface ProjectCardProps {
-  project: typeof projects[0];
+  project: Project;
+  getStatusInfo: (status: Project['status']) => {
+    label: string;
+    icon: React.ReactNode;
+    variant: 'default' | 'secondary' | 'outline';
+  };
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
+const ProjectCard: React.FC<ProjectCardProps> = ({ project, getStatusInfo }) => {
+  const statusInfo = getStatusInfo(project.status);
+  
+  // Calculate date display format (simplified for now)
+  const createdAt = new Date(project.created_at).toLocaleDateString();
+  const updatedAt = new Date(project.updated_at).toLocaleDateString();
+  
   return (
     <Card className="overflow-hidden transition-all hover:shadow-md">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <CardTitle className="text-lg">{project.name}</CardTitle>
-          <Badge variant={project.status === 'completed' ? 'secondary' : 'default'}>
-            {project.status === 'completed' ? (
-              <CheckCircle2 className="mr-1 h-3 w-3" />
-            ) : (
-              <Clock className="mr-1 h-3 w-3" />
-            )}
-            {project.status === 'completed' ? 'Completed' : 'In Progress'}
+          <Badge variant={statusInfo.variant}>
+            {statusInfo.icon}
+            {statusInfo.label}
           </Badge>
         </div>
         <CardDescription>{project.description}</CardDescription>
       </CardHeader>
       <CardContent className="pb-0">
         <div className="space-y-4">
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span>Progress</span>
-              <span className="text-muted-foreground">{project.progress}%</span>
-            </div>
-            <Progress value={project.progress} className="h-2" />
-          </div>
-          
-          <div className="flex flex-wrap gap-2">
-            {project.domains.length > 0 && (
-              <Badge variant="outline" className="flex items-center gap-1">
-                <Globe className="h-3 w-3" />
-                {project.domains.length} {project.domains.length === 1 ? 'domain' : 'domains'}
-              </Badge>
-            )}
-            
-            {project.hasGithub && (
-              <Badge variant="outline" className="flex items-center gap-1">
-                <Github className="h-3 w-3" />
-                Repository
-              </Badge>
-            )}
-            
-            {project.social.length > 0 && (
-              <Badge variant="outline" className="flex items-center gap-1">
-                {project.social.includes('twitter') && <Twitter className="h-3 w-3" />}
-                {project.social.includes('instagram') && <Instagram className="h-3 w-3" />}
-                {project.social.includes('linkedin') && <Linkedin className="h-3 w-3" />}
-                {project.social.length} accounts
-              </Badge>
-            )}
-          </div>
-          
           <div className="flex justify-between text-xs text-muted-foreground">
             <div className="flex items-center">
               <Calendar className="mr-1 h-3 w-3" />
-              {project.startDate} - {project.dueDate}
+              Created: {createdAt}
+            </div>
+            <div className="flex items-center">
+              <Clock className="mr-1 h-3 w-3" />
+              Updated: {updatedAt}
             </div>
           </div>
         </div>
       </CardContent>
       <CardFooter className="flex justify-between pt-4">
         <div className="flex -space-x-2">
-          {Array(project.team).fill(0).map((_, i) => (
-            <Avatar key={i} className="h-7 w-7 border-2 border-background">
-              <AvatarFallback className="text-xs">{String.fromCharCode(65 + i)}</AvatarFallback>
-            </Avatar>
-          ))}
+          <Avatar className="h-7 w-7 border-2 border-background">
+            <AvatarFallback className="text-xs">U</AvatarFallback>
+          </Avatar>
         </div>
         <Button variant="ghost" size="sm" asChild>
           <Link to={`/projects/${project.id}`}>View Details</Link>

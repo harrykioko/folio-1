@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,6 +9,7 @@ import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
+import { createProject, updateProject } from "@/utils/supabaseProjects";
 
 // Import our extracted components and schemas
 import ProjectBasicInfoFields from "./form/ProjectBasicInfoFields";
@@ -20,12 +20,14 @@ import { projectSchema, ProjectFormValues, getDefaultValues } from "./form/Proje
 interface ProjectFormProps {
   defaultValues?: Partial<ProjectFormValues>;
   isEditing?: boolean;
-  onSubmit: (data: ProjectFormValues) => void;
+  projectId?: number;
+  onSubmit?: (data: ProjectFormValues) => void;
 }
 
 const ProjectForm: React.FC<ProjectFormProps> = ({
   defaultValues = getDefaultValues(),
   isEditing = false,
+  projectId,
   onSubmit,
 }) => {
   const navigate = useNavigate();
@@ -35,10 +37,34 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
     mode: "onChange" // Enable validation on change for better user experience
   });
 
-  const handleSubmit = (data: ProjectFormValues) => {
-    onSubmit(data);
-    toast.success(isEditing ? "Project updated successfully" : "Project created successfully");
-    navigate("/projects");
+  const handleSubmit = async (data: ProjectFormValues) => {
+    try {
+      if (onSubmit) {
+        onSubmit(data);
+        return;
+      }
+
+      // Map form data to the structure expected by Supabase
+      const projectData = {
+        name: data.name,
+        description: data.description,
+        status: data.status,
+        // Other fields can be stored as JSON in the description or in separate tables
+      };
+
+      if (isEditing && projectId) {
+        await updateProject(projectId, projectData);
+        toast.success("Project updated successfully");
+      } else {
+        await createProject(projectData);
+        toast.success("Project created successfully");
+      }
+      
+      navigate("/projects");
+    } catch (error) {
+      console.error("Error saving project:", error);
+      toast.error("Failed to save project. Please try again.");
+    }
   };
 
   return (
