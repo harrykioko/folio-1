@@ -435,7 +435,7 @@ const AccountDetails: React.FC = () => {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="">None</SelectItem>
+                          <SelectItem value="none">None</SelectItem>
                           {projects.map(project => (
                             <SelectItem key={project.id} value={project.id.toString()}>
                               {project.name}
