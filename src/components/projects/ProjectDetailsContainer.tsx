@@ -42,7 +42,7 @@ const ProjectDetailsContainer: React.FC = () => {
         
         // Enhance the project data with UI required fields if they're missing
         // This ensures we always have the required properties for the OverviewTab
-        const enhancedProject = {
+        const enhancedProject: Project = {
           ...data,
           // Add UI-specific fields with default values if they don't exist
           progress: 0, // Default progress

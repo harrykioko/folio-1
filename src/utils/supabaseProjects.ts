@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -10,6 +9,13 @@ export type Project = {
   created_by: string | null;
   created_at: string;
   updated_at: string;
+  progress?: number;
+  startDate?: string;
+  dueDate?: string;
+  team?: number;
+  domains?: string[];
+  hasGithub?: boolean;
+  social?: string[];
 }
 
 export type ProjectFormData = {

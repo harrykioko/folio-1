@@ -7,17 +7,10 @@ import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Calendar, Check, Clock, Github, Globe, Instagram, Linkedin, Pencil, Plus, Twitter } from "lucide-react";
+import { Project } from "@/utils/supabaseProjects";
 
 interface OverviewTabProps {
-  project: {
-    progress: number;
-    startDate: string;
-    dueDate: string;
-    team: number;
-    domains: string[];
-    hasGithub: boolean;
-    social: string[] | undefined;
-  };
+  project: Project;
 }
 
 const OverviewTab: React.FC<OverviewTabProps> = ({ project }) => {
@@ -30,6 +23,14 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ project }) => {
   if (socialArray.includes("instagram")) socialAccounts.push({ name: "Instagram", icon: Instagram });
   if (socialArray.includes("linkedin")) socialAccounts.push({ name: "LinkedIn", icon: Linkedin });
 
+  // Use default values for progress and other properties if they're undefined
+  const progress = project.progress ?? 0;
+  const startDate = project.startDate ?? "Not set";
+  const dueDate = project.dueDate ?? "Not set";
+  const team = project.team ?? 1;
+  const domains = project.domains ?? [];
+  const hasGithub = project.hasGithub ?? false;
+
   return (
     <div className="space-y-4">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -41,9 +42,9 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ project }) => {
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span>Overall Completion</span>
-                <span className="text-muted-foreground">{project.progress}%</span>
+                <span className="text-muted-foreground">{progress}%</span>
               </div>
-              <Progress value={project.progress} className="h-2" />
+              <Progress value={progress} className="h-2" />
             </div>
           </CardContent>
         </Card>
@@ -59,14 +60,14 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ project }) => {
                   <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
                   <span>Start Date:</span>
                 </div>
-                <span className="font-medium">{project.startDate}</span>
+                <span className="font-medium">{startDate}</span>
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center text-sm">
                   <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
                   <span>Due Date:</span>
                 </div>
-                <span className="font-medium">{project.dueDate}</span>
+                <span className="font-medium">{dueDate}</span>
               </div>
             </div>
           </CardContent>
@@ -78,7 +79,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ project }) => {
           </CardHeader>
           <CardContent>
             <div className="flex -space-x-2">
-              {Array(project.team).fill(0).map((_, i) => (
+              {Array(team).fill(0).map((_, i) => (
                 <Avatar key={i} className="border-2 border-background">
                   <AvatarFallback>{String.fromCharCode(65 + i)}</AvatarFallback>
                 </Avatar>
@@ -98,13 +99,13 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ project }) => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {project.domains && project.domains.length > 0 && (
+              {domains && domains.length > 0 && (
                 <div>
                   <h4 className="text-sm font-medium mb-2 flex items-center">
                     <Globe className="mr-2 h-4 w-4" /> Domains
                   </h4>
                   <div className="space-y-2">
-                    {project.domains.map((domain, idx) => (
+                    {domains.map((domain, idx) => (
                       <div key={idx} className="flex items-center justify-between p-2 bg-muted rounded-md">
                         <span>{domain}</span>
                         <Button variant="ghost" size="sm">
@@ -120,7 +121,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ project }) => {
                 </div>
               )}
               
-              {project.hasGithub && (
+              {hasGithub && (
                 <div>
                   <h4 className="text-sm font-medium mb-2 flex items-center">
                     <Github className="mr-2 h-4 w-4" /> GitHub Repository
@@ -175,14 +176,14 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ project }) => {
                 <span className="text-sm">Completed</span>
                 <Badge variant="outline" className="flex gap-1 items-center">
                   <Check className="h-3 w-3" />
-                  {Math.round(project.progress / 20)} / 5
+                  {Math.round(progress / 20)} / 5
                 </Badge>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm">In Progress</span>
                 <Badge variant="outline" className="flex gap-1 items-center">
                   <Clock className="h-3 w-3" />
-                  {5 - Math.round(project.progress / 20)}
+                  {5 - Math.round(progress / 20)}
                 </Badge>
               </div>
               <Separator />
