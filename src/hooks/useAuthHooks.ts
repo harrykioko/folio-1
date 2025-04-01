@@ -8,9 +8,16 @@ import { InvitationResponse } from '@/types/auth';
 export const useAuthHooks = (setUserMetadata: React.Dispatch<React.SetStateAction<AuthUser | null>>) => {
   // Fetch user metadata from our custom users table
   const fetchUserMetadata = async (userId: string) => {
-    const userData = await fetchUserProfile(userId);
-    if (userData) {
-      setUserMetadata(userData);
+    try {
+      const userData = await fetchUserProfile(userId);
+      if (userData) {
+        setUserMetadata(userData);
+        return userData;
+      }
+      return null;
+    } catch (error) {
+      console.error("Error fetching user metadata:", error);
+      return null;
     }
   };
 
@@ -20,18 +27,26 @@ export const useAuthHooks = (setUserMetadata: React.Dispatch<React.SetStateActio
     email: string,
     fullName?: string
   ) => {
-    return await upsertUserProfile(userId, email, fullName);
+    try {
+      return await upsertUserProfile(userId, email, fullName);
+    } catch (error) {
+      console.error("Error upserting user metadata:", error);
+      return null;
+    }
   };
 
   // Authentication methods
   const handleSignIn = async (email: string, password: string) => {
     try {
+      console.log("Signing in with:", email);
+      
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) {
+        console.error("Sign in error:", error);
         toast({
           variant: "destructive",
           title: "Login failed",
@@ -40,9 +55,13 @@ export const useAuthHooks = (setUserMetadata: React.Dispatch<React.SetStateActio
         return { error, data: null };
       }
 
+      console.log("Sign in successful, session:", data.session ? "present" : "missing");
+      
       // Success message handled by onAuthStateChange
       return { error: null, data: data.session };
     } catch (error) {
+      console.error("Unexpected sign in error:", error);
+      
       toast({
         variant: "destructive",
         title: "Login failed",
@@ -101,6 +120,7 @@ export const useAuthHooks = (setUserMetadata: React.Dispatch<React.SetStateActio
         title: "Signed out",
         description: "You have been signed out successfully",
       });
+      return { error: null };
     } catch (error) {
       console.error('Error signing out:', error);
       toast({
@@ -108,6 +128,7 @@ export const useAuthHooks = (setUserMetadata: React.Dispatch<React.SetStateActio
         title: "Sign out failed",
         description: "An error occurred while signing out",
       });
+      return { error };
     }
   };
 

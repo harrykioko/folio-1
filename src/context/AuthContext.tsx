@@ -40,23 +40,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Handle auth state changes
   useEffect(() => {
+    // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, currentSession) => {
+      (event, currentSession) => {
+        console.log(`Auth event: ${event}, user: ${currentSession?.user?.email || 'none'}`);
+        
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
 
-        // Avoid triggering state updates during component unmounting
-        if (currentSession?.user) {
-          // Use setTimeout to prevent potential deadlocks with Supabase auth
-          setTimeout(async () => {
-            await fetchUserMetadata(currentSession.user.id);
-          }, 0);
-        } else {
+        // Handle different auth events
+        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+          // Defer metadata fetch to prevent Supabase auth deadlocks
+          if (currentSession?.user) {
+            setTimeout(() => {
+              fetchUserMetadata(currentSession.user.id)
+                .catch(error => console.error("Error fetching user metadata:", error));
+              setLoading(false);
+            }, 0);
+          }
+        } else if (event === 'SIGNED_OUT') {
           setUserMetadata(null);
           setIsAdmin(false);
+          setLoading(false);
         }
-
-        setLoading(false);
 
         // Only redirect based on auth events after initialization
         if (authInitialized) {
@@ -70,8 +76,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             navigate('/login', { replace: true });
           }
         }
-
-        console.log(`Auth event: ${event}, user: ${currentSession?.user?.email || 'none'}`);
       }
     );
 
@@ -84,7 +88,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(initialSession?.user ?? null);
 
         if (initialSession?.user) {
-          await fetchUserMetadata(initialSession.user.id);
+          try {
+            await fetchUserMetadata(initialSession.user.id);
+          } catch (error) {
+            console.error("Error fetching user metadata:", error);
+          }
         }
       } catch (error) {
         console.error("Error initializing auth:", error);
@@ -99,7 +107,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => {
       subscription.unsubscribe();
     };
-  }, [navigate, fetchUserMetadata, location.pathname, authInitialized]);
+  }, [navigate, fetchUserMetadata, location.pathname]);
 
   // Update isAdmin state when userMetadata changes
   useEffect(() => {

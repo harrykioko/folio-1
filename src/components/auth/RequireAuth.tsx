@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { Loader2 } from 'lucide-react';
@@ -11,6 +11,11 @@ interface RequireAuthProps {
 const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
   const { user, loading } = useAuth();
   const location = useLocation();
+
+  // Log auth state for debugging
+  useEffect(() => {
+    console.log(`RequireAuth: loading=${loading}, authenticated=${!!user}`);
+  }, [loading, user]);
 
   if (loading) {
     return (
@@ -24,6 +29,7 @@ const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
   }
 
   if (!user) {
+    console.log("No user found, redirecting to login");
     // Redirect to login page with the return path
     return <Navigate to="/login" state={{ from: location }} replace />;
   }

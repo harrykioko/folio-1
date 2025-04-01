@@ -20,17 +20,18 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
   const [loginError, setLoginError] = useState<string | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
-  const { signIn, user } = useAuth();
+  const { signIn, user, loading } = useAuth();
 
   // Get the intended destination
   const from = (location.state as { from?: { pathname: string } })?.from?.pathname || "/dashboard";
 
   // If user is already logged in, redirect them
   useEffect(() => {
-    if (user) {
+    if (user && !loading) {
+      console.log("User already logged in, redirecting to dashboard");
       navigate('/dashboard', { replace: true });
     }
-  }, [user, navigate]);
+  }, [user, loading, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,6 +39,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
     setLoginError(null);
 
     try {
+      console.log("Attempting sign in");
       const { error } = await signIn(email, password);
       
       if (error) {
@@ -49,6 +51,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
           description: error.message || "Invalid email or password",
         });
       } else {
+        console.log("Sign in successful");
         // On successful login
         if (onLoginSuccess) {
           onLoginSuccess();
