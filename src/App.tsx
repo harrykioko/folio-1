@@ -12,6 +12,7 @@ import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Dashboard from "./pages/Dashboard";
 import Projects from "./pages/Projects";
+import ProjectDetails from "./pages/ProjectDetails";
 import Accounts from "./pages/Accounts";
 import AccountDetails from "./pages/AccountDetails";
 import Prompts from "./pages/Prompts";
@@ -45,8 +46,8 @@ const App = () => (
             <Route path="/settings" element={<Dashboard />} />
             
             {/* Project details routes */}
-            <Route path="/projects/:projectId" element={<Projects />} />
-            <Route path="/projects/new" element={<Projects />} />
+            <Route path="/projects/:projectId" element={<ProjectDetails />} />
+            <Route path="/projects/new" element={<ProjectDetails />} />
             
             {/* Account details routes */}
             <Route path="/accounts/:accountId" element={<AccountDetails />} />
