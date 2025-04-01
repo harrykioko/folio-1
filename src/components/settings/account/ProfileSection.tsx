@@ -23,8 +23,9 @@ const profileFormSchema = z.object({
 export type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 const ProfileSection = () => {
-  const { user, userMetadata } = useAuth();
+  const { user, userMetadata, session } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [authStatus, setAuthStatus] = useState<string>("Checking auth status...");
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -35,6 +36,21 @@ const ProfileSection = () => {
     },
     mode: "onChange",
   });
+
+  // Debug authentication status when component mounts
+  useEffect(() => {
+    console.log("Auth state:", { 
+      user: user ? "present" : "missing", 
+      userMetadata: userMetadata ? "present" : "missing",
+      session: session ? "present" : "missing"
+    });
+    
+    if (session && user) {
+      setAuthStatus("Authenticated");
+    } else {
+      setAuthStatus("Not authenticated");
+    }
+  }, [user, userMetadata, session]);
 
   // Update form when user data is available
   useEffect(() => {
@@ -48,11 +64,30 @@ const ProfileSection = () => {
   }, [userMetadata, form]);
 
   async function onSubmit(data: ProfileFormValues) {
-    if (!user || !userMetadata) {
+    // Check authentication with more detailed error info
+    if (!session) {
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "You must be logged in to update your profile.",
+        title: "Authentication Error",
+        description: "Your session has expired. Please log in again.",
+      });
+      return;
+    }
+
+    if (!user) {
+      toast({
+        variant: "destructive",
+        title: "Authentication Error",
+        description: "User data not available. Please refresh the page.",
+      });
+      return;
+    }
+
+    if (!userMetadata) {
+      toast({
+        variant: "destructive",
+        title: "Profile Error",
+        description: "Your profile data could not be loaded. Please refresh the page.",
       });
       return;
     }
@@ -61,7 +96,7 @@ const ProfileSection = () => {
     try {
       // Update user metadata including bio
       const success = await upsertUserMetadata(
-        userMetadata.id,
+        user.id, // Use user.id directly from the auth user
         data.email,
         data.name,
         data.bio
@@ -108,6 +143,33 @@ const ProfileSection = () => {
       .toUpperCase()
       .substring(0, 2);
   };
+
+  // If we're not authenticated, show a friendly message
+  if (authStatus !== "Authenticated" && !userMetadata) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Profile</CardTitle>
+          <CardDescription>
+            Authentication status: {authStatus}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p>Loading your profile or you need to sign in to access this page.</p>
+          <Button 
+            className="mt-4"
+            onClick={() => {
+              // Force refresh auth
+              supabase.auth.refreshSession();
+              window.location.reload();
+            }}
+          >
+            Refresh Session
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
