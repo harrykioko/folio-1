@@ -32,6 +32,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { searchAll } from "@/services/searchService";
+import { DialogTitle } from "@/components/ui/dialog";
 
 interface CommandPaletteProps {
   open: boolean;
@@ -121,6 +122,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onOpenChange }) =
     }
 
     const performSearch = async () => {
+      // If empty query, show defaults
       if (!query.trim()) {
         setResults({
           pages: defaultPages,
@@ -135,17 +137,23 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onOpenChange }) =
 
       setLoading(true);
       try {
+        // Get search results from API
         const searchResults = await searchAll(query);
         
-        // Filter default pages by query
+        // Filter default pages by query - use more lenient filtering by including case-insensitive partial matches
         const filteredPages = defaultPages.filter(page => 
           page.title.toLowerCase().includes(query.toLowerCase())
         );
         
-        // Filter default actions by query
+        // Filter default actions by query - same lenient approach
         const filteredActions = defaultActions.filter(action => 
           action.title.toLowerCase().includes(query.toLowerCase())
         );
+
+        console.log("Search query:", query);
+        console.log("Filtered pages:", filteredPages);
+        console.log("Search results:", searchResults);
+        console.log("Filtered actions:", filteredActions);
         
         setResults({
           pages: filteredPages,
@@ -162,6 +170,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onOpenChange }) =
       }
     };
 
+    // Debounce search to avoid too many requests
     const debounce = setTimeout(() => {
       performSearch();
     }, 300);
@@ -296,6 +305,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onOpenChange }) =
 
   return (
     <CommandDialog open={open} onOpenChange={onOpenChange}>
+      <DialogTitle className="sr-only">Search</DialogTitle>
       <CommandInput 
         placeholder="Search pages, projects, tasks, prompts..." 
         value={query}
@@ -314,7 +324,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onOpenChange }) =
             </motion.div>
           ) : (
             <>
-              <CommandEmpty>No results found.</CommandEmpty>
+              <CommandEmpty>No results found. Try a different search term.</CommandEmpty>
               
               {results.pages.length > 0 && (
                 <CommandGroup heading="Pages">

@@ -1,3 +1,4 @@
+
 import { 
   mockProjects, 
   mockTasks, 
@@ -39,42 +40,63 @@ export const searchAll = async (query: string): Promise<SearchResults> => {
   // Simulate network delay for realistic behavior
   await new Promise(resolve => setTimeout(resolve, 300));
   
-  const normalizedQuery = query.toLowerCase();
+  // Normalize the query to lowercase for case-insensitive comparison
+  const normalizedQuery = query.toLowerCase().trim();
+  
+  console.log("Searching with normalized query:", normalizedQuery);
   
   // This is where you would make a fetch call to your Supabase backend
   // For now, we'll filter mock data to simulate search results
+  // Using more lenient filtering that allows partial matches
   const filteredProjects = mockProjects
-    .filter(project => project.title.toLowerCase().includes(normalizedQuery) || 
-                      (project.description && project.description.toLowerCase().includes(normalizedQuery)))
+    .filter(project => 
+      project.title.toLowerCase().includes(normalizedQuery) || 
+      (project.description && project.description.toLowerCase().includes(normalizedQuery)) ||
+      (project.tags && project.tags.some(tag => tag.toLowerCase().includes(normalizedQuery)))
+    )
     .map(project => ({
       ...project,
       route: `/projects/${project.id}`
     }));
     
   const filteredTasks = mockTasks
-    .filter(task => task.title.toLowerCase().includes(normalizedQuery) ||
-                   (task.description && task.description.toLowerCase().includes(normalizedQuery)))
+    .filter(task => 
+      task.title.toLowerCase().includes(normalizedQuery) ||
+      (task.description && task.description.toLowerCase().includes(normalizedQuery)) ||
+      (task.status && task.status.toLowerCase().includes(normalizedQuery))
+    )
     .map(task => ({
       ...task,
       route: `/tasks/${task.id}`
     }));
     
   const filteredPrompts = mockPrompts
-    .filter(prompt => prompt.title.toLowerCase().includes(normalizedQuery) ||
-                     (prompt.description && prompt.description.toLowerCase().includes(normalizedQuery)) ||
-                     (prompt.tags && prompt.tags.some(tag => tag.toLowerCase().includes(normalizedQuery))))
+    .filter(prompt => 
+      prompt.title.toLowerCase().includes(normalizedQuery) ||
+      (prompt.description && prompt.description.toLowerCase().includes(normalizedQuery)) ||
+      (prompt.tags && prompt.tags.some(tag => tag.toLowerCase().includes(normalizedQuery)))
+    )
     .map(prompt => ({
       ...prompt,
       route: `/prompts/${prompt.id}`
     }));
     
   const filteredAccounts = mockAccounts
-    .filter(account => account.title.toLowerCase().includes(normalizedQuery) ||
-                      (account.description && account.description.toLowerCase().includes(normalizedQuery)))
+    .filter(account => 
+      account.title.toLowerCase().includes(normalizedQuery) ||
+      (account.description && account.description.toLowerCase().includes(normalizedQuery))
+    )
     .map(account => ({
       ...account,
       route: `/accounts/${account.id}`
     }));
+  
+  console.log("Search results:", {
+    projects: filteredProjects.length,
+    tasks: filteredTasks.length,
+    prompts: filteredPrompts.length,
+    accounts: filteredAccounts.length
+  });
   
   return {
     projects: filteredProjects,
