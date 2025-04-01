@@ -18,6 +18,18 @@ const profileFormSchema = z.object({
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
+// Password form schema
+const passwordFormSchema = z.object({
+  currentPassword: z.string().min(1, { message: "Current password is required" }),
+  newPassword: z.string().min(8, { message: "Password must be at least 8 characters" }),
+  confirmPassword: z.string()
+}).refine(data => data.newPassword === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
+});
+
+type PasswordFormValues = z.infer<typeof passwordFormSchema>;
+
 const AccountSettings = () => {
   const defaultValues: Partial<ProfileFormValues> = {
     name: "Jane Smith",
@@ -31,9 +43,24 @@ const AccountSettings = () => {
     mode: "onChange",
   });
 
+  const passwordForm = useForm<PasswordFormValues>({
+    resolver: zodResolver(passwordFormSchema),
+    defaultValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
+    mode: "onChange",
+  });
+
   function onSubmit(data: ProfileFormValues) {
     console.log(data);
     // In a real app, this would make an API call to update user profile
+  }
+
+  function onPasswordSubmit(data: PasswordFormValues) {
+    console.log(data);
+    // In a real app, this would make an API call to change password
   }
 
   return (
@@ -128,25 +155,54 @@ const AccountSettings = () => {
             Change your password to keep your account secure.
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-4">
-            <div className="grid gap-2">
-              <FormLabel htmlFor="current">Current password</FormLabel>
-              <Input id="current" type="password" />
-            </div>
-            <div className="grid gap-2">
-              <FormLabel htmlFor="new">New password</FormLabel>
-              <Input id="new" type="password" />
-            </div>
-            <div className="grid gap-2">
-              <FormLabel htmlFor="confirm">Confirm password</FormLabel>
-              <Input id="confirm" type="password" />
-            </div>
-          </div>
-        </CardContent>
-        <CardFooter>
-          <Button>Change password</Button>
-        </CardFooter>
+        <Form {...passwordForm}>
+          <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)}>
+            <CardContent className="space-y-4">
+              <FormField
+                control={passwordForm.control}
+                name="currentPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Current password</FormLabel>
+                    <FormControl>
+                      <Input type="password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={passwordForm.control}
+                name="newPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>New password</FormLabel>
+                    <FormControl>
+                      <Input type="password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={passwordForm.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirm password</FormLabel>
+                    <FormControl>
+                      <Input type="password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+            <CardFooter>
+              <Button type="submit">Change password</Button>
+            </CardFooter>
+          </form>
+        </Form>
       </Card>
 
       <Card>
