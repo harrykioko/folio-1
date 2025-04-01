@@ -1,6 +1,6 @@
 
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, NavLink } from "react-router-dom";
 import { Bell, Settings, LogOut } from "lucide-react";
 import { 
   SidebarGroup, 
@@ -9,9 +9,10 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  SidebarMenuBadge,
   useSidebar
 } from "@/components/ui/sidebar";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
 
 const AccountMenu: React.FC = () => {
   const navigate = useNavigate();
@@ -35,15 +36,23 @@ const AccountMenu: React.FC = () => {
             >
               <Bell className="h-4 w-4" />
               <span>Notifications</span>
+              {!isCollapsed && <Badge className="ml-auto bg-primary text-white h-5 px-1">2</Badge>}
+              {isCollapsed && <Badge className="absolute -top-1 -right-1 bg-primary text-white h-4 w-4 flex items-center justify-center p-0 text-[10px] rounded-full">2</Badge>}
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton 
               tooltip={isCollapsed ? "Settings" : undefined}
               onClick={() => navigate("/settings")}
+              asChild
             >
-              <Settings className="h-4 w-4" />
-              <span>Settings</span>
+              <NavLink 
+                to="/settings" 
+                className={({ isActive }) => isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"}
+              >
+                <Settings className="h-4 w-4 mr-3" />
+                <span>Settings</span>
+              </NavLink>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>

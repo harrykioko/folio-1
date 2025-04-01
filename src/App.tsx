@@ -20,6 +20,7 @@ import AccountDetails from "./pages/AccountDetails";
 import Prompts from "./pages/Prompts";
 import PromptDetails from "./pages/PromptDetails";
 import NewPrompt from "./pages/NewPrompt";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -57,10 +58,11 @@ const App = () => (
             <Route path="/prompts/new" element={<NewPrompt />} />
             <Route path="/prompts/:promptId" element={<PromptDetails />} />
             
-            {/* Placeholder routes for future implementation */}
-            <Route path="/messages" element={<Dashboard />} />
+            {/* Team page */}
             <Route path="/team" element={<Dashboard />} />
-            <Route path="/settings" element={<Dashboard />} />
+            
+            {/* Settings page */}
+            <Route path="/settings" element={<Settings />} />
             
             {/* Account details routes */}
             <Route path="/accounts/new" element={<AccountDetails />} />
