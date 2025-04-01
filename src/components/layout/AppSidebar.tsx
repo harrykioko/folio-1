@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import {
   Sidebar,
@@ -15,12 +15,10 @@ import GeneralMenu from "./sidebar/GeneralMenu";
 import ToolsMenu from "./sidebar/ToolsMenu";
 import AccountMenu from "./sidebar/AccountMenu";
 import SidebarFooter from "./sidebar/SidebarFooter";
-import CommandPalette from "../CommandPalette";
 
 const AppSidebar = () => {
   const location = useLocation();
   const { state, toggleSidebar } = useSidebar();
-  const [commandOpen, setCommandOpen] = useState(false);
 
   // Detect mobile screens and automatically collapse sidebar
   useEffect(() => {
@@ -38,22 +36,19 @@ const AppSidebar = () => {
   }, [state, toggleSidebar]);
 
   return (
-    <>
-      <Sidebar className="glassmorphism transition-all duration-300 ease-in-out border-r border-white/10">
-        <SidebarHeaderContainer>
-          <SidebarHeader onSearchClick={() => setCommandOpen(true)} />
-        </SidebarHeaderContainer>
-        <SidebarContent className="px-3 py-2">
-          <GeneralMenu />
-          <ToolsMenu />
-          <AccountMenu />
-        </SidebarContent>
-        <SidebarFooterContainer>
-          <SidebarFooter />
-        </SidebarFooterContainer>
-      </Sidebar>
-      <CommandPalette open={commandOpen} onOpenChange={setCommandOpen} />
-    </>
+    <Sidebar className="glassmorphism transition-all duration-300 ease-in-out border-r border-white/10">
+      <SidebarHeaderContainer>
+        <SidebarHeader onSearchClick={() => {}} />
+      </SidebarHeaderContainer>
+      <SidebarContent className="px-3 py-2">
+        <GeneralMenu />
+        <ToolsMenu />
+        <AccountMenu />
+      </SidebarContent>
+      <SidebarFooterContainer>
+        <SidebarFooter />
+      </SidebarFooterContainer>
+    </Sidebar>
   );
 };
 
