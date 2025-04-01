@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,7 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "@/hooks/use-toast";
-import { supabase } from "@/lib/supabase";
+import { upsertUserMetadata } from "@/services/userProfileService";
 
 const profileFormSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -41,34 +40,8 @@ const ProfileSection = () => {
       form.reset({
         name: userMetadata.fullName || "",
         email: userMetadata.email || "",
-        bio: "",
+        bio: userMetadata.bio || "",
       });
-      
-      // Fetch additional user data (bio) from the users table
-      const fetchUserData = async () => {
-        if (!userMetadata.id) return;
-        
-        try {
-          const { data, error } = await supabase
-            .from('users')
-            .select('bio')
-            .eq('id', userMetadata.id)
-            .single();
-            
-          if (error) {
-            console.error("Error fetching user bio:", error);
-            return;
-          }
-          
-          if (data) {
-            form.setValue('bio', data.bio || "");
-          }
-        } catch (error) {
-          console.error("Failed to fetch user bio:", error);
-        }
-      };
-      
-      fetchUserData();
     }
   }, [userMetadata, form]);
 
@@ -84,18 +57,16 @@ const ProfileSection = () => {
 
     setIsLoading(true);
     try {
-      // Update the user's bio in the users table
-      const { error: bioError } = await supabase
-        .from('users')
-        .update({ 
-          full_name: data.name,
-          bio: data.bio,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', userMetadata.id);
+      // Update user metadata including bio
+      const success = await upsertUserMetadata(
+        userMetadata.id,
+        data.email,
+        data.name,
+        data.bio
+      );
 
-      if (bioError) {
-        throw new Error(bioError.message);
+      if (!success) {
+        throw new Error("Failed to update profile");
       }
 
       // If email changed, update it through auth API
