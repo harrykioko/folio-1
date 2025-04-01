@@ -1,9 +1,11 @@
 
 import React from "react";
-import { Dialog } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import DeleteProjectDialog from "@/components/projects/DeleteProjectDialog";
 import ProjectHeader from "@/components/projects/ProjectHeader";
+import EditProjectDialog from "@/components/projects/EditProjectDialog";
 import { Project } from "@/utils/supabaseProjects";
+import { ProjectFormValues } from "@/components/projects/form/ProjectFormSchema";
 
 interface ProjectDialogManagerProps {
   project: Project;
@@ -12,6 +14,7 @@ interface ProjectDialogManagerProps {
   isDeleteDialogOpen: boolean;
   setIsDeleteDialogOpen: (value: boolean) => void;
   onDelete: () => Promise<void>;
+  onUpdate: (data: ProjectFormValues) => Promise<void>;
 }
 
 const ProjectDialogManager: React.FC<ProjectDialogManagerProps> = ({
@@ -20,26 +23,37 @@ const ProjectDialogManager: React.FC<ProjectDialogManagerProps> = ({
   setIsEditDialogOpen,
   isDeleteDialogOpen,
   setIsDeleteDialogOpen,
-  onDelete
+  onDelete,
+  onUpdate
 }) => {
   return (
     <>
-      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-          <ProjectHeader 
-            name={project.name}
-            description={project.description || ""}
-            status={project.status}
-            projectId={project.id}
-            setIsEditDialogOpen={setIsEditDialogOpen}
-            setIsDeleteDialogOpen={setIsDeleteDialogOpen}
+      <ProjectHeader 
+        name={project.name}
+        description={project.description || ""}
+        status={project.status}
+        projectId={project.id}
+        setIsEditDialogOpen={setIsEditDialogOpen}
+        setIsDeleteDialogOpen={setIsDeleteDialogOpen}
+      />
+      
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent>
+          <EditProjectDialog 
+            project={project} 
+            onClose={() => setIsEditDialogOpen(false)}
+            onSubmit={onUpdate}
           />
-          
+        </DialogContent>
+      </Dialog>
+      
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent>
           <DeleteProjectDialog 
             onClose={() => setIsDeleteDialogOpen(false)}
             onDelete={onDelete}
           />
-        </Dialog>
+        </DialogContent>
       </Dialog>
     </>
   );
