@@ -11,7 +11,7 @@ const PromptDetails: React.FC = () => {
   const navigate = useNavigate();
   const [prompt, setPrompt] = useState<any | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [projects, setProjects] = useState<{id: number, name: string}[]>([]);
+  const [projects, setProjects] = useState<{id: string; name: string}[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

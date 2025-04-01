@@ -10,7 +10,7 @@ import { toast } from "@/hooks/use-toast";
 
 const NewPrompt: React.FC = () => {
   const navigate = useNavigate();
-  const [projects, setProjects] = useState<{id: number, name: string}[]>([]);
+  const [projects, setProjects] = useState<{id: string; name: string}[]>([]);
 
   useEffect(() => {
     // Fetch projects for the dropdown

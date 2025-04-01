@@ -158,14 +158,14 @@ export const copyPromptToClipboard = (promptText: string) => {
   });
 };
 
-// Get project options for select inputs
+// Get project options for select inputs - modified to return string IDs
 export const getProjectOptions = () => {
   const uniqueProjects = promptsData
     .filter(p => p.projectId !== null && p.projectName !== null)
-    .reduce((acc: {id: number, name: string}[], curr) => {
-      if (curr.projectId !== null && curr.projectName !== null && !acc.some(p => p.id === curr.projectId)) {
+    .reduce((acc: {id: string; name: string}[], curr) => {
+      if (curr.projectId !== null && curr.projectName !== null && !acc.some(p => p.id === String(curr.projectId))) {
         acc.push({
-          id: curr.projectId,
+          id: String(curr.projectId), // Convert number to string
           name: curr.projectName
         });
       }
