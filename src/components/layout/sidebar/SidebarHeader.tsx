@@ -3,6 +3,7 @@ import React from "react";
 import { Search } from "lucide-react";
 import { SidebarInput, useSidebar } from "@/components/ui/sidebar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Logo } from "@/components/ui/logo";
 
 const SidebarHeader: React.FC = () => {
   const { state } = useSidebar();
@@ -10,23 +11,7 @@ const SidebarHeader: React.FC = () => {
 
   return (
     <div className="p-4 space-y-4">
-      <div className="flex items-center space-x-2">
-        <div className="bg-primary/80 p-1 rounded-md flex items-center justify-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="h-6 w-6 text-primary-foreground"
-          >
-            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
-          </svg>
-        </div>
-        {!isCollapsed && <div className="font-bold text-xl">Folio</div>}
-      </div>
+      <Logo showText={!isCollapsed} size="md" />
       
       {/* Search input or icon depending on sidebar state */}
       {isCollapsed ? (

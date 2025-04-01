@@ -4,6 +4,7 @@ import { ChatPanel } from "./chat/ChatPanel";
 import { ContextPanel } from "./context/ContextPanel";
 import { motion } from "framer-motion";
 import PageHeader from "../ui/page-header";
+import { Logo } from "@/components/ui/logo";
 
 export const WorkspaceLayout: React.FC = () => {
   const [activePanelContext, setActivePanelContext] = useState<string | null>(null);
@@ -18,6 +19,7 @@ export const WorkspaceLayout: React.FC = () => {
       <PageHeader 
         heading="AI Workspace"
         subheading="Ask anything about your projects, tasks, or prompts"
+        icon={<Logo showText={false} size="sm" className="mr-2" />}
       />
       
       <motion.div 

@@ -1,8 +1,8 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import LoginForm from "@/components/auth/LoginForm";
 import { ArrowLeft } from "lucide-react";
+import { Logo } from "@/components/ui/logo";
 
 const Login: React.FC = () => {
   return (
@@ -32,18 +32,7 @@ const Login: React.FC = () => {
       <div className="flex-1 flex items-center justify-center p-4 z-10">
         <div className="w-full max-w-md text-center mb-8">
           <div className="inline-flex items-center justify-center bg-primary/10 backdrop-blur-md p-3 rounded-2xl mb-6 border border-white/10">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-8 w-8 text-white"
-            >
-              <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
-            </svg>
+            <Logo showText={false} size="lg" />
           </div>
           <h1 className="text-3xl font-bold tracking-tight text-white">Folio</h1>
           <p className="text-lg text-white/70 mt-2">

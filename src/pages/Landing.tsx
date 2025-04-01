@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Command, Zap } from "lucide-react";
+import { Logo } from "@/components/ui/logo";
 
 const Landing: React.FC = () => {
   return (
@@ -29,21 +30,7 @@ const Landing: React.FC = () => {
       {/* Header */}
       <header className="container z-10 pt-6 px-4 md:px-6">
         <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-8 w-8 text-primary-foreground mr-2"
-            >
-              <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
-            </svg>
-            <span className="text-2xl font-bold tracking-tight text-white">Folio</span>
-          </div>
+          <Logo size="lg" textClassName="text-white" />
           <div className="flex items-center gap-4">
             <Link to="/login">
               <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10">

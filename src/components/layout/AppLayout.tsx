@@ -5,6 +5,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import AppSidebar from "./AppSidebar";
 import CommandPalette from "../CommandPalette";
 import { Toaster } from "@/components/ui/toaster";
+import { Logo } from "@/components/ui/logo";
 
 const AppLayout: React.FC = () => {
   const [commandOpen, setCommandOpen] = useState(false);
@@ -16,7 +17,7 @@ const AppLayout: React.FC = () => {
         <div className="flex-1 flex flex-col">
           <header className="border-b h-14 flex items-center px-4 sm:px-6">
             <SidebarTrigger className="mr-4" />
-            <h1 className="font-semibold text-lg">Folio</h1>
+            <Logo />
             <div className="ml-auto flex items-center gap-2">
               <div className="text-sm text-muted-foreground hidden md:block">
                 Press{" "}
