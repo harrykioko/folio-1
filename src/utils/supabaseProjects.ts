@@ -34,10 +34,12 @@ export const fetchProjects = async () => {
 
 // Fetch a single project by ID
 export const fetchProjectById = async (id: number | string) => {
+  const numericId = typeof id === 'string' ? parseInt(id, 10) : id;
+  
   const { data, error } = await supabase
     .from('projects')
     .select('*')
-    .eq('id', id)
+    .eq('id', numericId)
     .single();
   
   if (error) {
