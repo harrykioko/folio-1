@@ -1,4 +1,3 @@
-
 import { User, Session } from '@supabase/supabase-js';
 import { supabase, AuthUser } from '@/lib/supabase';
 import { toast } from '@/hooks/use-toast';

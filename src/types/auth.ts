@@ -17,7 +17,7 @@ export interface AuthContextType {
       session: Session | null;
     };
   }>;
-  signOut: () => Promise<void>;
+  signOut: () => Promise<{ error: any } | void>;
   loading: boolean;
   isAdmin: boolean;
   inviteUser: (email: string, role?: string) => Promise<{
