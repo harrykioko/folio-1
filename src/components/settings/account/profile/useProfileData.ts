@@ -31,13 +31,16 @@ export const useProfileData = () => {
 
   // Generate initials for avatar fallback
   const getInitials = () => {
-    if (!userMetadata?.fullName) return "U";
-    return userMetadata.fullName
-      .split(" ")
-      .map(name => name[0])
-      .join("")
-      .toUpperCase()
-      .substring(0, 2);
+    if (userMetadata?.fullName) {
+      return userMetadata.fullName
+        .split(" ")
+        .map(name => name[0])
+        .join("")
+        .toUpperCase()
+        .substring(0, 2);
+    }
+    
+    return user?.email ? user.email[0].toUpperCase() : "U";
   };
 
   // Get display name for the UI - ALWAYS prioritize the fullName from userMetadata (from users table)
@@ -58,7 +61,13 @@ export const useProfileData = () => {
 
   // Get user email
   const getEmail = () => {
-    return userMetadata?.email || user?.email || "";
+    // Prioritize email from userMetadata if available
+    if (userMetadata?.email) {
+      return userMetadata.email;
+    }
+    
+    // Fallback to auth user email
+    return user?.email || "";
   };
 
   return {

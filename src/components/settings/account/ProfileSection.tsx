@@ -42,11 +42,14 @@ const ProfileSection = () => {
     }
   }, [user, userMetadata, authStatus, getDisplayName, getEmail, getInitials]);
 
-  // If we're not authenticated, show a friendly message
-  if (authStatus !== "Authenticated" || !userMetadata) {
+  // Fixed conditional: Only show AuthenticationStatus if NOT authenticated 
+  // (the bug was showing this even when authenticated but userMetadata was null)
+  if (authStatus !== "Authenticated") {
     return <AuthenticationStatus status={authStatus} />;
   }
 
+  // Even if we're authenticated but userMetadata is still loading, show the profile form
+  // with the basic data we have from the auth user object
   return (
     <Card>
       <ProfileHeader 
@@ -56,14 +59,14 @@ const ProfileSection = () => {
       <CardContent className="space-y-6">
         <ProfileAvatar 
           initials={getInitials()} 
-          avatarUrl={userMetadata.avatarUrl || "/placeholder.svg"} 
+          avatarUrl={(userMetadata?.avatarUrl) || "/placeholder.svg"} 
         />
 
         <ProfileForm
           initialData={{
-            name: userMetadata.fullName || getDisplayName() || "",
-            email: userMetadata.email || getEmail() || "",
-            bio: userMetadata.bio || "",
+            name: getDisplayName(),
+            email: getEmail(),
+            bio: userMetadata?.bio || "",
           }}
           onSubmit={handleSubmit}
           isLoading={isLoading}

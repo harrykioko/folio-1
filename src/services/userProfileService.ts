@@ -20,7 +20,8 @@ export const fetchUserMetadata = async (userId: string): Promise<AuthUser | null
     if (data) {
       console.log("Raw user data retrieved from database:", data);
       
-      return {
+      // Create a properly formatted AuthUser object
+      const userData: AuthUser = {
         id: data.id,
         email: data.email || '',
         fullName: data.full_name || undefined,
@@ -28,6 +29,9 @@ export const fetchUserMetadata = async (userId: string): Promise<AuthUser | null
         bio: data.bio || undefined,
         avatarUrl: data.avatar_url || undefined,
       };
+      
+      console.log("Formatted user metadata:", userData);
+      return userData;
     }
     
     return null;
