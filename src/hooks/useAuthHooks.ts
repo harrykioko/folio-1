@@ -2,18 +2,9 @@
 import { User, Session } from '@supabase/supabase-js';
 import { supabase, AuthUser } from '@/lib/supabase';
 import { toast } from '@/hooks/use-toast';
-import { useMFA } from './useMFA';
 import { fetchUserMetadata as fetchUserProfile, upsertUserMetadata as upsertUserProfile } from '@/services/userProfileService';
 
 export const useAuthHooks = (setUserMetadata: React.Dispatch<React.SetStateAction<AuthUser | null>>) => {
-  const { 
-    setupMFA, 
-    verifyMFA, 
-    checkMFA, 
-    getMFAFactors, 
-    unenrollMFA 
-  } = useMFA();
-
   // Fetch user metadata from our custom users table
   const fetchUserMetadata = async (userId: string) => {
     const userData = await fetchUserProfile(userId);
@@ -125,10 +116,5 @@ export const useAuthHooks = (setUserMetadata: React.Dispatch<React.SetStateActio
     handleSignIn,
     handleSignUp,
     handleSignOut,
-    handleSetupMFA: setupMFA,
-    handleVerifyMFA: verifyMFA,
-    handleCheckMFA: checkMFA,
-    handleGetMFAFactors: getMFAFactors,
-    handleUnenrollMFA: unenrollMFA
   };
 };

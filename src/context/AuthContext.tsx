@@ -22,11 +22,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     handleSignIn, 
     handleSignUp, 
     handleSignOut,
-    handleSetupMFA,
-    handleVerifyMFA,
-    handleCheckMFA,
-    handleGetMFAFactors,
-    handleUnenrollMFA
   } = useAuthHooks(setUserMetadata);
 
   useEffect(() => {
@@ -87,11 +82,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signUp: handleSignUp,
     signOut: handleSignOut,
     loading,
-    setupMFA: handleSetupMFA,
-    verifyMFA: handleVerifyMFA,
-    checkMFA: handleCheckMFA,
-    getMFAFactors: handleGetMFAFactors,
-    unenrollMFA: handleUnenrollMFA,
   };
 
   return (

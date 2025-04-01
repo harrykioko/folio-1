@@ -16,15 +16,4 @@ export interface AuthContextType {
   }>;
   signOut: () => Promise<void>;
   loading: boolean;
-  setupMFA: () => Promise<{ factorId: string; qrCode: string } | null>;
-  verifyMFA: (factorId: string, code: string) => Promise<boolean>;
-  checkMFA: () => Promise<boolean>;
-  getMFAFactors: () => Promise<any>;
-  unenrollMFA: (factorId: string) => Promise<boolean>;
-}
-
-export interface MFAFactorStatus {
-  id: string;
-  type: string;
-  status: 'verified' | 'unverified';
 }

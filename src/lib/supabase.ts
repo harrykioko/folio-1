@@ -14,14 +14,6 @@ export type AuthUser = {
   role?: string;
 };
 
-export type MFAFactorStatus = 'verified' | 'unverified';
-
-export type MFAFactor = {
-  id: string;
-  type: string;
-  status: MFAFactorStatus;
-};
-
 export type OAuthProvider = Provider;
 
 // Define types for the database tables based on the Database type
