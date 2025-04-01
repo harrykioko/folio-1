@@ -5,8 +5,10 @@ import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessa
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { projects } from "@/utils/projectUtils";
+import { Skeleton } from "@/components/ui/skeleton";
 import { TaskFormValues } from "./TaskFormSchema";
+import { Project } from "@/utils/supabaseProjects";
+import { User } from "@/hooks/useUsers";
 
 // Title Field Component
 export const TitleField = ({ form }: { form: UseFormReturn<TaskFormValues> }) => (
@@ -109,30 +111,40 @@ export const PriorityField = ({ form }: { form: UseFormReturn<TaskFormValues> })
 );
 
 // Project Field Component
-export const ProjectField = ({ form }: { form: UseFormReturn<TaskFormValues> }) => (
+interface ProjectFieldProps {
+  form: UseFormReturn<TaskFormValues>;
+  projects: Project[];
+  isLoading: boolean;
+}
+
+export const ProjectField = ({ form, projects, isLoading }: ProjectFieldProps) => (
   <FormField
     control={form.control}
     name="projectId"
     render={({ field }) => (
       <FormItem>
         <FormLabel>Project</FormLabel>
-        <Select 
-          onValueChange={field.onChange} 
-          defaultValue={field.value}
-        >
-          <FormControl>
-            <SelectTrigger>
-              <SelectValue placeholder="Select project" />
-            </SelectTrigger>
-          </FormControl>
-          <SelectContent>
-            {projects.map((project) => (
-              <SelectItem key={project.id} value={project.id.toString()}>
-                {project.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {isLoading ? (
+          <Skeleton className="h-10 w-full" />
+        ) : (
+          <Select 
+            onValueChange={field.onChange} 
+            defaultValue={field.value}
+          >
+            <FormControl>
+              <SelectTrigger>
+                <SelectValue placeholder="Select project" />
+              </SelectTrigger>
+            </FormControl>
+            <SelectContent>
+              {projects.map((project) => (
+                <SelectItem key={project.id} value={project.id.toString()}>
+                  {project.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
         <FormMessage />
       </FormItem>
     )}
@@ -140,16 +152,41 @@ export const ProjectField = ({ form }: { form: UseFormReturn<TaskFormValues> }) 
 );
 
 // Assignee Field Component
-export const AssigneeField = ({ form }: { form: UseFormReturn<TaskFormValues> }) => (
+interface AssigneeFieldProps {
+  form: UseFormReturn<TaskFormValues>;
+  users: User[];
+  isLoading: boolean;
+}
+
+export const AssigneeField = ({ form, users, isLoading }: AssigneeFieldProps) => (
   <FormField
     control={form.control}
     name="assignee"
     render={({ field }) => (
       <FormItem>
         <FormLabel>Assignee</FormLabel>
-        <FormControl>
-          <Input placeholder="Enter assignee name" {...field} />
-        </FormControl>
+        {isLoading ? (
+          <Skeleton className="h-10 w-full" />
+        ) : (
+          <Select 
+            onValueChange={field.onChange} 
+            defaultValue={field.value}
+          >
+            <FormControl>
+              <SelectTrigger>
+                <SelectValue placeholder="Select assignee" />
+              </SelectTrigger>
+            </FormControl>
+            <SelectContent>
+              <SelectItem value="">Unassigned</SelectItem>
+              {users.map((user) => (
+                <SelectItem key={user.id} value={user.id}>
+                  {user.full_name || user.email || user.id}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
         <FormMessage />
       </FormItem>
     )}

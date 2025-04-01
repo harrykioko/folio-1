@@ -14,6 +14,8 @@ import {
   DueDateField 
 } from "./form/FormFields";
 import FormActions from "./form/FormActions";
+import { useProjects } from "@/hooks/useProjects";
+import { useUsers } from "@/hooks/useUsers";
 
 interface TaskFormProps {
   task?: any;
@@ -28,6 +30,10 @@ const TaskForm: React.FC<TaskFormProps> = ({
   onSubmit, 
   onCancel 
 }) => {
+  // Fetch projects and users data
+  const { projects, isLoading: projectsLoading } = useProjects();
+  const { users, isLoading: usersLoading } = useUsers();
+  
   // Set up form with default values from task if editing, or use defaultProjectId if provided
   const form = useForm<TaskFormValues>({
     resolver: zodResolver(TaskFormSchema),
@@ -55,8 +61,16 @@ const TaskForm: React.FC<TaskFormProps> = ({
         <div className="grid gap-6 md:grid-cols-2">
           <StatusField form={form} />
           <PriorityField form={form} />
-          <ProjectField form={form} />
-          <AssigneeField form={form} />
+          <ProjectField 
+            form={form} 
+            projects={projects || []} 
+            isLoading={projectsLoading} 
+          />
+          <AssigneeField 
+            form={form} 
+            users={users || []} 
+            isLoading={usersLoading} 
+          />
           <DueDateField form={form} />
         </div>
 
