@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
@@ -56,7 +57,16 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
           onLoginSuccess();
         }
         
-        // Keep the loading state true as redirection happens in AuthContext
+        // Add a timeout to prevent infinite loading state
+        // This ensures we give time for the auth context to update and trigger the redirect
+        setTimeout(() => {
+          setIsLoading(false);
+          
+          // Manual redirect as a fallback if context redirect doesn't happen
+          if (user) {
+            navigate('/dashboard', { replace: true });
+          }
+        }, 1500);
       }
     } catch (err) {
       console.error("Unexpected login error:", err);

@@ -71,31 +71,52 @@ export const useAuthSession = (fetchUserMetadata: FetchMetadataFn) => {
         if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
           if (currentSession?.user) {
             try {
-              // Fetch metadata immediately but don't block rendering
-              const metadata = await fetchMetadataWithRetry(currentSession.user.id);
-              
-              if (!metadata && event === 'SIGNED_IN') {
-                // If we can't get metadata after a fresh login, something is wrong
-                toast({
-                  variant: "destructive",
-                  title: "Account setup incomplete",
-                  description: "Unable to fetch your account details. Please try again later."
-                });
-              }
+              // Use setTimeout to prevent potential deadlocks with Supabase auth
+              setTimeout(async () => {
+                if (!isSubscribed) return;
+                
+                const metadata = await fetchMetadataWithRetry(currentSession.user.id);
+                
+                if (isSubscribed) {
+                  setUserMetadata(metadata);
+                  setLoading(false);
+                }
+                
+                if (!metadata && event === 'SIGNED_IN' && isSubscribed) {
+                  // If we can't get metadata after a fresh login, something is wrong
+                  toast({
+                    variant: "destructive",
+                    title: "Account setup incomplete",
+                    description: "Unable to fetch your account details. Please try again later."
+                  });
+                }
+              }, 0);
             } catch (error) {
               console.error("Error fetching user metadata:", error);
-            } finally {
+              if (isSubscribed) {
+                setLoading(false);
+              }
+            }
+          } else {
+            if (isSubscribed) {
               setLoading(false);
             }
           }
         } else if (event === 'SIGNED_OUT') {
-          setUserMetadata(null);
-          setIsAdmin(false);
-          setLoading(false);
+          if (isSubscribed) {
+            setUserMetadata(null);
+            setIsAdmin(false);
+            setLoading(false);
+          }
+        } else {
+          // For other events, ensure loading state is updated
+          if (isSubscribed) {
+            setLoading(false);
+          }
         }
 
         // Only redirect based on auth events after initialization
-        if (authInitialized) {
+        if (authInitialized && isSubscribed) {
           if (event === 'SIGNED_IN') {
             // Stay on current page or redirect to dashboard if on auth pages
             const authPaths = ['/login', '/signup', '/'];
@@ -122,7 +143,10 @@ export const useAuthSession = (fetchUserMetadata: FetchMetadataFn) => {
 
         if (initialSession?.user) {
           try {
-            await fetchMetadataWithRetry(initialSession.user.id);
+            const metadata = await fetchMetadataWithRetry(initialSession.user.id);
+            if (isSubscribed) {
+              setUserMetadata(metadata);
+            }
           } catch (error) {
             console.error("Error fetching initial user metadata:", error);
           }
