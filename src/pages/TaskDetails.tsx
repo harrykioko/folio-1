@@ -6,6 +6,9 @@ import { getTaskById } from "@/utils/taskUtils";
 import { getProjectById } from "@/utils/projectUtils";
 import TaskForm from "@/components/tasks/TaskForm";
 import TaskHeader from "@/components/tasks/TaskHeader";
+import NewTaskHeader from "@/components/tasks/NewTaskHeader";
+import TaskDetail from "@/components/tasks/TaskDetail";
+import DeleteTaskDialog from "@/components/tasks/DeleteTaskDialog";
 import { TaskFormValues } from "@/components/tasks/form/TaskFormSchema";
 import { Card } from "@/components/ui/card";
 
@@ -72,21 +75,11 @@ const TaskDetails: React.FC = () => {
     navigate("/tasks");
   };
 
-  // Handle the case when we're creating a new task
+  // Render new task form
   if (isNewTask) {
     return (
       <div className="max-w-4xl mx-auto animate-fade-in">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold">Create New Task</h1>
-          {linkedProject && (
-            <p className="text-muted-foreground mt-2">
-              Creating task for project: <span className="font-medium">{linkedProject.name}</span>
-            </p>
-          )}
-          <p className="text-muted-foreground mt-2">
-            Fill out the form below to create a new task.
-          </p>
-        </div>
+        <NewTaskHeader linkedProject={linkedProject} />
         <Card className="p-6">
           <TaskForm 
             onSubmit={handleSubmit} 
@@ -125,55 +118,14 @@ const TaskDetails: React.FC = () => {
           />
         </Card>
       ) : (
-        <div className="grid gap-6 md:grid-cols-3">
-          <div className="md:col-span-2 space-y-6">
-            <Card className="p-6">
-              <h3 className="text-lg font-medium mb-4">Description</h3>
-              <div className="prose dark:prose-invert">
-                <p>{task.description || "No description provided."}</p>
-              </div>
-            </Card>
-            
-            <Card className="p-6">
-              <h3 className="text-lg font-medium mb-4">Activity</h3>
-              <div className="text-center text-muted-foreground py-8">
-                No activity recorded yet.
-              </div>
-            </Card>
-          </div>
-          
-          <div className="space-y-6">
-            <Card className="p-6">
-              <h3 className="text-lg font-medium mb-4">Details</h3>
-              <dl className="space-y-4">
-                <div>
-                  <dt className="text-sm font-medium text-muted-foreground">Assignee</dt>
-                  <dd className="mt-1">{task.assignee || "Unassigned"}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium text-muted-foreground">Project</dt>
-                  <dd className="mt-1">{task.project}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium text-muted-foreground">Due Date</dt>
-                  <dd className="mt-1">{task.dueDate}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium text-muted-foreground">Created</dt>
-                  <dd className="mt-1">{task.created || "Unknown"}</dd>
-                </div>
-              </dl>
-            </Card>
-            
-            <Card className="p-6">
-              <h3 className="text-lg font-medium mb-4">Related</h3>
-              <div className="text-center text-muted-foreground py-8">
-                No related items found.
-              </div>
-            </Card>
-          </div>
-        </div>
+        <TaskDetail task={task} />
       )}
+
+      <DeleteTaskDialog 
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        onDelete={handleDeleteTask}
+      />
     </div>
   );
 };
