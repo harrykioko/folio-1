@@ -36,6 +36,11 @@ const App = () => (
           <Route element={<AppLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/projects" element={<Projects />} />
+            
+            {/* Project details routes - Order matters! Put specific routes first */}
+            <Route path="/projects/new" element={<ProjectDetails />} />
+            <Route path="/projects/:projectId" element={<ProjectDetails />} />
+            
             <Route path="/accounts" element={<Accounts />} />
             <Route path="/prompts" element={<Prompts />} />
             
@@ -44,10 +49,6 @@ const App = () => (
             <Route path="/messages" element={<Dashboard />} />
             <Route path="/team" element={<Dashboard />} />
             <Route path="/settings" element={<Dashboard />} />
-            
-            {/* Project details routes - Order matters! Put specific routes first */}
-            <Route path="/projects/new" element={<ProjectDetails />} />
-            <Route path="/projects/:projectId" element={<ProjectDetails />} />
             
             {/* Account details routes */}
             <Route path="/accounts/new" element={<AccountDetails />} />

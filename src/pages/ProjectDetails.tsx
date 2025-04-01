@@ -21,6 +21,8 @@ const ProjectDetails: React.FC = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
   
+  console.log("Current projectId param:", projectId); // Debugging log
+  
   const isNewProject = projectId === "new";
   
   // Safely find the project in our dummy data
