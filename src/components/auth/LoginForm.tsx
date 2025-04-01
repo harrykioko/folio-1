@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
@@ -42,29 +41,25 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
     setLoginError(null);
 
     try {
-      console.log("Attempting sign in");
-      const { error } = await signIn(email, password);
+      console.log("Attempting sign in with:", email);
+      const { error, data } = await signIn(email, password);
       
       if (error) {
         console.error("Login error:", error);
         setLoginError(error.message || "Failed to sign in");
-        toast({
-          variant: "destructive",
-          title: "Login failed",
-          description: error.message || "Invalid email or password",
-        });
         setIsLoading(false);
       } else {
-        console.log("Sign in successful, redirecting to:", from);
+        console.log("Sign in successful, session:", data ? "present" : "missing");
+        
         // On successful login
         if (onLoginSuccess) {
           onLoginSuccess();
         }
-        // The navigation is now handled in AuthContext
-        // We keep isLoading true for a better UX as the redirect happens
+        
+        // Keep the loading state true as redirection happens in AuthContext
       }
     } catch (err) {
-      console.error("Login error:", err);
+      console.error("Unexpected login error:", err);
       setLoginError("An unexpected error occurred");
       toast({
         variant: "destructive",
