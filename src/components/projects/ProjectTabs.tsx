@@ -3,7 +3,10 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import OverviewTab from "./OverviewTab";
-import EmptyTabContent from "./EmptyTabContent";
+import TasksTab from "./TasksTab";
+import AccountsTab from "./AccountsTab";
+import PromptsTab from "./PromptsTab";
+import ActivityTab from "./ActivityTab";
 
 interface ProjectTabsProps {
   activeTab: string;
@@ -17,10 +20,6 @@ const ProjectTabs: React.FC<ProjectTabsProps> = ({
   project,
 }) => {
   const navigate = useNavigate();
-
-  const handleAddTask = () => {
-    navigate(`/tasks/new?projectId=${project.id}`);
-  };
 
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
@@ -37,40 +36,19 @@ const ProjectTabs: React.FC<ProjectTabsProps> = ({
       </TabsContent>
       
       <TabsContent value="tasks">
-        <EmptyTabContent
-          title="Tasks"
-          description="No tasks have been added to this project yet."
-          buttonText="Add Task"
-          buttonLink=""
-          onButtonClick={handleAddTask}
-        />
+        <TasksTab projectId={project.id} />
       </TabsContent>
       
       <TabsContent value="accounts">
-        <EmptyTabContent
-          title="Linked Accounts"
-          description="No accounts have been linked to this project yet."
-          buttonText="Add Account"
-          buttonLink="/accounts/new"
-        />
+        <AccountsTab projectId={project.id} />
       </TabsContent>
       
       <TabsContent value="prompts">
-        <EmptyTabContent
-          title="Prompt Library"
-          description="No prompts have been added to this project yet."
-          buttonText="Add Prompt"
-          buttonLink="/prompts/new"
-        />
+        <PromptsTab projectId={project.id} />
       </TabsContent>
       
       <TabsContent value="activity">
-        <EmptyTabContent
-          title="Activity Log"
-          description="No recent activity for this project."
-          buttonText=""
-          buttonLink=""
-        />
+        <ActivityTab projectId={project.id} />
       </TabsContent>
     </Tabs>
   );
