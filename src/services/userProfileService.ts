@@ -3,6 +3,8 @@ import { supabase, AuthUser } from '@/lib/supabase';
 
 export const fetchUserMetadata = async (userId: string): Promise<AuthUser | null> => {
   try {
+    console.log("Fetching user metadata for ID:", userId);
+    
     // Use a prepared statement with a single value lookup for better performance
     const { data, error } = await supabase
       .from('users')
@@ -16,13 +18,15 @@ export const fetchUserMetadata = async (userId: string): Promise<AuthUser | null
     }
 
     if (data) {
+      console.log("User data retrieved:", data);
+      
       return {
         id: data.id,
         email: data.email || '',
         fullName: data.full_name || undefined,
         role: data.role || undefined,
         bio: data.bio || undefined,
-        avatarUrl: data.avatar_url || undefined, // Proper handling of the avatar_url field
+        avatarUrl: data.avatar_url || undefined,
       };
     }
     
@@ -38,9 +42,17 @@ export const upsertUserMetadata = async (
   email: string,
   fullName?: string,
   bio?: string,
-  avatarUrl?: string // Add avatarUrl parameter
+  avatarUrl?: string
 ): Promise<boolean> => {
   try {
+    console.log("Upserting user metadata:", {
+      userId,
+      email,
+      fullName,
+      bio,
+      avatarUrl
+    });
+    
     const { error } = await supabase
       .from('users')
       .upsert(
@@ -49,7 +61,7 @@ export const upsertUserMetadata = async (
           email,
           full_name: fullName || null,
           bio: bio || null,
-          avatar_url: avatarUrl || null, // Add support for avatarUrl
+          avatar_url: avatarUrl || null,
           updated_at: new Date().toISOString(),
         },
         { onConflict: 'id' }
@@ -59,6 +71,8 @@ export const upsertUserMetadata = async (
       console.error('Error upserting user metadata:', error);
       return false;
     }
+    
+    console.log('User metadata updated successfully');
     return true;
   } catch (error) {
     console.error('Failed to upsert user metadata:', error);

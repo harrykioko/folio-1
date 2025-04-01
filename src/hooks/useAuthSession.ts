@@ -76,6 +76,7 @@ export const useAuthSession = (fetchUserMetadata: FetchMetadataFn) => {
                 if (!isSubscribed) return;
                 
                 const metadata = await fetchMetadataWithRetry(currentSession.user.id);
+                console.log("Fetched user metadata:", metadata);
                 
                 if (isSubscribed) {
                   setUserMetadata(metadata);

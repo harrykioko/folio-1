@@ -14,6 +14,13 @@ export const useProfileData = () => {
       session: session ? "present" : "missing"
     });
     
+    if (userMetadata) {
+      console.log("User metadata:", {
+        fullName: userMetadata.fullName,
+        email: userMetadata.email
+      });
+    }
+    
     if (session && user) {
       setAuthStatus("Authenticated");
     } else {
@@ -32,10 +39,19 @@ export const useProfileData = () => {
       .substring(0, 2);
   };
 
-  // Get display name for the UI
+  // Get display name for the UI - prioritize the fullName from userMetadata
   const getDisplayName = () => {
-    if (userMetadata?.fullName) return userMetadata.fullName;
-    if (user?.email) return user.email.split('@')[0];
+    // Check for and prioritize fullName from userMetadata
+    if (userMetadata?.fullName) {
+      return userMetadata.fullName;
+    }
+    
+    // Fallback to user email if available (but without domain)
+    if (user?.email) {
+      return user.email.split('@')[0];
+    }
+    
+    // Default fallback
     return "User";
   };
 

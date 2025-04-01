@@ -1,9 +1,8 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { useSidebar } from "@/components/ui/sidebar";
 import { useAuth } from "@/context/AuthContext";
 import { useProfileData } from "@/components/settings/account/profile/useProfileData";
@@ -12,6 +11,17 @@ const SidebarFooter: React.FC = () => {
   const { state, toggleSidebar } = useSidebar();
   const isCollapsed = state === "collapsed";
   const { getInitials, getDisplayName, getEmail } = useProfileData();
+  const { userMetadata } = useAuth();
+
+  // Debug the user metadata
+  useEffect(() => {
+    if (userMetadata) {
+      console.log("SidebarFooter userMetadata:", {
+        fullName: userMetadata.fullName,
+        email: userMetadata.email
+      });
+    }
+  }, [userMetadata]);
 
   return (
     <div className={`p-4 border-t ${isCollapsed ? 'border-white/10' : ''}`}>
@@ -19,7 +29,7 @@ const SidebarFooter: React.FC = () => {
         {!isCollapsed ? (
           <div className="flex items-center space-x-2">
             <Avatar>
-              <AvatarImage src="/placeholder.svg" />
+              <AvatarImage src={userMetadata?.avatarUrl || "/placeholder.svg"} />
               <AvatarFallback>{getInitials()}</AvatarFallback>
             </Avatar>
             <div>
@@ -30,7 +40,7 @@ const SidebarFooter: React.FC = () => {
         ) : (
           <div className="flex flex-col items-center justify-center w-full mb-2">
             <Avatar className="h-8 w-8">
-              <AvatarImage src="/placeholder.svg" />
+              <AvatarImage src={userMetadata?.avatarUrl || "/placeholder.svg"} />
               <AvatarFallback>{getInitials()}</AvatarFallback>
             </Avatar>
           </div>
