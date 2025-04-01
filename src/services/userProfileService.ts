@@ -18,7 +18,7 @@ export const fetchUserMetadata = async (userId: string): Promise<AuthUser | null
     }
 
     if (data) {
-      console.log("User data retrieved:", data);
+      console.log("Raw user data retrieved from database:", data);
       
       return {
         id: data.id,

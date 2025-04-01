@@ -27,6 +27,7 @@ export const useAuthSession = (fetchUserMetadata: FetchMetadataFn) => {
         const metadata = await fetchUserMetadata(userId);
         
         if (metadata) {
+          console.log("Successfully fetched metadata after attempt", attempts, metadata);
           return metadata;
         }
         
@@ -76,7 +77,7 @@ export const useAuthSession = (fetchUserMetadata: FetchMetadataFn) => {
                 if (!isSubscribed) return;
                 
                 const metadata = await fetchMetadataWithRetry(currentSession.user.id);
-                console.log("Fetched user metadata:", metadata);
+                console.log("Fetched user metadata after auth event:", metadata);
                 
                 if (isSubscribed) {
                   setUserMetadata(metadata);
@@ -146,6 +147,7 @@ export const useAuthSession = (fetchUserMetadata: FetchMetadataFn) => {
           try {
             const metadata = await fetchMetadataWithRetry(initialSession.user.id);
             if (isSubscribed) {
+              console.log("Initial auth setup - metadata:", metadata);
               setUserMetadata(metadata);
             }
           } catch (error) {

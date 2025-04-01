@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
   ProfileHeader, 
@@ -23,11 +23,24 @@ const ProfileSection = () => {
   const { isLoading, handleSubmit } = useProfileSubmit(user?.id, userMetadata);
 
   // Debug information
-  console.log("ProfileSection render:", {
-    user: user ? "present" : "missing",
-    userMetadata: userMetadata ? "present" : "missing",
-    authStatus
-  });
+  useEffect(() => {
+    console.log("ProfileSection render data:", {
+      user: user ? "present" : "missing",
+      userMetadata: userMetadata ? "present" : "missing",
+      authStatus,
+      displayName: getDisplayName(),
+      email: getEmail(),
+      initials: getInitials()
+    });
+    
+    if (userMetadata) {
+      console.log("UserMetadata details:", {
+        fullName: userMetadata.fullName,
+        email: userMetadata.email,
+        id: userMetadata.id
+      });
+    }
+  }, [user, userMetadata, authStatus, getDisplayName, getEmail, getInitials]);
 
   // If we're not authenticated, show a friendly message
   if (authStatus !== "Authenticated" || !userMetadata) {

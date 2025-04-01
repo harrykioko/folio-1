@@ -15,9 +15,10 @@ export const useProfileData = () => {
     });
     
     if (userMetadata) {
-      console.log("User metadata:", {
+      console.log("User metadata in useProfileData:", {
         fullName: userMetadata.fullName,
-        email: userMetadata.email
+        email: userMetadata.email,
+        id: userMetadata.id
       });
     }
     
@@ -39,7 +40,7 @@ export const useProfileData = () => {
       .substring(0, 2);
   };
 
-  // Get display name for the UI - prioritize the fullName from userMetadata
+  // Get display name for the UI - ALWAYS prioritize the fullName from userMetadata (from users table)
   const getDisplayName = () => {
     // Check for and prioritize fullName from userMetadata
     if (userMetadata?.fullName) {
