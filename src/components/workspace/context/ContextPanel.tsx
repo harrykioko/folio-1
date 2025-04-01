@@ -19,16 +19,26 @@ import { ProjectCard } from "./ProjectCard";
 import { SuggestedCard } from "./SuggestedCard";
 import { PromptCard } from "./PromptCard";
 import { EmptyContextState } from "./EmptyContextState";
+import { getProjectById, projects } from "@/utils/projectUtils";
 
 export const ContextPanel: React.FC = () => {
   const [activeTab, setActiveTab] = useState("context");
   const [hasActiveContext, setHasActiveContext] = useState(false);
+  const [activeProject, setActiveProject] = useState<any>(null);
   
   const handleActionClick = (action: string) => {
     console.log(action);
     // In a real implementation, this would trigger context changes
     // For demo purposes, we'll set hasActiveContext to true to show the transition
     setHasActiveContext(true);
+  };
+
+  const handleProjectSelect = (projectId: number) => {
+    const project = getProjectById(projectId);
+    if (project) {
+      setActiveProject(project);
+      setHasActiveContext(true);
+    }
   };
 
   return (
@@ -46,7 +56,9 @@ export const ContextPanel: React.FC = () => {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Current Context</BreadcrumbPage>
+              <BreadcrumbPage>
+                {activeProject ? activeProject.name : "Current Context"}
+              </BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -72,7 +84,10 @@ export const ContextPanel: React.FC = () => {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <EmptyContextState onActionClick={handleActionClick} />
+              <EmptyContextState 
+                onActionClick={handleActionClick}
+                onProjectSelect={handleProjectSelect}
+              />
             </motion.div>
           ) : (
             <motion.div
@@ -83,7 +98,21 @@ export const ContextPanel: React.FC = () => {
               transition={{ duration: 0.3 }}
               className="space-y-4"
             >
-              {activeTab === "context" && (
+              {activeTab === "context" && activeProject && (
+                <ProjectCard 
+                  title={activeProject.name}
+                  description={activeProject.description}
+                  image="/lovable-uploads/79a1aa49-c50d-4339-863a-b36ea808f6d0.png"
+                  stats={[
+                    { label: "Progress", value: `${activeProject.progress}%` },
+                    { label: "Team", value: activeProject.team.toString() },
+                    { label: "Due Date", value: activeProject.dueDate }
+                  ]}
+                  tags={activeProject.domains.map((domain: string) => domain.split('.')[0])}
+                />
+              )}
+              
+              {activeTab === "context" && !activeProject && (
                 <ProjectCard 
                   title="Harvest on Hudson"
                   description="Farm-to-table restaurant with scenic river views"

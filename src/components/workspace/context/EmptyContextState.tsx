@@ -1,110 +1,108 @@
 
-import React from "react";
-import { motion } from "framer-motion";
-import { Search } from "lucide-react";
+import React, { useState } from "react";
+import { LightbulbIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { projects } from "@/utils/projectUtils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { FolderOpen } from "lucide-react";
 
 interface EmptyContextStateProps {
-  onActionClick?: (action: string) => void;
+  onActionClick: (action: string) => void;
+  onProjectSelect?: (projectId: number) => void;
 }
 
 export const EmptyContextState: React.FC<EmptyContextStateProps> = ({
-  onActionClick = () => {},
+  onActionClick,
+  onProjectSelect = () => {},
 }) => {
-  const helpfulHints = [
-    "Ask me to summarize a project",
-    "Search for a prompt or generate a new one",
-    "Create a new task or assign teammates"
-  ];
+  const [showProjectSelect, setShowProjectSelect] = useState(false);
 
-  const suggestedActions = [
-    { icon: "ListTodo", label: "Create task", action: "Create a new task" },
-    { icon: "FolderOpen", label: "Open project", action: "Show me a list of projects" },
-    { icon: "FileEdit", label: "New prompt", action: "Create a new prompt" },
-    { icon: "FileText", label: "Meeting notes", action: "Draft meeting notes" },
-  ];
-
-  // Map icon string to component
-  const getIcon = (icon: string) => {
-    switch (icon) {
-      case "ListTodo":
-        return <i className="i-lucide-list-todo" />;
-      case "FolderOpen":
-        return <i className="i-lucide-folder-open" />;
-      case "FileEdit":
-        return <i className="i-lucide-file-edit" />;
-      case "FileText":
-        return <i className="i-lucide-file-text" />;
-      default:
-        return null;
-    }
+  const handleProjectSelect = (projectId: string) => {
+    onProjectSelect(Number(projectId));
+    setShowProjectSelect(false);
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-full p-6 text-center">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="mb-8"
-      >
-        <div className="relative w-24 h-24 mx-auto mb-6">
-          <motion.div
-            className="absolute inset-0 rounded-full bg-primary/10"
-            animate={{ scale: [1, 1.1, 1] }}
-            transition={{ 
-              duration: 3, 
-              repeat: Infinity,
-              repeatType: "reverse" 
-            }}
-          />
-          <div className="absolute inset-0 bg-gradient-radial from-primary/20 to-transparent rounded-full animate-pulse-glow" />
-          <Search className="absolute inset-0 m-auto h-12 w-12 text-primary" />
+    <div className="h-full flex flex-col items-center justify-center text-center p-6">
+      <div className="w-20 h-20 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center mb-6">
+        <LightbulbIcon className="h-10 w-10 text-primary" />
+      </div>
+      
+      <h3 className="text-xl font-semibold mb-2">Current Context</h3>
+      <p className="text-muted-foreground mb-6">
+        Use the chat or suggested actions below to get started.
+      </p>
+      
+      <div className="space-y-4 max-w-md w-full">
+        <div className="space-y-2">
+          <h4 className="text-sm font-medium">Try asking me about:</h4>
+          <ul className="text-sm text-muted-foreground space-y-1">
+            <li>• Summarizing a project</li>
+            <li>• Searching for a prompt or generating a new one</li>
+            <li>• Creating a new task or assigning teammates</li>
+          </ul>
         </div>
         
-        <h2 className="text-2xl font-semibold mb-2">Current Context</h2>
-        <p className="text-muted-foreground mb-6">
-          Use the chat or suggested actions below to get started:
-        </p>
-      </motion.div>
-
-      <motion.ul 
-        className="text-left mb-8 space-y-3"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2, duration: 0.5 }}
-      >
-        {helpfulHints.map((hint, index) => (
-          <motion.li
-            key={index}
-            className="flex items-center text-muted-foreground"
-            initial={{ x: -10, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: 0.3 + index * 0.1, duration: 0.3 }}
+        <div className="grid grid-cols-2 gap-3 mt-6">
+          <Button 
+            variant="outline" 
+            className="flex items-center" 
+            onClick={() => onActionClick("Create a new task")}
           >
-            <span className="text-primary mr-2">•</span> {hint}
-          </motion.li>
-        ))}
-      </motion.ul>
-
-      <motion.div
-        className="grid grid-cols-2 gap-3 w-full max-w-md"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5, duration: 0.3 }}
-      >
-        {suggestedActions.map((action, index) => (
-          <Button
-            key={index}
-            variant="outline"
-            className="flex items-center justify-center h-14 p-4 hover:scale-105 transition-transform"
-            onClick={() => onActionClick(action.action)}
-          >
-            {getIcon(action.icon)}
-            <span className="ml-2">{action.label}</span>
+            <span className="mr-2">➕</span> Create task
           </Button>
-        ))}
-      </motion.div>
+          
+          {showProjectSelect ? (
+            <Select onValueChange={handleProjectSelect}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a project" />
+              </SelectTrigger>
+              <SelectContent>
+                {projects.map((project) => (
+                  <SelectItem key={project.id} value={project.id.toString()}>
+                    {project.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ) : (
+            <Button 
+              variant="outline" 
+              className="flex items-center" 
+              onClick={() => setShowProjectSelect(true)}
+            >
+              <FolderOpen className="mr-2 h-4 w-4" /> Open project
+            </Button>
+          )}
+          
+          <Button 
+            variant="outline" 
+            className="flex items-center" 
+            onClick={() => onActionClick("Create a new prompt for welcome emails")}
+          >
+            <span className="mr-2">✏️</span> New prompt
+          </Button>
+          
+          <Button 
+            variant="outline" 
+            className="flex items-center" 
+            onClick={() => onActionClick("Draft notes for tomorrow's client meeting")}
+          >
+            <span className="mr-2">📄</span> Meeting notes
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };
