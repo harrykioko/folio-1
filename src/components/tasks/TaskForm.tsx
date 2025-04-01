@@ -12,7 +12,7 @@ import {
   ProjectField,
   AssigneeField,
   DueDateField 
-} from "./form/FormFields";
+} from "./form/fields";
 import FormActions from "./form/FormActions";
 import { useProjects } from "@/hooks/useProjects";
 import { useUsers } from "@/hooks/useUsers";
