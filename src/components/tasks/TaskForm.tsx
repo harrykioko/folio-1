@@ -16,6 +16,8 @@ import {
 import FormActions from "./form/FormActions";
 import { useProjects } from "@/hooks/useProjects";
 import { useUsers } from "@/hooks/useUsers";
+import { createTask, updateTask } from "@/utils/supabaseTasks";
+import { toast } from "sonner";
 
 interface TaskFormProps {
   task?: any;
@@ -48,13 +50,37 @@ const TaskForm: React.FC<TaskFormProps> = ({
     },
   });
 
-  const handleSubmit = (data: TaskFormValues) => {
-    // Convert "unassigned" value to null for the assignee field
-    const formattedData = {
-      ...data,
-      assignee: data.assignee === "unassigned" ? null : data.assignee
-    };
-    onSubmit(formattedData);
+  const handleSubmit = async (data: TaskFormValues) => {
+    try {
+      // Map form values to the expected Supabase field structure
+      const formattedData = {
+        title: data.title,
+        description: data.description,
+        project_id: data.projectId ? Number(data.projectId) : null,
+        assigned_to: data.assignee === "unassigned" ? null : data.assignee,
+        priority: data.priority.toLowerCase(),
+        deadline: data.dueDate || null,
+        status: parseTaskStatus(data.status)
+      };
+
+      console.log("Formatted task data for Supabase:", formattedData);
+      
+      // Call onSubmit with the original form data for component usage
+      onSubmit(data);
+    } catch (error) {
+      console.error("Error in form submission:", error);
+      toast.error("Failed to save task. Please try again.");
+    }
+  };
+
+  // Helper function to convert UI-friendly format back to database status
+  const parseTaskStatus = (status: string): string => {
+    switch (status.toLowerCase()) {
+      case "to do": return "todo";
+      case "in progress": return "in_progress";
+      case "completed": return "done";
+      default: return "todo";
+    }
   };
 
   return (
