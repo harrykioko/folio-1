@@ -1,12 +1,12 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Lock, Mail, User } from "lucide-react";
+import { Lock, Mail, User, Loader2 } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 interface SignUpFormProps {
   onSignUpSuccess?: () => void;
@@ -18,27 +18,33 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUpSuccess }) => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { signUp } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate sign up delay
-    setTimeout(() => {
-      // For demo purposes, we'll allow any sign up
-      toast({
-        title: "Account created",
-        description: "Welcome to Folio! Your account has been created successfully.",
-      });
-      setIsLoading(false);
-      
-      // Navigate to dashboard
-      if (onSignUpSuccess) {
-        onSignUpSuccess();
-      } else {
-        navigate("/dashboard");
+    try {
+      const { error, data } = await signUp(email, password, name);
+
+      if (!error && data.user) {
+        // Successful registration
+        if (onSignUpSuccess) {
+          onSignUpSuccess();
+        } else {
+          // If using email confirmation, prompt user to check email
+          if (data.session === null) {
+            navigate("/login");
+          } else {
+            navigate("/dashboard");
+          }
+        }
       }
-    }, 1500);
+    } catch (err) {
+      console.error("Signup error:", err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -93,6 +99,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUpSuccess }) => {
                 onChange={(e) => setPassword(e.target.value)}
                 className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-white/40 focus-visible:ring-primary"
                 required
+                minLength={6}
               />
             </div>
           </div>
@@ -101,7 +108,14 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUpSuccess }) => {
             className="w-full bg-primary hover:bg-primary/90 text-white transition-all shadow-[0_0_15px_rgba(139,92,246,0.3)] hover:shadow-[0_0_25px_rgba(139,92,246,0.5)]" 
             disabled={isLoading}
           >
-            {isLoading ? "Creating account..." : "Create account"}
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Creating account...
+              </>
+            ) : (
+              "Create account"
+            )}
           </Button>
         </form>
       </CardContent>

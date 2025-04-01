@@ -7,6 +7,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AppLayout from "./components/layout/AppLayout";
 import { ThemeProvider } from "next-themes";
 import { AppearanceProvider } from "./components/settings/AppearanceContext";
+import { AuthProvider } from "./context/AuthContext";
+import RequireAuth from "./components/auth/RequireAuth";
 
 // Pages
 import Landing from "./pages/Landing";
@@ -30,60 +32,62 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ThemeProvider attribute="class" defaultTheme="system">
-      <AppearanceProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              {/* Public Routes */}
-              <Route path="/" element={<Landing />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<SignUp />} />
-              
-              {/* App Routes - Protected by AppLayout */}
-              <Route element={<AppLayout />}>
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/projects" element={<Projects />} />
+    <BrowserRouter>
+      <AuthProvider>
+        <ThemeProvider attribute="class" defaultTheme="system">
+          <AppearanceProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <Routes>
+                {/* Public Routes */}
+                <Route path="/" element={<Landing />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<SignUp />} />
                 
-                {/* Project details routes - Order matters! Put specific routes first */}
-                <Route path="/projects/new" element={<ProjectDetails />} />
-                <Route path="/projects/:projectId" element={<ProjectDetails />} />
+                {/* App Routes - Protected by RequireAuth */}
+                <Route element={<RequireAuth><AppLayout /></RequireAuth>}>
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/projects" element={<Projects />} />
+                  
+                  {/* Project details routes - Order matters! Put specific routes first */}
+                  <Route path="/projects/new" element={<ProjectDetails />} />
+                  <Route path="/projects/:projectId" element={<ProjectDetails />} />
+                  
+                  {/* Tasks routes */}
+                  <Route path="/tasks" element={<Tasks />} />
+                  <Route path="/tasks/new" element={<TaskDetails />} />
+                  <Route path="/tasks/:taskId" element={<TaskDetails />} />
+                  
+                  <Route path="/accounts" element={<Accounts />} />
+                  
+                  {/* Prompts routes */}
+                  <Route path="/prompts" element={<Prompts />} />
+                  <Route path="/prompts/new" element={<NewPrompt />} />
+                  <Route path="/prompts/:promptId" element={<PromptDetails />} />
+                  
+                  {/* Workspace route */}
+                  <Route path="/workspace" element={<Workspace />} />
+                  
+                  {/* Team page */}
+                  <Route path="/team" element={<Dashboard />} />
+                  
+                  {/* Settings page */}
+                  <Route path="/settings" element={<Settings />} />
+                  
+                  {/* Account details routes */}
+                  <Route path="/accounts/new" element={<AccountDetails />} />
+                  <Route path="/accounts/:accountId" element={<AccountDetails />} />
+                </Route>
                 
-                {/* Tasks routes */}
-                <Route path="/tasks" element={<Tasks />} />
-                <Route path="/tasks/new" element={<TaskDetails />} />
-                <Route path="/tasks/:taskId" element={<TaskDetails />} />
-                
-                <Route path="/accounts" element={<Accounts />} />
-                
-                {/* Prompts routes */}
-                <Route path="/prompts" element={<Prompts />} />
-                <Route path="/prompts/new" element={<NewPrompt />} />
-                <Route path="/prompts/:promptId" element={<PromptDetails />} />
-                
-                {/* Workspace route */}
-                <Route path="/workspace" element={<Workspace />} />
-                
-                {/* Team page */}
-                <Route path="/team" element={<Dashboard />} />
-                
-                {/* Settings page */}
-                <Route path="/settings" element={<Settings />} />
-                
-                {/* Account details routes */}
-                <Route path="/accounts/new" element={<AccountDetails />} />
-                <Route path="/accounts/:accountId" element={<AccountDetails />} />
-              </Route>
-              
-              {/* Catch-all route for 404 */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </AppearanceProvider>
-    </ThemeProvider>
+                {/* Catch-all route for 404 */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </TooltipProvider>
+          </AppearanceProvider>
+        </ThemeProvider>
+      </AuthProvider>
+    </BrowserRouter>
   </QueryClientProvider>
 );
 
