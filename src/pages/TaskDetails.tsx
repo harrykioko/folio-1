@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -60,6 +61,9 @@ const TaskDetails: React.FC = () => {
       const priority = parseTaskPriority(data.priority);
       const status = parseTaskStatus(data.status);
       
+      console.log(`Parsed priority: ${priority}, type: ${typeof priority}`);
+      console.log(`Parsed status: ${status}, type: ${typeof status}`);
+      
       const formattedData = {
         title: data.title,
         description: data.description || "",
@@ -90,7 +94,7 @@ const TaskDetails: React.FC = () => {
       }
     } catch (error) {
       console.error("Error saving task:", error);
-      toast.error("Failed to save task. Please try again.");
+      // Toast is now handled in the createTask/updateTask functions
     } finally {
       setIsSubmitting(false);
     }
@@ -105,7 +109,7 @@ const TaskDetails: React.FC = () => {
       }
     } catch (error) {
       console.error("Error deleting task:", error);
-      toast.error("Failed to delete task. Please try again.");
+      // Toast is now handled in the deleteTask function
     }
   };
 
@@ -117,6 +121,7 @@ const TaskDetails: React.FC = () => {
           <TaskForm 
             onSubmit={handleSubmit} 
             defaultProjectId={projectIdFromQuery || undefined}
+            isSubmitting={isSubmitting}
           />
         </Card>
       </div>
@@ -146,7 +151,8 @@ const TaskDetails: React.FC = () => {
           <TaskForm 
             task={task} 
             onSubmit={handleSubmit} 
-            onCancel={() => setIsEditMode(false)} 
+            onCancel={() => setIsEditMode(false)}
+            isSubmitting={isSubmitting}
           />
         </Card>
       ) : (

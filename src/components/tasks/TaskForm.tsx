@@ -24,13 +24,15 @@ interface TaskFormProps {
   defaultProjectId?: string;
   onSubmit: (data: TaskFormValues) => void;
   onCancel?: () => void;
+  isSubmitting?: boolean;
 }
 
 const TaskForm: React.FC<TaskFormProps> = ({ 
   task, 
   defaultProjectId,
   onSubmit, 
-  onCancel 
+  onCancel,
+  isSubmitting = false
 }) => {
   // Fetch projects and users data
   const { projects, isLoading: projectsLoading } = useProjects();
@@ -84,7 +86,8 @@ const TaskForm: React.FC<TaskFormProps> = ({
 
         <FormActions 
           isEditing={!!task} 
-          onCancel={onCancel} 
+          onCancel={onCancel}
+          isSubmitting={isSubmitting}
         />
       </form>
     </Form>
