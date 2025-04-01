@@ -3,17 +3,20 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ListTodo, FileText, KeyRound, Calendar } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 type SuggestedCardProps = {
   title: string;
   description: string;
   icon: string;
+  onClick?: () => void;
 };
 
 export const SuggestedCard: React.FC<SuggestedCardProps> = ({
   title,
   description,
   icon,
+  onClick = () => {},
 }) => {
   // Map icon string to component
   const IconComponent = () => {
@@ -43,13 +46,14 @@ export const SuggestedCard: React.FC<SuggestedCardProps> = ({
         <CardContent>
           <CardDescription>{description}</CardDescription>
           <div className="mt-4">
-            <motion.button 
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="text-xs font-medium text-primary"
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={onClick}
+              className="text-xs font-medium text-primary p-0 h-auto"
             >
               Continue →
-            </motion.button>
+            </Button>
           </div>
         </CardContent>
       </Card>

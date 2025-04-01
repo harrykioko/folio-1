@@ -17,7 +17,7 @@ export const WorkspaceLayout: React.FC = () => {
     <div className="container mx-auto px-4 py-6">
       <PageHeader 
         heading="AI Workspace"
-        subheading="Ask anything about your projects"
+        subheading="Ask anything about your projects, tasks, or prompts"
       />
       
       <motion.div 

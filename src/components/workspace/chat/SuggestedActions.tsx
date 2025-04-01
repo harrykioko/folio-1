@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, FileSearch, Calendar, ListTodo, FileEdit, FolderOpen } from "lucide-react";
+import { FileSearch, Calendar, ListTodo, FileEdit, FolderOpen, PlusCircle } from "lucide-react";
 
 interface SuggestedActionsProps {
   onActionClick?: (action: string) => void;
@@ -11,7 +11,7 @@ export const SuggestedActions: React.FC<SuggestedActionsProps> = ({
   onActionClick = () => console.log 
 }) => {
   const suggestions = [
-    { id: 1, icon: <FileSearch className="mr-2 h-4 w-4" />, label: "Project summary", action: "Show me a summary of the Harvest LMS project" },
+    { id: 1, icon: <FileSearch className="mr-2 h-4 w-4" />, label: "Project summary", action: "Show me a summary of the Dashboard X project" },
     { id: 2, icon: <ListTodo className="mr-2 h-4 w-4" />, label: "Create task", action: "Create a new task for the marketing website" },
     { id: 3, icon: <Calendar className="mr-2 h-4 w-4" />, label: "Meeting notes", action: "Draft notes for tomorrow's client meeting" },
     { id: 4, icon: <FileEdit className="mr-2 h-4 w-4" />, label: "New prompt", action: "Create a new prompt for welcome emails" },

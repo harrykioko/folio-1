@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { LightbulbIcon } from "lucide-react";
+import { LightbulbIcon, PlusCircle, FolderPlus, FileEdit, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { projects } from "@/utils/projectUtils";
 import {
@@ -10,12 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { FolderOpen } from "lucide-react";
 
 interface EmptyContextStateProps {
   onActionClick: (action: string) => void;
@@ -39,9 +33,9 @@ export const EmptyContextState: React.FC<EmptyContextStateProps> = ({
         <LightbulbIcon className="h-10 w-10 text-primary" />
       </div>
       
-      <h3 className="text-xl font-semibold mb-2">Current Context</h3>
+      <h3 className="text-xl font-semibold mb-2">No context selected</h3>
       <p className="text-muted-foreground mb-6">
-        Use the chat or suggested actions below to get started.
+        Start by selecting or creating a project or task to view relevant details.
       </p>
       
       <div className="space-y-4 max-w-md w-full">
@@ -60,7 +54,7 @@ export const EmptyContextState: React.FC<EmptyContextStateProps> = ({
             className="flex items-center" 
             onClick={() => onActionClick("Create a new task")}
           >
-            <span className="mr-2">➕</span> Create task
+            <PlusCircle className="mr-2 h-4 w-4" /> Create Task
           </Button>
           
           {showProjectSelect ? (
@@ -82,7 +76,7 @@ export const EmptyContextState: React.FC<EmptyContextStateProps> = ({
               className="flex items-center" 
               onClick={() => setShowProjectSelect(true)}
             >
-              <FolderOpen className="mr-2 h-4 w-4" /> Open project
+              <FolderPlus className="mr-2 h-4 w-4" /> Add Project
             </Button>
           )}
           
@@ -91,7 +85,7 @@ export const EmptyContextState: React.FC<EmptyContextStateProps> = ({
             className="flex items-center" 
             onClick={() => onActionClick("Create a new prompt for welcome emails")}
           >
-            <span className="mr-2">✏️</span> New prompt
+            <FileEdit className="mr-2 h-4 w-4" /> New Prompt
           </Button>
           
           <Button 
@@ -99,7 +93,7 @@ export const EmptyContextState: React.FC<EmptyContextStateProps> = ({
             className="flex items-center" 
             onClick={() => onActionClick("Draft notes for tomorrow's client meeting")}
           >
-            <span className="mr-2">📄</span> Meeting notes
+            <FileText className="mr-2 h-4 w-4" /> Meeting Notes
           </Button>
         </div>
       </div>
