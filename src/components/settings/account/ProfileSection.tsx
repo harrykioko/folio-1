@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,9 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useAuth } from "@/context/AuthContext";
+import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/lib/supabase";
 
 const profileFormSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -19,22 +22,119 @@ const profileFormSchema = z.object({
 export type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 const ProfileSection = () => {
-  const defaultValues: Partial<ProfileFormValues> = {
-    name: "Jane Smith",
-    email: "jane.smith@example.com",
-    bio: "Product Manager at Folio. Managing multiple SaaS projects and teams.",
-  };
+  const { user, userMetadata } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
-    defaultValues,
+    defaultValues: {
+      name: "",
+      email: "",
+      bio: "",
+    },
     mode: "onChange",
   });
 
-  function onSubmit(data: ProfileFormValues) {
-    console.log(data);
-    // In a real app, this would make an API call to update user profile
+  // Update form when user data is available
+  useEffect(() => {
+    if (userMetadata) {
+      form.reset({
+        name: userMetadata.fullName || "",
+        email: userMetadata.email || "",
+        bio: "",
+      });
+      
+      // Fetch additional user data (bio) from the users table
+      const fetchUserData = async () => {
+        if (!userMetadata.id) return;
+        
+        try {
+          const { data, error } = await supabase
+            .from('users')
+            .select('bio')
+            .eq('id', userMetadata.id)
+            .single();
+            
+          if (error) {
+            console.error("Error fetching user bio:", error);
+            return;
+          }
+          
+          if (data) {
+            form.setValue('bio', data.bio || "");
+          }
+        } catch (error) {
+          console.error("Failed to fetch user bio:", error);
+        }
+      };
+      
+      fetchUserData();
+    }
+  }, [userMetadata, form]);
+
+  async function onSubmit(data: ProfileFormValues) {
+    if (!user || !userMetadata) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "You must be logged in to update your profile.",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      // Update the user's bio in the users table
+      const { error: bioError } = await supabase
+        .from('users')
+        .update({ 
+          full_name: data.name,
+          bio: data.bio,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', userMetadata.id);
+
+      if (bioError) {
+        throw new Error(bioError.message);
+      }
+
+      // If email changed, update it through auth API
+      if (data.email !== userMetadata.email) {
+        const { error: emailError } = await supabase.auth.updateUser({
+          email: data.email
+        });
+
+        if (emailError) {
+          throw new Error(emailError.message);
+        }
+      }
+
+      toast({
+        title: "Profile updated",
+        description: "Your profile has been updated successfully.",
+      });
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to update profile",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   }
+
+  // Generate initials for avatar fallback
+  const getInitials = () => {
+    if (!userMetadata?.fullName) return "U";
+    return userMetadata.fullName
+      .split(" ")
+      .map(name => name[0])
+      .join("")
+      .toUpperCase()
+      .substring(0, 2);
+  };
 
   return (
     <Card>
@@ -48,7 +148,7 @@ const ProfileSection = () => {
         <div className="flex items-center gap-6">
           <Avatar className="h-24 w-24">
             <AvatarImage src="/placeholder.svg" alt="Profile" />
-            <AvatarFallback>JS</AvatarFallback>
+            <AvatarFallback>{getInitials()}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col gap-2">
             <Button variant="outline" size="sm">
@@ -114,7 +214,9 @@ const ProfileSection = () => {
                 </FormItem>
               )}
             />
-            <Button type="submit">Update profile</Button>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? "Updating..." : "Update profile"}
+            </Button>
           </form>
         </Form>
       </CardContent>

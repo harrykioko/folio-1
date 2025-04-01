@@ -71,6 +71,7 @@ export type Database = {
       }
       users: {
         Row: {
+          bio: string | null
           created_at: string | null
           email: string | null
           full_name: string | null
@@ -79,6 +80,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          bio?: string | null
           created_at?: string | null
           email?: string | null
           full_name?: string | null
@@ -87,6 +89,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          bio?: string | null
           created_at?: string | null
           email?: string | null
           full_name?: string | null

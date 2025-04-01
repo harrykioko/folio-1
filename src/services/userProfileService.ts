@@ -21,6 +21,7 @@ export const fetchUserMetadata = async (userId: string): Promise<AuthUser | null
         email: data.email || '',
         fullName: data.full_name || undefined,
         role: data.role || undefined,
+        bio: data.bio || undefined,
       };
     }
     
@@ -34,7 +35,8 @@ export const fetchUserMetadata = async (userId: string): Promise<AuthUser | null
 export const upsertUserMetadata = async (
   userId: string,
   email: string,
-  fullName?: string
+  fullName?: string,
+  bio?: string
 ): Promise<boolean> => {
   try {
     const { error } = await supabase
@@ -44,6 +46,7 @@ export const upsertUserMetadata = async (
           id: userId,
           email,
           full_name: fullName || null,
+          bio: bio || null,
           updated_at: new Date().toISOString(),
         },
         { onConflict: 'id' }

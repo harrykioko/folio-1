@@ -12,6 +12,7 @@ export type AuthUser = {
   email: string;
   fullName?: string;
   role?: string;
+  bio?: string;
 };
 
 export type OAuthProvider = Provider;
