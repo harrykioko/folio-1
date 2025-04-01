@@ -4,7 +4,7 @@ import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessa
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Control } from "react-hook-form";
 import { AccountFormValues } from "@/schemas/accountSchema";
-import { projects } from "@/utils/accountUtils";
+import { projects } from "@/utils/projectData";
 
 interface AccountProjectFieldProps {
   control: Control<AccountFormValues>;

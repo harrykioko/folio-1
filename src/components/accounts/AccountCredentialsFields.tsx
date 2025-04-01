@@ -1,4 +1,3 @@
-
 import React from "react";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -6,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Control } from "react-hook-form";
 import { AccountFormValues } from "@/schemas/accountSchema";
 import { Copy, Eye, EyeOff } from "lucide-react";
-import { copyToClipboard } from "@/utils/accountUtils";
+import { copyToClipboard } from "@/utils/accountActions";
 
 interface AccountCredentialsFieldsProps {
   control: Control<AccountFormValues>;

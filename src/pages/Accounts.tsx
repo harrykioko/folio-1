@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -34,7 +33,8 @@ import {
 import { toast } from "@/hooks/use-toast";
 import AccountFilters from "@/components/accounts/AccountFilters";
 import { AccountFilters as AccountFiltersType } from "@/schemas/accountSchema";
-import { accountsData } from "@/utils/accountUtils";
+import { accountsData } from "@/utils/accountData";
+import { getTypeIcon } from "@/utils/accountIcons";
 
 const Accounts: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -46,7 +46,6 @@ const Accounts: React.FC = () => {
   });
   
   const filteredAccounts = accountsData.filter(account => {
-    // Search filter
     const matchesSearch = 
       account.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       account.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -54,16 +53,13 @@ const Accounts: React.FC = () => {
     
     if (!matchesSearch) return false;
     
-    // Type filter
     if (filters.type && account.type !== filters.type) return false;
     
-    // Project filter
     if (filters.projectId) {
       if (filters.projectId === "none" && account.projectId) return false;
       if (filters.projectId !== "none" && account.projectId?.toString() !== filters.projectId) return false;
     }
     
-    // Expiry status filter
     if (filters.expiryStatus) {
       const today = new Date();
       const thirtyDaysFromNow = new Date(today);
@@ -119,7 +115,6 @@ const Accounts: React.FC = () => {
     }
   };
   
-  // Calculate active filters count for badge
   const activeFiltersCount = Object.values(filters).filter(Boolean).length;
 
   return (

@@ -8,7 +8,7 @@ import { AccountFormValues, accountFormSchema } from "@/schemas/accountSchema";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { Trash2, Save } from "lucide-react";
-import { handleDeleteAccount } from "@/utils/accountUtils";
+import { handleDeleteAccount } from "@/utils/accountActions";
 
 // Import form components
 import AccountBasicFields from "./AccountBasicFields";

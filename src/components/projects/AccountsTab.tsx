@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Plus, Globe, Github, Twitter, Instagram, Linkedin, AtSign } from "lucide-react";
-import { accountsData } from "@/utils/accountUtils";
+import { accountsData } from "@/utils/accountData";
+import { getTypeIcon } from "@/utils/accountIcons";
 
 interface AccountsTabProps {
   projectId: number;
@@ -14,25 +15,6 @@ interface AccountsTabProps {
 const AccountsTab: React.FC<AccountsTabProps> = ({ projectId }) => {
   const navigate = useNavigate();
   const accounts = accountsData.filter(account => account.projectId === projectId);
-
-  const getAccountIcon = (type: string) => {
-    switch (type) {
-      case 'domain':
-        return <Globe className="h-4 w-4" />;
-      case 'github':
-        return <Github className="h-4 w-4" />;
-      case 'twitter':
-        return <Twitter className="h-4 w-4" />;
-      case 'instagram':
-        return <Instagram className="h-4 w-4" />;
-      case 'linkedin':
-        return <Linkedin className="h-4 w-4" />;
-      case 'service':
-        return <AtSign className="h-4 w-4" />;
-      default:
-        return <Globe className="h-4 w-4" />;
-    }
-  };
 
   const handleAddAccount = () => {
     navigate(`/accounts/new?projectId=${projectId}`);
@@ -95,7 +77,7 @@ const AccountsTab: React.FC<AccountsTabProps> = ({ projectId }) => {
                 <TableCell className="font-medium">{account.name}</TableCell>
                 <TableCell>
                   <div className="flex items-center">
-                    {getAccountIcon(account.type)}
+                    {getTypeIcon(account.type)}
                     <span className="ml-2 capitalize">{account.type}</span>
                   </div>
                 </TableCell>

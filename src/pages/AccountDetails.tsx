@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
 import { AccountFormValues } from "@/schemas/accountSchema";
-import { fetchAccountById } from "@/utils/accountUtils";
+import { fetchAccountById } from "@/utils/accountActions";
 
 // Import components
 import AccountForm from "@/components/accounts/AccountForm";

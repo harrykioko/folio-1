@@ -4,34 +4,14 @@ import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/comp
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Control } from "react-hook-form";
 import { AccountFormValues } from "@/schemas/accountSchema";
-import { accountTypes } from "@/utils/accountUtils";
-import { Globe, Github, Twitter, Instagram, Linkedin, AtSign, Bookmark } from "lucide-react";
+import { accountTypes } from "@/utils/accountTypes";
+import { getTypeIcon } from "@/utils/accountIcons";
 
 interface AccountTypeSelectorProps {
   control: Control<AccountFormValues>;
 }
 
 const AccountTypeSelector: React.FC<AccountTypeSelectorProps> = ({ control }) => {
-  // Function to get icon based on account type
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case 'domain':
-        return <Globe className="h-5 w-5" />;
-      case 'github':
-        return <Github className="h-5 w-5" />;
-      case 'twitter':
-        return <Twitter className="h-5 w-5" />;
-      case 'instagram':
-        return <Instagram className="h-5 w-5" />;
-      case 'linkedin':
-        return <Linkedin className="h-5 w-5" />;
-      case 'service':
-        return <AtSign className="h-5 w-5" />;
-      default:
-        return <Bookmark className="h-5 w-5" />;
-    }
-  };
-
   return (
     <FormField
       control={control}

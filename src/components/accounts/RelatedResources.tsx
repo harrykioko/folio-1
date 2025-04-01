@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Bookmark, Globe } from "lucide-react";
-import { Account } from "@/utils/accountUtils";
+import { Account } from "@/utils/accountTypes";
 
 interface RelatedResourcesProps {
   accountId?: string;
