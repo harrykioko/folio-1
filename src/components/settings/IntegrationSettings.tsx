@@ -3,7 +3,7 @@ import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { GitHubLogoIcon, EnvelopeClosedIcon, CalendarIcon, PlusIcon } from "@radix-ui/react-icons";
+import { Github, Mail, Calendar, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 interface IntegrationCardProps {
@@ -77,7 +77,7 @@ const IntegrationSettings = () => {
       <IntegrationCard
         title="GitHub"
         description="Connect your GitHub account to manage repositories and track issues."
-        icon={<GitHubLogoIcon className="h-5 w-5" />}
+        icon={<Github className="h-5 w-5" />}
         connected={true}
         onConnect={() => handleConnect("github")}
         onDisconnect={() => handleDisconnect("github")}
@@ -103,7 +103,7 @@ const IntegrationSettings = () => {
       <IntegrationCard
         title="Email Provider"
         description="Connect your email service for notifications and communication."
-        icon={<EnvelopeClosedIcon className="h-5 w-5" />}
+        icon={<Mail className="h-5 w-5" />}
         connected={false}
         onConnect={() => handleConnect("email")}
       />
@@ -111,7 +111,7 @@ const IntegrationSettings = () => {
       <IntegrationCard
         title="Calendar"
         description="Sync project deadlines and meetings with your calendar."
-        icon={<CalendarIcon className="h-5 w-5" />}
+        icon={<Calendar className="h-5 w-5" />}
         connected={true}
         onConnect={() => handleConnect("calendar")}
         onDisconnect={() => handleDisconnect("calendar")}
@@ -149,7 +149,7 @@ const IntegrationSettings = () => {
         </CardHeader>
         <CardContent>
           <Button variant="outline" className="w-full">
-            <PlusIcon className="mr-2 h-4 w-4" />
+            <Plus className="mr-2 h-4 w-4" />
             Add Integration
           </Button>
         </CardContent>
