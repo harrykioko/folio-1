@@ -16,7 +16,6 @@ import {
   FolderGit, 
   KeySquare, 
   Lightbulb, 
-  MessageSquare, 
   CheckSquare, 
   Settings 
 } from "lucide-react";
@@ -93,13 +92,6 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onOpenChange }) =
           >
             <CheckSquare className="mr-2 h-4 w-4" />
             <span>Tasks</span>
-          </CommandItem>
-          <CommandItem
-            onSelect={() => runCommand(() => navigate("/messages"))}
-            className="flex items-center"
-          >
-            <MessageSquare className="mr-2 h-4 w-4" />
-            <span>Messages</span>
           </CommandItem>
           <CommandItem
             onSelect={() => runCommand(() => navigate("/team"))}
