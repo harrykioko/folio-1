@@ -54,7 +54,9 @@ export const useMFA = () => {
         description: "Multi-factor authentication has been enabled for your account",
       });
       
-      return !!data.id;
+      // Fix: Checking for verification success
+      // The response structure for challengeAndVerify in Supabase v2
+      return data && data.factor !== undefined;
     } catch (error) {
       console.error('Error verifying MFA:', error);
       toast({
