@@ -1,7 +1,7 @@
 
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { CheckSquare, MessageSquare, Users } from "lucide-react";
+import { CheckSquare, MessageSquare, Users, Sparkles } from "lucide-react";
 import { 
   SidebarMenu, 
   SidebarMenuItem, 
@@ -42,6 +42,17 @@ const ToolsMenu: React.FC = () => {
               <span>{!isCollapsed && "Messages"}</span>
               {!isCollapsed && <Badge className="ml-auto bg-primary text-white h-5 px-1">3</Badge>}
               {isCollapsed && <Badge className="absolute -top-1 -right-1 bg-primary text-white h-4 w-4 flex items-center justify-center p-0 text-[10px] rounded-full">3</Badge>}
+            </NavLink>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+        <SidebarMenuItem>
+          <SidebarMenuButton asChild tooltip="Workspace">
+            <NavLink 
+              to="/workspace" 
+              className={({ isActive }) => isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"}
+            >
+              <Sparkles className="h-4 w-4 mr-3" />
+              <span>{!isCollapsed && "Workspace"}</span>
             </NavLink>
           </SidebarMenuButton>
         </SidebarMenuItem>

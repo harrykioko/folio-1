@@ -24,6 +24,7 @@ import PromptDetails from "./pages/PromptDetails";
 import NewPrompt from "./pages/NewPrompt";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import Workspace from "./pages/Workspace";
 
 const queryClient = new QueryClient();
 
@@ -61,6 +62,9 @@ const App = () => (
                 <Route path="/prompts" element={<Prompts />} />
                 <Route path="/prompts/new" element={<NewPrompt />} />
                 <Route path="/prompts/:promptId" element={<PromptDetails />} />
+                
+                {/* Workspace route */}
+                <Route path="/workspace" element={<Workspace />} />
                 
                 {/* Team page */}
                 <Route path="/team" element={<Dashboard />} />
