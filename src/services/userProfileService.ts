@@ -22,7 +22,7 @@ export const fetchUserMetadata = async (userId: string): Promise<AuthUser | null
         fullName: data.full_name || undefined,
         role: data.role || undefined,
         bio: data.bio || undefined,
-        avatarUrl: data.avatar_url || undefined, // Add support for avatarUrl
+        avatarUrl: data.avatar_url || undefined, // Proper handling of the avatar_url field
       };
     }
     

@@ -5,10 +5,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { useSidebar } from "@/components/ui/sidebar";
+import { useAuth } from "@/context/AuthContext";
+import { useProfileData } from "@/components/settings/account/profile/useProfileData";
 
 const SidebarFooter: React.FC = () => {
   const { state, toggleSidebar } = useSidebar();
   const isCollapsed = state === "collapsed";
+  const { getInitials, getDisplayName, getEmail } = useProfileData();
 
   return (
     <div className={`p-4 border-t ${isCollapsed ? 'border-white/10' : ''}`}>
@@ -17,18 +20,18 @@ const SidebarFooter: React.FC = () => {
           <div className="flex items-center space-x-2">
             <Avatar>
               <AvatarImage src="/placeholder.svg" />
-              <AvatarFallback>JD</AvatarFallback>
+              <AvatarFallback>{getInitials()}</AvatarFallback>
             </Avatar>
             <div>
-              <p className="text-sm font-medium">Admin User</p>
-              <p className="text-xs text-muted-foreground">admin@example.com</p>
+              <p className="text-sm font-medium">{getDisplayName()}</p>
+              <p className="text-xs text-muted-foreground">{getEmail()}</p>
             </div>
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center w-full mb-2">
             <Avatar className="h-8 w-8">
               <AvatarImage src="/placeholder.svg" />
-              <AvatarFallback>JD</AvatarFallback>
+              <AvatarFallback>{getInitials()}</AvatarFallback>
             </Avatar>
           </div>
         )}
