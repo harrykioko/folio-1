@@ -18,6 +18,8 @@ import TaskDetails from "./pages/TaskDetails";
 import Accounts from "./pages/Accounts";
 import AccountDetails from "./pages/AccountDetails";
 import Prompts from "./pages/Prompts";
+import PromptDetails from "./pages/PromptDetails";
+import NewPrompt from "./pages/NewPrompt";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -49,7 +51,11 @@ const App = () => (
             <Route path="/tasks/:taskId" element={<TaskDetails />} />
             
             <Route path="/accounts" element={<Accounts />} />
+            
+            {/* Prompts routes */}
             <Route path="/prompts" element={<Prompts />} />
+            <Route path="/prompts/new" element={<NewPrompt />} />
+            <Route path="/prompts/:promptId" element={<PromptDetails />} />
             
             {/* Placeholder routes for future implementation */}
             <Route path="/messages" element={<Dashboard />} />
@@ -59,11 +65,6 @@ const App = () => (
             {/* Account details routes */}
             <Route path="/accounts/new" element={<AccountDetails />} />
             <Route path="/accounts/:accountId" element={<AccountDetails />} />
-            
-            {/* Prompt details routes */}
-            <Route path="/prompts/new" element={<Prompts />} />
-            <Route path="/prompts/:promptId" element={<Prompts />} />
-            <Route path="/prompts/:promptId/edit" element={<Prompts />} />
           </Route>
           
           {/* Catch-all route for 404 */}
