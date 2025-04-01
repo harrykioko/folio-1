@@ -30,10 +30,11 @@ const ProjectDetails: React.FC = () => {
   useEffect(() => {
     // Only redirect if it's NOT a new project AND project is not found
     if (!project && !isNewProject) {
+      console.log("Project not found, projectId:", projectId);
       navigate("/projects");
       toast.error("Project not found");
     }
-  }, [project, isNewProject, navigate]);
+  }, [project, isNewProject, navigate, projectId]);
 
   const handleSubmit = (data: ProjectFormValues) => {
     if (isNewProject) {

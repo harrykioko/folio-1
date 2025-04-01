@@ -80,16 +80,21 @@ export const projects = [
   }
 ];
 
-// Fixed the getProjectById function to handle null/undefined projectId
+// Fixed the getProjectById function to properly handle string IDs
 export const getProjectById = (id: string | number | undefined | null) => {
   // Return undefined if id is undefined or null
   if (id === undefined || id === null) {
     return undefined;
   }
   
-  // Safely convert id to string for comparison
-  const idStr = String(id);
+  // Safely convert id to number for comparison if it's a string
+  const idNum = typeof id === 'string' ? parseInt(id, 10) : id;
+  
+  // Handle NaN case
+  if (isNaN(idNum)) {
+    return undefined;
+  }
   
   // Find the project with the matching id
-  return projects.find(project => project.id.toString() === idStr);
+  return projects.find(project => project.id === idNum);
 };
