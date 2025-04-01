@@ -13,6 +13,7 @@ import {
 import SidebarHeader from "./sidebar/SidebarHeader";
 import GeneralMenu from "./sidebar/GeneralMenu";
 import ToolsMenu from "./sidebar/ToolsMenu";
+import AccountMenu from "./sidebar/AccountMenu";
 import SidebarFooter from "./sidebar/SidebarFooter";
 
 const AppSidebar = () => {
@@ -42,6 +43,7 @@ const AppSidebar = () => {
       <SidebarContent className="px-3 py-2">
         <GeneralMenu />
         <ToolsMenu />
+        <AccountMenu />
       </SidebarContent>
       <SidebarFooterContainer>
         <SidebarFooter />
