@@ -127,6 +127,7 @@ const PromptsTab: React.FC<PromptsTabProps> = ({ projectId }) => {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>Name</TableHead>
               <TableHead>Content</TableHead>
               <TableHead>Tags</TableHead>
               <TableHead>Created</TableHead>
@@ -140,6 +141,9 @@ const PromptsTab: React.FC<PromptsTabProps> = ({ projectId }) => {
                 onClick={() => navigate(`/prompts/${prompt.id}`)}
               >
                 <TableCell className="font-medium">
+                  {prompt.name || "Untitled Prompt"}
+                </TableCell>
+                <TableCell>
                   {prompt.content.length > 100 
                     ? `${prompt.content.substring(0, 100)}...` 
                     : prompt.content}

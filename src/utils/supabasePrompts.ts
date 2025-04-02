@@ -5,6 +5,7 @@ import { toast } from "sonner";
 // TypeScript type definitions
 export type Prompt = {
   id: number;
+  name: string;
   content: string;
   tags: string[] | null;
   project_id: number | null;
@@ -14,6 +15,7 @@ export type Prompt = {
 }
 
 export type PromptFormData = {
+  name: string;
   content: string;
   tags?: string[];
   project_id?: number | null;
@@ -87,18 +89,19 @@ export const createPrompt = async (promptData: PromptFormData): Promise<Prompt> 
     }
     
     // Prepare the data with user ID
-    const data = {
-      ...promptData,
+    const formattedPromptData = {
+      name: promptData.name,
+      content: promptData.content,
+      tags: promptData.tags || [],
+      project_id: promptData.project_id || null,
       created_by: session.user.id,
-      // Ensure tags is an array even if it's undefined
-      tags: promptData.tags || []
     };
     
-    console.log("Creating new prompt:", data);
+    console.log("Creating new prompt:", formattedPromptData);
     
     const { data: result, error } = await supabase
       .from('prompts')
-      .insert([data])
+      .insert([formattedPromptData])
       .select()
       .single();
     

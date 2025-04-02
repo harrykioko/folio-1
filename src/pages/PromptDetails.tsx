@@ -3,8 +3,9 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import PromptDetail from "@/components/prompts/PromptDetail";
 import PromptForm from "@/components/prompts/PromptForm";
-import { getPromptById, updatePrompt, deletePrompt, getProjectOptions } from "@/utils/promptUtils";
+import { fetchPromptById, updatePrompt, deletePrompt } from "@/utils/supabasePrompts";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const PromptDetails: React.FC = () => {
   const { promptId } = useParams<{ promptId: string }>();
@@ -17,10 +18,25 @@ const PromptDetails: React.FC = () => {
   useEffect(() => {
     const fetchPrompt = async () => {
       try {
+        setLoading(true);
         if (promptId) {
-          const fetchedPrompt = getPromptById(Number(promptId));
+          // Fetch prompt details from Supabase
+          const fetchedPrompt = await fetchPromptById(Number(promptId));
           if (fetchedPrompt) {
-            setPrompt(fetchedPrompt);
+            // Convert to UI-friendly format
+            setPrompt({
+              id: fetchedPrompt.id,
+              title: fetchedPrompt.name, // Map the name field to title for form
+              category: fetchedPrompt.content.includes("marketing") ? "Marketing" : 
+                        fetchedPrompt.content.includes("content") ? "Content" : "Development",
+              description: "Generated prompt", // Default description
+              prompt: fetchedPrompt.content,
+              effectiveness: "Medium",
+              dateCreated: fetchedPrompt.created_at,
+              projectId: fetchedPrompt.project_id,
+              projectName: null, // Will be set if applicable
+              tags: fetchedPrompt.tags || [],
+            });
           } else {
             toast({
               title: "Prompt not found",
@@ -30,8 +46,20 @@ const PromptDetails: React.FC = () => {
             navigate("/prompts");
           }
         }
-        const projectOptions = getProjectOptions();
-        setProjects(projectOptions);
+
+        // Fetch projects for the dropdown
+        const { data: projectsData, error: projectsError } = await supabase
+          .from('projects')
+          .select('id, name');
+        
+        if (projectsError) {
+          console.error("Error fetching projects:", projectsError);
+        } else if (projectsData) {
+          setProjects(projectsData.map(project => ({
+            id: project.id.toString(),
+            name: project.name
+          })));
+        }
       } catch (error) {
         console.error("Error fetching prompt:", error);
         toast({
@@ -47,10 +75,30 @@ const PromptDetails: React.FC = () => {
     fetchPrompt();
   }, [promptId, navigate]);
 
-  const handleEditSubmit = (values: any) => {
+  const handleEditSubmit = async (values: any) => {
     try {
-      const updatedPrompt = updatePrompt(Number(promptId), values);
-      setPrompt(updatedPrompt);
+      if (!promptId) return;
+      
+      // Format values for update
+      const updates = {
+        name: values.title, // Map title from form to name in database
+        content: values.prompt,
+        tags: values.tags || [],
+        project_id: values.projectId ? Number(values.projectId) : null
+      };
+      
+      // Update the prompt in Supabase
+      const updatedPrompt = await updatePrompt(Number(promptId), updates);
+      
+      // Update local state with new values
+      setPrompt({
+        ...prompt,
+        title: updatedPrompt.name,
+        prompt: updatedPrompt.content,
+        tags: updatedPrompt.tags || [],
+        projectId: updatedPrompt.project_id
+      });
+      
       setIsEditing(false);
       toast({
         title: "Prompt updated",
@@ -66,9 +114,13 @@ const PromptDetails: React.FC = () => {
     }
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     try {
-      deletePrompt(Number(promptId));
+      if (!promptId) return;
+      
+      // Delete the prompt from Supabase
+      await deletePrompt(Number(promptId));
+      
       toast({
         title: "Prompt deleted",
         description: "The prompt has been deleted successfully.",
@@ -106,7 +158,7 @@ const PromptDetails: React.FC = () => {
         </div>
         <PromptForm
           defaultValues={{
-            title: prompt.title,
+            title: prompt.title || "Untitled Prompt",
             category: prompt.category,
             description: prompt.description,
             prompt: prompt.prompt,
