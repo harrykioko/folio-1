@@ -16,7 +16,8 @@ import {
   Pencil, 
   Plus, 
   Trash2,
-  CalendarDays
+  CalendarDays,
+  ChevronLeft
 } from "lucide-react";
 import { format } from "date-fns";
 
@@ -78,20 +79,16 @@ const ProjectHeader: React.FC<ProjectHeaderProps> = ({
     <div className="mb-8 pb-6 backdrop-blur-md bg-white/5 rounded-2xl p-6 border border-white/10 shadow-lg">
       <div className="flex flex-col space-y-4 sm:flex-row sm:justify-between sm:items-start">
         <div className="space-y-2">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center">
             <Button 
-              variant="outline" 
+              variant="ghost" 
               onClick={() => navigate("/projects")} 
               size="sm"
-              className="rounded-xl"
+              className="p-0 mr-2 h-auto"
             >
-              Back
+              <ChevronLeft className="h-4 w-4 mr-1" />
+              <span className="text-sm">Back</span>
             </Button>
-            
-            <span className={`px-3 py-1 text-xs font-medium rounded-full inline-flex items-center ${currentStatus.color}`}>
-              {currentStatus.icon}
-              <span>{currentStatus.text}</span>
-            </span>
           </div>
           
           <h1 className="text-3xl font-bold mt-2 text-foreground">{name}</h1>
@@ -106,6 +103,10 @@ const ProjectHeader: React.FC<ProjectHeaderProps> = ({
               <CalendarDays className="h-4 w-4 mr-1" />
               <span>{formattedStartDate} — {formattedEndDate}</span>
             </div>
+            <span className={`px-3 py-1 text-xs font-medium rounded-full inline-flex items-center ${currentStatus.color}`}>
+              {currentStatus.icon}
+              <span>{currentStatus.text}</span>
+            </span>
           </div>
         </div>
       
