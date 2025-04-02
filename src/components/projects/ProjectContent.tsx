@@ -1,9 +1,9 @@
 
 import React, { useState } from "react";
 import ProjectDialogManager from "@/components/projects/ProjectDialogManager";
-import ProjectTabs from "@/components/projects/ProjectTabs";
 import { Project } from "@/utils/supabaseProjects";
 import { ProjectFormValues } from "@/components/projects/form/ProjectFormSchema";
+import ProjectThreeColumnLayout from "@/components/projects/layout/ProjectThreeColumnLayout";
 
 interface ProjectContentProps {
   project: Project;
@@ -32,10 +32,12 @@ const ProjectContent: React.FC<ProjectContentProps> = ({
         onUpdate={onUpdate}
       />
       
-      <ProjectTabs 
+      <ProjectThreeColumnLayout 
+        project={project}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        project={project}
+        setIsEditDialogOpen={setIsEditDialogOpen}
+        setIsDeleteDialogOpen={setIsDeleteDialogOpen}
       />
     </div>
   );

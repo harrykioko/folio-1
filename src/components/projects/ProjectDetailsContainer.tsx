@@ -1,184 +1,82 @@
 
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { toast } from "sonner";
-import { fetchProjectById, deleteProject, updateProject, createProject, Project } from "@/utils/supabaseProjects";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { fetchProjectById, updateProject, deleteProject, Project } from "@/utils/supabaseProjects";
 import { ProjectFormValues } from "@/components/projects/form/ProjectFormSchema";
+import ProjectHeader from "@/components/projects/ProjectHeader";
+import ProjectContent from "@/components/projects/ProjectContent";
 import ProjectDetailLoading from "@/components/projects/ProjectDetailLoading";
 import ProjectNotFound from "@/components/projects/ProjectNotFound";
-import NewProjectView from "@/components/projects/NewProjectView";
-import ProjectContent from "@/components/projects/ProjectContent";
-import { getProjectById } from "@/utils/projectUtils"; // Import for fallback data
-import { useUser } from "@/hooks/useUser";
+import { toast } from "sonner";
 
 const ProjectDetailsContainer: React.FC = () => {
-  const { projectId } = useParams<{ projectId: string }>();
-  const location = useLocation();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [project, setProject] = useState<Project | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const { user } = useUser();
-  
-  // Check if we're on the new project route
-  const isNewProject = location.pathname === "/projects/new" || projectId === "new";
-  
-  // Fetch project data from Supabase
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<Error | null>(null);
+
   useEffect(() => {
-    const loadProject = async () => {
-      // Don't fetch if we're creating a new project
-      if (isNewProject) {
-        setLoading(false);
-        return;
-      }
-      
+    const fetchProject = async () => {
       try {
         setLoading(true);
-        const numericId = parseInt(projectId || "0", 10);
-        if (isNaN(numericId) || numericId <= 0) {
-          throw new Error("Invalid project ID");
-        }
-        
-        // Fetch from Supabase
-        const data = await fetchProjectById(numericId);
-        
-        // Enhance the project data with UI required fields if they're missing
-        // This ensures we always have the required properties for the OverviewTab
-        const enhancedProject: Project = {
-          ...data,
-          // Add UI-specific fields with default values if they don't exist
-          progress: 0, // Default progress
-          startDate: "Not set", // Default start date
-          dueDate: "Not set", // Default due date
-          team: 1, // Default team size
-          domains: [], // Default empty domains array
-          hasGithub: false, // Default GitHub status
-          social: [], // Default empty social array
-        };
-        
-        // If available, get additional UI data from local utility (for demo purposes)
-        const mockProject = getProjectById(numericId);
-        if (mockProject) {
-          enhancedProject.progress = mockProject.progress;
-          enhancedProject.startDate = mockProject.startDate;
-          enhancedProject.dueDate = mockProject.dueDate;
-          enhancedProject.team = mockProject.team;
-          enhancedProject.domains = mockProject.domains;
-          enhancedProject.hasGithub = mockProject.hasGithub;
-          enhancedProject.social = mockProject.social;
-        }
-        
-        setProject(enhancedProject);
-        setError(null);
+        const fetchedProject = await fetchProjectById(id as string);
+        setProject(fetchedProject);
       } catch (err) {
-        console.error("Error loading project:", err);
-        setError("Failed to load project. It may not exist or you don't have permission to view it.");
+        console.error("Error fetching project:", err);
+        setError(err as Error);
       } finally {
         setLoading(false);
       }
     };
-    
-    loadProject();
-  }, [projectId, isNewProject]);
 
-  const handleCreateProject = async (data: ProjectFormValues) => {
-    try {
-      setLoading(true);
-      
-      // Format the data for Supabase - include all necessary fields
-      const projectData = {
-        name: data.name,
-        description: data.description,
-        status: data.status,
-        // The created_by field will be automatically filled by the RLS policy
-      };
-      
-      // Call the createProject function from supabaseProjects utility
-      const newProject = await createProject(projectData);
-      
-      toast.success("Project created successfully!");
-      // Navigate to the new project page
-      navigate(`/projects/${newProject.id}`);
-    } catch (error) {
-      console.error("Error creating project:", error);
-      toast.error("Failed to create project. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    fetchProject();
+  }, [id]);
 
-  const handleUpdateProject = async (data: ProjectFormValues) => {
+  const handleUpdate = async (data: ProjectFormValues) => {
+    if (!project) return;
     try {
-      // Format the data for Supabase
-      const updatedData = {
-        name: data.name,
-        description: data.description,
-        status: data.status
-      };
-      
-      if (!project || !project.id) {
-        throw new Error("Project ID is missing");
-      }
-      
-      await updateProject(project.id, updatedData);
-      toast.success("Project updated successfully!");
-      
-      // Refresh project data
-      const updatedProject = await fetchProjectById(project.id);
-      
-      // Maintain the UI-specific fields when updating
-      setProject({
-        ...updatedProject,
-        progress: project.progress,
-        startDate: project.startDate,
-        dueDate: project.dueDate,
-        team: project.team,
-        domains: project.domains,
-        hasGithub: project.hasGithub,
-        social: project.social,
-      });
-    } catch (error) {
-      console.error("Error updating project:", error);
+      const updatedProject = await updateProject(project.id, data);
+      setProject(updatedProject);
+      toast.success("Project updated successfully");
+    } catch (err) {
+      console.error("Error updating project:", err);
       toast.error("Failed to update project");
     }
   };
 
-  const handleDeleteProject = async () => {
+  const handleDelete = async () => {
+    if (!project) return;
     try {
-      if (!project || !project.id) {
-        throw new Error("Project ID is missing");
-      }
-      
       await deleteProject(project.id);
-      toast.success("Project deleted successfully!");
+      toast.success("Project deleted successfully");
       navigate("/projects");
-    } catch (error) {
-      console.error("Error deleting project:", error);
+    } catch (err) {
+      console.error("Error deleting project:", err);
       toast.error("Failed to delete project");
     }
   };
 
-  // Show loading state
-  if (loading) {
-    return <ProjectDetailLoading />;
-  }
-
-  // Handle the case when we're creating a new project
-  if (isNewProject) {
-    return <NewProjectView onSubmit={handleCreateProject} />;
-  }
-
-  // Handle error state
-  if (error || !project) {
-    return <ProjectNotFound error={error} />;
-  }
+  if (loading) return <ProjectDetailLoading />;
+  if (error || !project) return <ProjectNotFound />;
 
   return (
-    <ProjectContent 
-      project={project}
-      onUpdate={handleUpdateProject}
-      onDelete={handleDeleteProject}
-    />
+    <div className="container mx-auto p-4 animate-fade-in">
+      <ProjectHeader
+        name={project.name}
+        description={project.description || ""}
+        status={project.status}
+        projectId={project.id}
+        setIsEditDialogOpen={() => {}}
+        setIsDeleteDialogOpen={() => {}}
+      />
+      
+      <ProjectContent
+        project={project}
+        onUpdate={handleUpdate}
+        onDelete={handleDelete}
+      />
+    </div>
   );
 };
 
