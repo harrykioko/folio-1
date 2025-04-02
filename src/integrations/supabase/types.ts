@@ -195,6 +195,44 @@ export type Database = {
         }
         Relationships: []
       }
+      milestones: {
+        Row: {
+          due_date: string | null
+          id: number
+          project_id: number | null
+          sort_order: number | null
+          start_date: string | null
+          status: string | null
+          title: string | null
+        }
+        Insert: {
+          due_date?: string | null
+          id?: number
+          project_id?: number | null
+          sort_order?: number | null
+          start_date?: string | null
+          status?: string | null
+          title?: string | null
+        }
+        Update: {
+          due_date?: string | null
+          id?: number
+          project_id?: number | null
+          sort_order?: number | null
+          start_date?: string | null
+          status?: string | null
+          title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "milestones_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       project_members: {
         Row: {
           created_at: string | null

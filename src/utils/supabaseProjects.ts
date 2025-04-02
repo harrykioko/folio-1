@@ -20,19 +20,8 @@ export type Project = {
   social?: string[];
 }
 
-// We'll update this type to match our form values structure
-export type ProjectFormData = {
-  name: string;
-  description: string;
-  status: Project["status"];
-  startDate?: string;
-  dueDate?: string;
-  githubRepo?: string;
-  domains?: string;
-  twitter?: string;
-  instagram?: string;
-  linkedin?: string;
-}
+// Update this type to match the ProjectFormValues structure
+export type ProjectFormData = ProjectFormValues;
 
 // Fetch all projects
 export const fetchProjects = async () => {
@@ -56,7 +45,7 @@ export const fetchProjectById = async (id: number | string) => {
     throw new Error("Project ID is required");
   }
   
-  // Handle "new" case separately if necessary
+  // Handle "new" case separately
   if (id === "new") {
     throw new Error("Cannot fetch project with ID 'new'");
   }
@@ -92,6 +81,7 @@ export const createProject = async (project: ProjectFormValues) => {
   }
   
   // Extract only the fields that should be sent to the database
+  // We only need name, description, and status for the database
   const projectData = {
     name: project.name,
     description: project.description,

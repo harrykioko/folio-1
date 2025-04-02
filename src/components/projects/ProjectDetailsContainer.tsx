@@ -28,11 +28,14 @@ const ProjectDetailsContainer: React.FC = () => {
       try {
         setLoading(true);
         
+        // For new projects, just set loading to false and return early
+        // This prevents trying to fetch a non-existent project
         if (isNewProject) {
           setLoading(false);
           return;
         }
         
+        // Only fetch project if we have a valid ID and it's not "new"
         if (effectiveId) {
           const fetchedProject = await fetchProjectById(effectiveId);
           setProject(fetchedProject);
