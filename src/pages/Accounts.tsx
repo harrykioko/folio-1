@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -23,7 +22,7 @@ import {
   AtSign,
   Facebook
 } from "lucide-react";
-import { TiktokIcon } from "@/utils/accountUtils";
+import { TiktokIcon, getTypeIcon, getPlatformIcon } from "@/utils/accountUtils";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,7 +37,6 @@ import AccountGridView from "@/components/accounts/AccountGridView";
 import ViewToggle from "@/components/accounts/ViewToggle";
 import { accountsData } from "@/utils/accountData";
 import { AccountFilters as AccountFiltersType } from "@/schemas/accountSchema";
-import { getTypeIcon, getPlatformIcon } from "@/utils/accountIcons";
 
 const Accounts: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -61,7 +59,6 @@ const Accounts: React.FC = () => {
     
     if (filters.type && account.type !== filters.type) return false;
     
-    // Filter by platform if type is SocialMedia and platform filter is set
     if (filters.type === "SocialMedia" && filters.platform && account.platform !== filters.platform) {
       return false;
     }
