@@ -23,7 +23,17 @@ export const updateTask = async (id: number, taskData: Partial<TaskFormData>): P
     if (taskData.assigned_to !== undefined) formattedTaskData.assigned_to = taskData.assigned_to || null;
     if (taskData.priority !== undefined) formattedTaskData.priority = taskData.priority;
     if (taskData.deadline !== undefined) formattedTaskData.deadline = taskData.deadline || null;
-    if (taskData.status !== undefined) formattedTaskData.status = taskData.status;
+    
+    // Ensure status is one of the allowed values in the database constraint
+    if (taskData.status !== undefined) {
+      // Validate that status is one of the allowed values
+      const allowedStatuses = ['todo', 'in_progress', 'completed'];
+      if (!allowedStatuses.includes(taskData.status)) {
+        toast.error(`Invalid status: ${taskData.status}. Must be one of: ${allowedStatuses.join(', ')}`);
+        throw new Error(`Invalid status value: ${taskData.status}`);
+      }
+      formattedTaskData.status = taskData.status;
+    }
     
     const { data, error } = await supabase
       .from('tasks')
