@@ -22,15 +22,18 @@ const ProjectDetailsContainer: React.FC = () => {
 
   const effectiveId = id || projectId;
   const isNewProject = effectiveId === "new";
+  
+  // Add debug log to confirm route parameters
+  console.log("ProjectDetailsContainer params:", { id, projectId, effectiveId });
 
   useEffect(() => {
-    // Only run fetch if we have a valid project ID and it's not the "new" route
-    if (!effectiveId || effectiveId === "new") {
-      setLoading(false);
-      return;
-    }
-
     const fetchProject = async () => {
+      // ✅ Short-circuit if it's a new project or ID is missing
+      if (!effectiveId || effectiveId === "new") {
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
         const fetchedProject = await fetchProjectById(effectiveId);
