@@ -84,7 +84,7 @@ const RelatedTaskCard: React.FC<RelatedTaskCardProps> = ({ task, onUnlink }) => 
         <div className="flex items-center space-x-2">
           {assignee && (
             <Avatar className="h-6 w-6">
-              <AvatarImage src={assignee.avatar_url || ''} alt={assignee.full_name || 'User'} />
+              <AvatarImage src={assignee.avatar_url || undefined} alt={assignee.full_name || 'User'} />
               <AvatarFallback className="text-xs">
                 {assignee.full_name ? getInitials(assignee.full_name) : 'U'}
               </AvatarFallback>

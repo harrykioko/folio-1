@@ -14,11 +14,9 @@ export type RelatedTask = {
 // Fetch related tasks for a specific task
 export const fetchRelatedTasks = async (taskId: number): Promise<Task[]> => {
   try {
-    // First get the IDs of related tasks
+    // First get the IDs of related tasks using raw SQL query
     const { data: relatedTaskIds, error: relatedError } = await supabase
-      .from('related_tasks')
-      .select('related_task_id')
-      .eq('task_id', taskId);
+      .rpc('get_related_task_ids', { current_task_id: taskId });
     
     if (relatedError) {
       toast.error(`Error fetching related tasks: ${relatedError.message}`);
@@ -30,7 +28,7 @@ export const fetchRelatedTasks = async (taskId: number): Promise<Task[]> => {
     }
     
     // Then fetch the actual task data for those IDs
-    const ids = relatedTaskIds.map(item => item.related_task_id);
+    const ids = relatedTaskIds;
     
     const { data: tasks, error: tasksError } = await supabase
       .from('tasks')
@@ -52,13 +50,12 @@ export const fetchRelatedTasks = async (taskId: number): Promise<Task[]> => {
 // Link a task to another task
 export const linkTask = async (taskId: number, relatedTaskId: number): Promise<boolean> => {
   try {
-    // Check if relation already exists
+    // Check if relation already exists using a custom RPC function
     const { data: existing, error: checkError } = await supabase
-      .from('related_tasks')
-      .select('id')
-      .eq('task_id', taskId)
-      .eq('related_task_id', relatedTaskId)
-      .maybeSingle();
+      .rpc('check_task_relation_exists', { 
+        task_id_param: taskId, 
+        related_task_id_param: relatedTaskId 
+      });
     
     if (checkError) {
       toast.error(`Error checking existing relation: ${checkError.message}`);
@@ -71,11 +68,11 @@ export const linkTask = async (taskId: number, relatedTaskId: number): Promise<b
       return true;
     }
     
+    // Use a custom RPC function to insert the relation
     const { error } = await supabase
-      .from('related_tasks')
-      .insert({
-        task_id: taskId,
-        related_task_id: relatedTaskId,
+      .rpc('link_related_task', {
+        task_id_param: taskId,
+        related_task_id_param: relatedTaskId
       });
     
     if (error) {
@@ -95,11 +92,12 @@ export const linkTask = async (taskId: number, relatedTaskId: number): Promise<b
 // Unlink a task from another task
 export const unlinkTask = async (taskId: number, relatedTaskId: number): Promise<boolean> => {
   try {
+    // Use a custom RPC function to delete the relation
     const { error } = await supabase
-      .from('related_tasks')
-      .delete()
-      .eq('task_id', taskId)
-      .eq('related_task_id', relatedTaskId);
+      .rpc('unlink_related_task', {
+        task_id_param: taskId,
+        related_task_id_param: relatedTaskId
+      });
     
     if (error) {
       toast.error(`Error unlinking task: ${error.message}`);

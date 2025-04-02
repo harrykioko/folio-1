@@ -237,7 +237,7 @@ const LinkTaskModal: React.FC<LinkTaskModalProps> = ({
                     <div className="flex items-center gap-2 ml-2">
                       {assignee && (
                         <Avatar className="h-6 w-6">
-                          <AvatarImage src={assignee.avatar_url || ''} alt={assignee.full_name || 'User'} />
+                          <AvatarImage src={assignee.avatar_url || undefined} alt={assignee.full_name || 'User'} />
                           <AvatarFallback className="text-xs">
                             {assignee.full_name ? getInitials(assignee.full_name) : 'U'}
                           </AvatarFallback>
