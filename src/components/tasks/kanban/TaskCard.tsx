@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Calendar, Tag } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Task } from "@/utils/tasks/types";
+import { useProjects } from "@/hooks/useProjects";
 
 interface TaskCardProps {
   task: Task;
@@ -16,6 +17,7 @@ interface TaskCardProps {
 
 const TaskCard: React.FC<TaskCardProps> = ({ task, getUserName, isDragging = false }) => {
   const navigate = useNavigate();
+  const { projects, isLoading: isLoadingProjects } = useProjects();
   
   const getPriorityColor = (priority: string) => {
     switch (priority.toLowerCase()) {
@@ -37,7 +39,16 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, getUserName, isDragging = fal
       .substring(0, 2);
   };
 
+  const getProjectName = (projectId: number | null) => {
+    if (!projectId) return null;
+    if (isLoadingProjects) return `P-${projectId}`;
+    
+    const project = projects?.find(p => p.id === projectId);
+    return project ? project.name : `P-${projectId}`;
+  };
+
   const assigneeName = getUserName(task.assigned_to);
+  const projectName = getProjectName(task.project_id);
 
   const handleClick = () => {
     navigate(`/tasks/${task.id}`);
@@ -88,10 +99,10 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, getUserName, isDragging = fal
               </div>
             )}
             
-            {task.project_id && (
+            {projectName && (
               <div className="flex items-center gap-1">
                 <Tag className="h-3 w-3" />
-                <span>P-{task.project_id}</span>
+                <span className="max-w-[80px] truncate">{projectName}</span>
               </div>
             )}
           </div>

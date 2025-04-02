@@ -1,8 +1,8 @@
-
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { TaskFormValues } from "@/components/tasks/form/TaskFormSchema";
+import { useProjects } from "@/hooks/useProjects";
 import { 
   createTask, 
   updateTask, 
@@ -28,6 +28,8 @@ export const useTaskDetail = () => {
   
   const projectIdFromQuery = searchParams.get('projectId');
   const isNewTask = location.pathname === "/tasks/new" || taskId === "new";
+  
+  const { projects, isLoading: isLoadingProjects } = useProjects();
   
   useEffect(() => {
     const loadTask = async () => {
@@ -66,7 +68,6 @@ export const useTaskDetail = () => {
     try {
       setIsSubmitting(true);
       
-      // Use the helper functions to ensure correct typing
       const priority = parseTaskPriority(data.priority);
       const status = parseTaskStatus(data.status);
       
@@ -93,7 +94,6 @@ export const useTaskDetail = () => {
         if (taskId) {
           await updateTask(Number(taskId), formattedData);
           
-          // Refresh the task data
           const updatedTask = await fetchTaskById(Number(taskId));
           setTask(updatedTask);
           
@@ -102,7 +102,6 @@ export const useTaskDetail = () => {
         }
       }
     } catch (error) {
-      // Toast is handled in the API functions
     } finally {
       setIsSubmitting(false);
     }
@@ -116,18 +115,24 @@ export const useTaskDetail = () => {
         navigate("/tasks");
       }
     } catch (error) {
-      // Toast is handled in the API function
     }
   };
 
-  // Format the task for display components if it exists
+  const getProjectName = (projectId: number | null) => {
+    if (!projectId) return "No Project";
+    if (isLoadingProjects) return `Project #${projectId}`;
+    
+    const project = projects?.find(p => p.id === projectId);
+    return project ? project.name : `Project #${projectId}`;
+  };
+
   const formattedTask = task ? {
     id: task.id,
     title: task.title,
     description: task.description,
     status: formatTaskStatus(task.status),
     priority: task.priority.charAt(0).toUpperCase() + task.priority.slice(1),
-    project: task.project_id ? `Project #${task.project_id}` : "No Project",
+    project: task.project_id ? getProjectName(task.project_id) : "No Project",
     projectId: task.project_id,
     assignee: task.assigned_to,
     dueDate: task.deadline ? new Date(task.deadline).toLocaleDateString() : "No due date",
