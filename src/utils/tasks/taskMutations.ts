@@ -74,12 +74,17 @@ export const updateTask = async (id: number, updates: Partial<TaskFormData>): Pr
       throw new Error(`Invalid status value: ${updates.status}`);
     }
     
+    // Convert numeric string IDs to numbers if project_id is included
+    const formattedUpdates = { ...updates };
+    if (formattedUpdates.project_id && typeof formattedUpdates.project_id === 'string') {
+      formattedUpdates.project_id = parseInt(formattedUpdates.project_id, 10);
+    }
+    
     const { data, error } = await supabase
       .from('tasks')
-      .update(updates)
+      .update(formattedUpdates)
       .eq('id', id)
-      .select()
-      .single();
+      .select();
     
     if (error) {
       console.error("Supabase error:", error);
@@ -92,12 +97,12 @@ export const updateTask = async (id: number, updates: Partial<TaskFormData>): Pr
       throw error;
     }
     
-    if (!data) {
+    if (!data || data.length === 0) {
       toast.error("No data returned after updating task");
       throw new Error("Failed to update task: No data returned");
     }
     
-    return data as Task;
+    return data[0] as Task;
   } catch (error) {
     console.error("Error updating task:", error);
     if (error instanceof Error && !error.message.includes('User not authenticated')) {
