@@ -34,7 +34,7 @@ const ProjectDetailsContainer: React.FC = () => {
 
   useEffect(() => {
     const fetchProject = async () => {
-      // ✅ Short-circuit if it's a new project or ID is missing
+      // Short-circuit if it's a new project or ID is missing
       if (!effectiveId || effectiveId === "new") {
         setLoading(false);
         return;
@@ -103,19 +103,36 @@ const ProjectDetailsContainer: React.FC = () => {
     }
   };
 
+  // Add more detailed debug logs for the rendering decision
+  console.log("Rendering decision:", { 
+    loading, 
+    isNewProject, 
+    hasProject: !!project, 
+    hasProjectId: project?.id ? true : false,
+    hasError: !!error
+  });
+
   if (loading) return <ProjectDetailLoading />;
 
-  // ✅ HARD GUARD to prevent layout rendering without a valid project
-  if (!isNewProject && (!project || !project.id)) return null;
-
+  // Handle new project case immediately after loading check
   if (isNewProject) {
+    console.log("Rendering NewProjectView");
     return <NewProjectView onSubmit={handleCreate} />;
   }
 
+  // Error case - only show if we're not on the new project route
   if (error) {
+    console.log("Rendering ProjectNotFound due to error");
     return <ProjectNotFound error={error.message} />;
   }
 
+  // HARD GUARD to prevent layout rendering without a valid project
+  if (!project || !project.id) {
+    console.log("Rendering null because no valid project");
+    return <ProjectNotFound error="Project not found or invalid project data" />;
+  }
+
+  console.log("Rendering full project view for:", project.name);
   return (
     <div className="container mx-auto p-4 animate-fade-in">
       <ProjectHeader
