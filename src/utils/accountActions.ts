@@ -46,6 +46,7 @@ export const createAccount = async (data: AccountFormValues) => {
         url: data.url || null,
         password: data.savePassword && data.password ? data.password : null,
         project_id: data.projectId ? parseInt(data.projectId) : null,
+        owner_id: data.ownerId || null,
         renewal_date: data.expiryDate || null
       })
       .select('id')

@@ -4,23 +4,23 @@ import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessa
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Control } from "react-hook-form";
 import { AccountFormValues } from "@/schemas/accountSchema";
-import { useProjects } from "@/hooks/useProjects";
+import { useUsers } from "@/hooks/useUsers";
 import { Loader2 } from "lucide-react";
 
-interface AccountProjectFieldProps {
+interface AccountOwnerFieldProps {
   control: Control<AccountFormValues>;
 }
 
-const AccountProjectField: React.FC<AccountProjectFieldProps> = ({ control }) => {
-  const { projects, isLoading, error } = useProjects();
+const AccountOwnerField: React.FC<AccountOwnerFieldProps> = ({ control }) => {
+  const { users, isLoading, error } = useUsers();
 
   return (
     <FormField
       control={control}
-      name="projectId"
+      name="ownerId"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Associated Project</FormLabel>
+          <FormLabel>Account Owner</FormLabel>
           <Select
             onValueChange={field.onChange}
             value={field.value || ""}
@@ -30,25 +30,25 @@ const AccountProjectField: React.FC<AccountProjectFieldProps> = ({ control }) =>
                 {isLoading ? (
                   <div className="flex items-center gap-2">
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    <span>Loading projects...</span>
+                    <span>Loading users...</span>
                   </div>
                 ) : (
-                  <SelectValue placeholder="Select a project (optional)" />
+                  <SelectValue placeholder="Select an owner (optional)" />
                 )}
               </SelectTrigger>
             </FormControl>
             <SelectContent>
               <SelectItem value="">None</SelectItem>
-              {projects && projects.map(project => (
-                <SelectItem key={project.id.toString()} value={project.id.toString()}>
-                  {project.name}
+              {users && users.map(user => (
+                <SelectItem key={user.id} value={user.id}>
+                  {user.full_name || user.email}
                 </SelectItem>
               ))}
-              {error && <SelectItem value="" disabled>Error loading projects</SelectItem>}
+              {error && <SelectItem value="" disabled>Error loading users</SelectItem>}
             </SelectContent>
           </Select>
           <FormDescription>
-            Link this account to a specific project
+            Assign this account to a specific user
           </FormDescription>
           <FormMessage />
         </FormItem>
@@ -57,4 +57,4 @@ const AccountProjectField: React.FC<AccountProjectFieldProps> = ({ control }) =>
   );
 };
 
-export default AccountProjectField;
+export default AccountOwnerField;

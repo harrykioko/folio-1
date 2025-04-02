@@ -11,6 +11,7 @@ export const accountFormSchema = z.object({
   username: z.string().optional().nullable(),
   password: z.string().optional().nullable(),
   projectId: z.string().optional().nullable(),
+  ownerId: z.string().optional().nullable(),
   expiryDate: z.string().optional().nullable(),
   notes: z.string().optional().nullable(),
   savePassword: z.boolean().default(true),

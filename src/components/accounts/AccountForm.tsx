@@ -17,6 +17,7 @@ import AccountTypeSpecificFields from "./AccountTypeSpecificFields";
 import AccountCredentialsFields from "./AccountCredentialsFields";
 import SavePasswordField from "./SavePasswordField";
 import AccountProjectField from "./AccountProjectField";
+import AccountOwnerField from "./AccountOwnerField";
 import AccountExpiryField from "./AccountExpiryField";
 import AccountNotesField from "./AccountNotesField";
 
@@ -41,6 +42,7 @@ const AccountForm: React.FC<AccountFormProps> = ({ initialData, accountId }) => 
       username: "",
       password: "",
       projectId: "",
+      ownerId: "",
       expiryDate: "",
       notes: "",
       savePassword: true,
@@ -128,7 +130,12 @@ const AccountForm: React.FC<AccountFormProps> = ({ initialData, accountId }) => 
         />
 
         <SavePasswordField control={form.control} />
-        <AccountProjectField control={form.control} />
+        
+        <div className="grid gap-4 sm:grid-cols-2">
+          <AccountProjectField control={form.control} />
+          <AccountOwnerField control={form.control} />
+        </div>
+        
         <AccountExpiryField control={form.control} />
         <AccountNotesField control={form.control} />
 
