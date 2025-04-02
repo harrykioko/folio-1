@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { fetchProjectById, updateProject, deleteProject, Project } from "@/utils/supabaseProjects";
 import { ProjectFormValues } from "@/components/projects/form/ProjectFormSchema";
 import ProjectHeader from "@/components/projects/ProjectHeader";
-import ProjectContent from "@/components/projects/ProjectContent";
+import ProjectModernLayout from "@/components/projects/layout/ProjectModernLayout";
 import ProjectDetailLoading from "@/components/projects/ProjectDetailLoading";
 import ProjectNotFound from "@/components/projects/ProjectNotFound";
 import { toast } from "sonner";
@@ -83,11 +83,13 @@ const ProjectDetailsContainer: React.FC = () => {
         description={project.description || ""}
         status={project.status}
         projectId={project.id}
+        startDate={project.startDate || new Date().toISOString()}
+        dueDate={project.dueDate || new Date().toISOString()}
         setIsEditDialogOpen={setIsEditDialogOpen}
         setIsDeleteDialogOpen={setIsDeleteDialogOpen}
       />
       
-      <ProjectContent
+      <ProjectModernLayout
         project={project}
         onUpdate={handleUpdate}
         onDelete={handleDelete}
