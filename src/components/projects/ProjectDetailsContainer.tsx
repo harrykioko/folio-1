@@ -12,7 +12,6 @@ import { createProject } from "@/utils/supabaseProjects";
 import { toast } from "sonner";
 
 const ProjectDetailsContainer: React.FC = () => {
-  // STEP 1: Standardize param extraction
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [project, setProject] = useState<Project | null>(null);
@@ -23,30 +22,37 @@ const ProjectDetailsContainer: React.FC = () => {
 
   // Determine whether this is a new project or an existing one
   const isNewProject = id === "new";
-  const numericId = !isNewProject ? parseInt(id || "", 10) : null;
   
-  // Enhanced debug logging
-  console.log("ProjectDetailsContainer rendering with params:", { 
+  // Extra debug logging to track the issue
+  console.log("ProjectDetailsContainer - Initial Render:", { 
     id, 
     isNewProject, 
-    numericId, 
-    currentUrl: window.location.pathname 
+    currentPath: window.location.pathname 
   });
   
-  // STEP 2: Improve useEffect to prevent invalid fetch
   useEffect(() => {
-    // CRITICAL: Check for "new" first, before any other logic
+    // For "new" projects, we don't need to fetch anything
     if (isNewProject) {
-      console.log("New project view detected, skipping fetch and setting loading=false");
+      console.log("New project page detected, skipping fetch");
       setLoading(false);
-      setError(null); // Clear any previous errors
-      setProject(null); // Clear any previous project
+      setProject(null);
+      setError(null);
       return;
     }
     
-    // If we have an invalid ID, don't fetch anything
-    if (numericId === null || isNaN(numericId)) {
-      console.log("Invalid project ID detected:", { id, numericId });
+    // Skip fetch if no ID is provided
+    if (!id) {
+      console.log("No project ID provided");
+      setLoading(false);
+      setError(new Error("Invalid project ID: undefined"));
+      return;
+    }
+    
+    // Try to convert ID to number for existing projects
+    const numericId = parseInt(id, 10);
+    
+    if (isNaN(numericId)) {
+      console.log(`Invalid project ID (not a number): ${id}`);
       setLoading(false);
       setError(new Error(`Invalid project ID: ${id}`));
       return;
@@ -54,7 +60,7 @@ const ProjectDetailsContainer: React.FC = () => {
 
     const fetchProject = async () => {
       try {
-        console.log("Fetching project with ID:", numericId);
+        console.log(`Fetching project with ID: ${numericId}`);
         setLoading(true);
         const fetchedProject = await fetchProjectById(numericId);
         console.log("Project fetched successfully:", fetchedProject);
@@ -70,7 +76,7 @@ const ProjectDetailsContainer: React.FC = () => {
     };
 
     fetchProject();
-  }, [isNewProject, numericId, id]);
+  }, [id, isNewProject]);
 
   const handleUpdate = async (data: ProjectFormValues) => {
     if (!project) return;
@@ -87,17 +93,11 @@ const ProjectDetailsContainer: React.FC = () => {
   const handleCreate = async (data: ProjectFormValues) => {
     console.log("Creating new project with data:", data);
     try {
-      // Ensure all required fields are present
-      if (!data.name || !data.description) {
-        toast.error("Project name and description are required");
-        return;
-      }
-      
       const newProject = await createProject(data);
       console.log("Project created successfully:", newProject);
       toast.success("Project created successfully");
       
-      // Verify we got a valid ID back before navigating
+      // Navigate to the new project's details page
       if (newProject && newProject.id) {
         navigate(`/projects/${newProject.id}`);
       } else {
@@ -122,20 +122,18 @@ const ProjectDetailsContainer: React.FC = () => {
     }
   };
 
-  // STEP 3: Reorder conditional rendering to prevent premature fallback
-  // IMPORTANT: Log the state before making render decisions
-  console.log("Render decision state:", { 
+  // Log the current state before render decisions
+  console.log("Render state:", { 
     isNewProject, 
     loading, 
-    hasError: !!error,
+    hasError: !!error, 
     errorMessage: error?.message,
-    hasProject: !!project,
-    currentUrl: window.location.href
+    hasProject: !!project 
   });
 
-  // NEW PROJECT CHECK MUST COME FIRST - before loading check
+  // CRITICAL: Check for "new" project page FIRST before any other render conditions
   if (isNewProject) {
-    console.log("✅ Rendering NewProjectView for new project");
+    console.log("Rendering NewProjectView");
     return <NewProjectView onSubmit={handleCreate} />;
   }
   
@@ -145,19 +143,19 @@ const ProjectDetailsContainer: React.FC = () => {
     return <ProjectDetailLoading />;
   }
   
-  // Then handle error state
+  // Handle error state
   if (error) {
-    console.log("Rendering ProjectNotFound due to error:", error.message);
+    console.log("Rendering error state:", error.message);
     return <ProjectNotFound error={error.message} />;
   }
   
-  // Finally, check if we have a valid project
-  if (!project || !project.id) {
-    console.log("Rendering ProjectNotFound because no valid project found");
-    return <ProjectNotFound error="Project not found or invalid project data" />;
+  // Handle case where project is not found but no explicit error
+  if (!project) {
+    console.log("Rendering not found state (no project loaded)");
+    return <ProjectNotFound error="Project not found" />;
   }
 
-  console.log("Rendering full project view for:", project.name);
+  console.log("Rendering project details:", project.name);
   return (
     <div className="container mx-auto p-4 animate-fade-in">
       <ProjectHeader

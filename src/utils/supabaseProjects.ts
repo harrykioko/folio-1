@@ -1,5 +1,4 @@
 
-
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 import { ProjectFormValues } from "@/components/projects/form/ProjectFormSchema";
@@ -26,6 +25,8 @@ export type ProjectFormData = ProjectFormValues;
 
 // Fetch all projects
 export const fetchProjects = async () => {
+  console.log("fetchProjects called");
+  
   const { data, error } = await supabase
     .from('projects')
     .select('*')
@@ -36,42 +37,50 @@ export const fetchProjects = async () => {
     throw error;
   }
   
+  console.log("Projects fetched:", data?.length || 0);
   return data as Project[];
 };
 
 // Fetch a single project by ID
 export const fetchProjectById = async (id: number) => {
-  // Enhanced debug logging
+  // Comprehensive input validation
   console.log("fetchProjectById called with:", { id, type: typeof id });
   
-  // Safety check: don't try to fetch if id is invalid
-  if (id === undefined || id === null || isNaN(id)) {
-    const error = new Error(`Invalid project ID: ${id}`);
+  // Validate ID
+  if (id === undefined || id === null) {
+    const error = new Error(`Invalid project ID: undefined`);
     console.error(error);
     throw error;
   }
   
-  // Additional validation to ensure we're not querying with "new"
-  if (id.toString() === "new") {
+  if (isNaN(id)) {
+    const error = new Error(`Invalid project ID (not a number): ${id}`);
+    console.error(error);
+    throw error;
+  }
+  
+  // Ensure we're not trying to fetch with "new"
+  if (typeof id === 'string' && (id === 'new' || id.toLowerCase() === 'new')) {
     const error = new Error(`Cannot fetch project with ID "new"`);
     console.error(error);
     throw error;
   }
   
   try {
+    console.log(`Making Supabase query for project with ID: ${id}`);
     const { data, error } = await supabase
       .from('projects')
       .select('*')
       .eq('id', id)
-      .single();
+      .maybeSingle();
     
     if (error) {
-      console.error(`Error fetching project with id ${id}:`, error);
+      console.error(`Supabase returned an error for project ID ${id}:`, error);
       throw error;
     }
     
     if (!data) {
-      const notFoundError = new Error(`Project with ID ${id} not found`);
+      const notFoundError = new Error(`Project with ID ${id} not found in database`);
       console.error(notFoundError);
       throw notFoundError;
     }
@@ -99,12 +108,10 @@ export const createProject = async (project: ProjectFormValues) => {
     }
     
     // Extract only the fields that should be sent to the database
-    // We only need name, description, and status for the database
     const projectData = {
       name: project.name,
       description: project.description,
       status: project.status
-      // Additional fields can be added later as the database schema evolves
     };
     
     console.log("Submitting project data to Supabase:", projectData);
