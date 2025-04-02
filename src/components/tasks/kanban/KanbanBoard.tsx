@@ -56,10 +56,27 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({ tasks, refreshTasks }) => {
     
     if (task && task.status !== newStatus) {
       try {
-        await updateTask(taskId, { status: newStatus as 'todo' | 'in_progress' | 'done' });
-        refreshTasks();
-        toast.success(`Task moved to ${newStatus === 'todo' ? 'To Do' : newStatus === 'in_progress' ? 'In Progress' : 'Completed'}`);
+        // Ensure newStatus is one of the valid status values
+        if (newStatus === 'todo' || newStatus === 'in_progress' || newStatus === 'done') {
+          // Update UI optimistically
+          console.log(`Updating task ${taskId} status from ${task.status} to ${newStatus}`);
+          
+          // Make API call
+          await updateTask(taskId, { 
+            status: newStatus as 'todo' | 'in_progress' | 'done' 
+          });
+          
+          // Refresh tasks after successful update
+          await refreshTasks();
+          
+          // Show success message
+          toast.success(`Task moved to ${newStatus === 'todo' ? 'To Do' : newStatus === 'in_progress' ? 'In Progress' : 'Completed'}`);
+        } else {
+          console.error(`Invalid status value: ${newStatus}`);
+          toast.error("Invalid status value");
+        }
       } catch (error) {
+        console.error("Failed to update task status:", error);
         toast.error("Failed to update task status");
       }
     }

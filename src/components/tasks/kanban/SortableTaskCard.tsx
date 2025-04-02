@@ -29,6 +29,7 @@ export function SortableTaskCard({ task, getUserName }: SortableTaskCardProps) {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.4 : 1,
+    zIndex: isDragging ? 10 : 'auto'
   };
 
   return (
@@ -37,7 +38,7 @@ export function SortableTaskCard({ task, getUserName }: SortableTaskCardProps) {
       style={style}
       {...attributes}
       {...listeners}
-      className={`touch-none ${isDragging ? 'z-10' : ''}`}
+      className="touch-none"
     >
       <TaskCard 
         task={task} 

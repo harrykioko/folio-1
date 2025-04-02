@@ -66,6 +66,14 @@ export const updateTask = async (id: number, updates: Partial<TaskFormData>): Pr
       throw new Error('User not authenticated');
     }
     
+    console.log(`Updating task ${id} with:`, updates);
+    
+    // Ensure status is valid if it's being updated
+    if (updates.status && !['todo', 'in_progress', 'done'].includes(updates.status)) {
+      toast.error(`Invalid status value: ${updates.status}`);
+      throw new Error(`Invalid status value: ${updates.status}`);
+    }
+    
     const { data, error } = await supabase
       .from('tasks')
       .update(updates)
@@ -74,6 +82,7 @@ export const updateTask = async (id: number, updates: Partial<TaskFormData>): Pr
       .single();
     
     if (error) {
+      console.error("Supabase error:", error);
       if (error.code === '42501') {
         toast.error("Permission denied: Task update failed due to security policy. Please check you have the right access level.");
       } else {
@@ -83,8 +92,14 @@ export const updateTask = async (id: number, updates: Partial<TaskFormData>): Pr
       throw error;
     }
     
+    if (!data) {
+      toast.error("No data returned after updating task");
+      throw new Error("Failed to update task: No data returned");
+    }
+    
     return data as Task;
   } catch (error) {
+    console.error("Error updating task:", error);
     if (error instanceof Error && !error.message.includes('User not authenticated')) {
       toast.error("Failed to update task. Please try again later.");
     }
