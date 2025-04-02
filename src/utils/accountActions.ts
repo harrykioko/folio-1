@@ -42,6 +42,10 @@ export const createAccount = async (data: AccountFormValues) => {
     const { data: sessionData } = await supabase.auth.getSession();
     console.log("Current auth session:", sessionData);
     
+    if (!sessionData.session) {
+      throw new Error("You must be logged in to create an account. Please sign in and try again.");
+    }
+    
     // Step 1: Insert the base account data
     console.log("Inserting base account data");
     const { data: accountData, error: accountError } = await supabase
@@ -73,7 +77,7 @@ export const createAccount = async (data: AccountFormValues) => {
     console.log("Account created with ID:", accountId);
 
     // Step 2: Insert type-specific data based on account type
-    if (data.type === "Domain" && (data.hostedOn || data.renewalCost !== null)) {
+    if (data.type === "Domain" && (data.hostedOn || data.renewalCost !== undefined)) {
       console.log("Inserting domain details");
       const { error: domainError } = await supabase
         .from('account_domains')
@@ -106,7 +110,7 @@ export const createAccount = async (data: AccountFormValues) => {
       }
     }
 
-    if (data.type === "Service" && data.monthlyCost !== null) {
+    if (data.type === "Service" && data.monthlyCost !== undefined) {
       console.log("Inserting service details");
       const { error: serviceError } = await supabase
         .from('account_services')

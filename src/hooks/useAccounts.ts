@@ -14,6 +14,12 @@ export function useAccounts() {
       setIsLoading(true);
       setError(null);
       
+      // Check authentication status first
+      const { data: authData } = await supabase.auth.getSession();
+      if (!authData.session) {
+        console.warn("User not authenticated. Some features may not work properly.");
+      }
+      
       console.log("Fetching accounts from view...");
       const { data: viewData, error: viewError } = await supabase
         .from('account_details')

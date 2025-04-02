@@ -20,6 +20,27 @@ const AccountDetails: React.FC = () => {
   const [account, setAccount] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [initialFormValues, setInitialFormValues] = useState<AccountFormValues | undefined>(undefined);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // Check authentication status
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data } = await supabase.auth.getSession();
+      console.log("Auth session on account details page:", data);
+      setIsAuthenticated(!!data.session);
+      
+      if (!data.session) {
+        toast({
+          title: "Authentication Required",
+          description: "You need to be logged in to manage accounts.",
+          variant: "destructive"
+        });
+        navigate("/login");
+      }
+    };
+    
+    checkAuth();
+  }, [navigate]);
 
   // Fetch account data
   useEffect(() => {
@@ -69,18 +90,10 @@ const AccountDetails: React.FC = () => {
       }
     };
 
-    loadAccountData();
-  }, [accountId]);
-
-  // Also check authentication status
-  useEffect(() => {
-    const checkAuth = async () => {
-      const { data } = await supabase.auth.getSession();
-      console.log("Auth session on account details page:", data);
-    };
-    
-    checkAuth();
-  }, []);
+    if (isAuthenticated) {
+      loadAccountData();
+    }
+  }, [accountId, isAuthenticated, navigate]);
 
   if (loading) {
     return (
