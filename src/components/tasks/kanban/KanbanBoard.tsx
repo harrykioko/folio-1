@@ -29,7 +29,7 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({ tasks, refreshTasks }) => {
   // Group tasks by status
   const todoTasks = tasks.filter(task => task.status === 'todo');
   const inProgressTasks = tasks.filter(task => task.status === 'in_progress');
-  const doneTasks = tasks.filter(task => task.status === 'done');
+  const completedTasks = tasks.filter(task => task.status === 'completed');
 
   // Handle drag start
   const handleDragStart = (event: DragStartEvent) => {
@@ -57,13 +57,13 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({ tasks, refreshTasks }) => {
     if (task && task.status !== newStatus) {
       try {
         // Ensure newStatus is one of the valid status values
-        if (newStatus === 'todo' || newStatus === 'in_progress' || newStatus === 'done') {
+        if (newStatus === 'todo' || newStatus === 'in_progress' || newStatus === 'completed') {
           // Update UI optimistically
           console.log(`Updating task ${taskId} status from ${task.status} to ${newStatus}`);
           
           // Make API call
           await updateTask(taskId, { 
-            status: newStatus as 'todo' | 'in_progress' | 'done' 
+            status: newStatus as 'todo' | 'in_progress' | 'completed' 
           });
           
           // Refresh tasks after successful update
@@ -115,11 +115,11 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({ tasks, refreshTasks }) => {
           />
         </SortableContext>
 
-        <SortableContext items={doneTasks.map(task => task.id.toString())} strategy={verticalListSortingStrategy}>
+        <SortableContext items={completedTasks.map(task => task.id.toString())} strategy={verticalListSortingStrategy}>
           <KanbanColumn 
-            id="done" 
+            id="completed" 
             title="Completed" 
-            tasks={doneTasks}
+            tasks={completedTasks}
             getUserName={getUserName}
           />
         </SortableContext>

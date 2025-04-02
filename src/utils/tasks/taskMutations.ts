@@ -69,7 +69,7 @@ export const updateTask = async (id: number, updates: Partial<TaskFormData>): Pr
     console.log(`Updating task ${id} with:`, updates);
     
     // Ensure status is valid if it's being updated
-    if (updates.status && !['todo', 'in_progress', 'done'].includes(updates.status)) {
+    if (updates.status && !['todo', 'in_progress', 'completed'].includes(updates.status)) {
       toast.error(`Invalid status value: ${updates.status}`);
       throw new Error(`Invalid status value: ${updates.status}`);
     }

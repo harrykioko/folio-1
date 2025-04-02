@@ -6,7 +6,7 @@ export const formatTaskStatus = (status: Task['status']): string => {
   switch (status) {
     case 'todo': return 'To Do';
     case 'in_progress': return 'In Progress';
-    case 'done': return 'Completed';
+    case 'completed': return 'Completed';
     default: return status;
   }
 };
@@ -16,8 +16,7 @@ export const parseTaskStatus = (status: string): Task['status'] => {
   switch (status.toLowerCase()) {
     case 'to do': return 'todo';
     case 'in progress': return 'in_progress';
-    case 'completed':
-    case 'done': return 'done';
+    case 'completed': return 'completed';
     default: return 'todo';
   }
 };
