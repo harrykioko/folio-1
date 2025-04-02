@@ -10,7 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { DialogTrigger } from "@/components/ui/dialog";
+import { Dialog } from "@/components/ui/dialog";
 
 interface ProjectHeaderProps {
   name: string;
@@ -64,12 +64,12 @@ const ProjectHeader: React.FC<ProjectHeaderProps> = ({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DialogTrigger asChild>
+            <Dialog>
               <DropdownMenuItem onSelect={() => setIsEditDialogOpen(true)}>
                 <Pencil className="mr-2 h-4 w-4" />
                 Edit Project
               </DropdownMenuItem>
-            </DialogTrigger>
+            </Dialog>
             <DropdownMenuItem 
               className="text-destructive focus:text-destructive"
               onSelect={() => setIsDeleteDialogOpen(true)}

@@ -2,7 +2,6 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
-import { DialogContent } from "@/components/ui/dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CardTitle, CardDescription } from "@/components/ui/card";
 
@@ -16,7 +15,7 @@ const DeleteProjectDialog: React.FC<DeleteProjectDialogProps> = ({
   onDelete,
 }) => {
   return (
-    <DialogContent>
+    <>
       <CardTitle className="text-xl mb-2">Delete Project</CardTitle>
       <CardDescription className="mb-4">
         Are you sure you want to delete this project? This action cannot be undone.
@@ -38,7 +37,7 @@ const DeleteProjectDialog: React.FC<DeleteProjectDialogProps> = ({
           Delete Project
         </Button>
       </div>
-    </DialogContent>
+    </>
   );
 };
 

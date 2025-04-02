@@ -3,7 +3,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CalendarClock, Edit, Trash } from "lucide-react";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useUsers } from "@/hooks/useUsers";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -106,30 +106,10 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
               <Edit className="h-4 w-4 mr-2" />
               Edit
             </Button>
-            <Dialog open={false} onOpenChange={setIsDeleteDialogOpen}>
-              <DialogTrigger asChild>
-                <Button variant="destructive">
-                  <Trash className="h-4 w-4 mr-2" />
-                  Delete
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Are you sure you want to delete this task?</DialogTitle>
-                  <DialogDescription>
-                    This action cannot be undone. This will permanently delete the task and remove it from the system.
-                  </DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
-                    Cancel
-                  </Button>
-                  <Button variant="destructive" onClick={() => {}}>
-                    Delete
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+            <Button variant="destructive" onClick={() => setIsDeleteDialogOpen(true)}>
+              <Trash className="h-4 w-4 mr-2" />
+              Delete
+            </Button>
           </>
         )}
       </div>

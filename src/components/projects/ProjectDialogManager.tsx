@@ -48,12 +48,10 @@ const ProjectDialogManager: React.FC<ProjectDialogManagerProps> = ({
       </Dialog>
       
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent>
-          <DeleteProjectDialog 
-            onClose={() => setIsDeleteDialogOpen(false)}
-            onDelete={onDelete}
-          />
-        </DialogContent>
+        <DeleteProjectDialog 
+          onClose={() => setIsDeleteDialogOpen(false)}
+          onDelete={onDelete}
+        />
       </Dialog>
     </>
   );
