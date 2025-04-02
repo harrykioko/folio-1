@@ -98,13 +98,16 @@ const ProjectDetailsContainer: React.FC = () => {
   };
 
   if (loading) return <ProjectDetailLoading />;
-  
+
+  // ✅ HARD GUARD to prevent layout rendering without a valid project
+  if (!isNewProject && (!project || !project.id)) return null;
+
   if (isNewProject) {
     return <NewProjectView onSubmit={handleCreate} />;
   }
-  
-  if (error || !project) {
-    return <ProjectNotFound error={error ? error.message : "The requested project could not be found."} />;
+
+  if (error) {
+    return <ProjectNotFound error={error.message} />;
   }
 
   return (
