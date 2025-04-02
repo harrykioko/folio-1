@@ -1,71 +1,53 @@
 
-import { useState, useMemo } from "react";
-import { Account } from "@/utils/accountTypes";
-import { AccountFilters } from "@/schemas/accountSchema";
+import { useState, useEffect, useMemo } from "react";
+import { Account, AccountType } from "@/utils/accountTypes";
 
-export interface ExtendedAccountFilters extends AccountFilters {
-  platform: string | null;
-}
+export type AccountFilters = {
+  types: AccountType[];
+  projects: number[];
+};
 
-export const useAccountFiltering = (accounts: Account[]) => {
+export const useAccountFiltering = (initialAccounts: Account[] = []) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [filters, setFilters] = useState<ExtendedAccountFilters>({
-    type: null,
-    platform: null,
-    projectId: null,
-    expiryStatus: null
+  const [filters, setFilters] = useState<AccountFilters>({
+    types: [],
+    projects: [],
   });
-
-  const filteredAccounts = useMemo(() => {
-    return accounts.filter(account => {
-      const matchesSearch = 
+  
+  // Track active filters count for UI
+  const activeFiltersCount = useMemo(() => {
+    return filters.types.length + filters.projects.length;
+  }, [filters]);
+  
+  // Function to filter accounts based on search query and filters
+  const filterAccounts = (accounts: Account[]) => {
+    return accounts.filter((account) => {
+      // Search query filtering
+      const matchesSearch =
+        searchQuery === "" ||
         account.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        account.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (account.projectName && account.projectName.toLowerCase().includes(searchQuery.toLowerCase()));
-      
-      if (!matchesSearch) return false;
-      
-      if (filters.type && account.type !== filters.type) return false;
-      
-      if (filters.type === "SocialMedia" && filters.platform && account.platform !== filters.platform) {
-        return false;
-      }
-      
-      if (filters.projectId) {
-        if (filters.projectId === "none" && account.projectId) return false;
-        if (filters.projectId !== "none" && account.projectId?.toString() !== filters.projectId) return false;
-      }
-      
-      if (filters.expiryStatus) {
-        const today = new Date();
-        const thirtyDaysFromNow = new Date(today);
-        thirtyDaysFromNow.setDate(today.getDate() + 30);
-        
-        if (filters.expiryStatus === "expired") {
-          if (!account.expiryDate || new Date(account.expiryDate) >= today) return false;
-        } else if (filters.expiryStatus === "expiring-soon") {
-          if (!account.expiryDate || 
-              new Date(account.expiryDate) < today || 
-              new Date(account.expiryDate) > thirtyDaysFromNow) return false;
-        } else if (filters.expiryStatus === "active") {
-          if (!account.expiryDate || new Date(account.expiryDate) < today) return false;
-        } else if (filters.expiryStatus === "no-expiry") {
-          if (account.expiryDate) return false;
-        }
-      }
-      
-      return true;
-    });
-  }, [accounts, searchQuery, filters]);
+        (account.username && account.username.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (account.url && account.url.toLowerCase().includes(searchQuery.toLowerCase()));
 
-  const activeFiltersCount = Object.values(filters).filter(Boolean).length;
+      // Type filtering
+      const matchesType =
+        filters.types.length === 0 || filters.types.includes(account.type);
+
+      // Project filtering
+      const matchesProject =
+        filters.projects.length === 0 ||
+        (account.projectId && filters.projects.includes(account.projectId));
+
+      return matchesSearch && matchesType && matchesProject;
+    });
+  };
 
   return {
     searchQuery,
     setSearchQuery,
     filters,
     setFilters,
-    filteredAccounts,
-    activeFiltersCount
+    activeFiltersCount,
+    filterAccounts
   };
 };

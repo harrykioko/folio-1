@@ -59,7 +59,7 @@ const AccountsTable: React.FC<AccountsTableProps> = ({
         </TableHeader>
         <TableBody>
           {accounts.map((account) => (
-            <TableRow key={account.id}>
+            <TableRow key={account.id.toString()}>
               <TableCell className="font-medium">{account.name}</TableCell>
               <TableCell>
                 <Badge variant="secondary" className="flex w-fit items-center gap-1">
@@ -74,24 +74,26 @@ const AccountsTable: React.FC<AccountsTableProps> = ({
                 </Badge>
               </TableCell>
               <TableCell>
-                {account.projectName ? 
+                {account.projectId ? 
                   <Link to={`/projects/${account.projectId}`} className="text-primary hover:underline">
-                    {account.projectName}
+                    {account.projectName || `Project #${account.projectId}`}
                   </Link> : 
                   <span className="text-muted-foreground">—</span>
                 }
               </TableCell>
               <TableCell>
                 <div className="flex items-center gap-1">
-                  <span>{account.username}</span>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="h-6 w-6" 
-                    onClick={() => copyToClipboard(account.username, "Username")}
-                  >
-                    <Copy className="h-3 w-3" />
-                  </Button>
+                  <span>{account.username || "—"}</span>
+                  {account.username && (
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-6 w-6" 
+                      onClick={() => copyToClipboard(account.username, "Username")}
+                    >
+                      <Copy className="h-3 w-3" />
+                    </Button>
+                  )}
                 </div>
               </TableCell>
               <TableCell>
@@ -148,12 +150,14 @@ const AccountsTable: React.FC<AccountsTableProps> = ({
                       <Link to={`/accounts/${account.id}/edit`}>Edit</Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                      <a href={account.url} target="_blank" rel="noopener noreferrer" className="flex items-center">
-                        Visit
-                        <ExternalLink className="ml-2 h-4 w-4" />
-                      </a>
-                    </DropdownMenuItem>
+                    {account.url && (
+                      <DropdownMenuItem asChild>
+                        <a href={account.url} target="_blank" rel="noopener noreferrer" className="flex items-center">
+                          Visit
+                          <ExternalLink className="ml-2 h-4 w-4" />
+                        </a>
+                      </DropdownMenuItem>
+                    )}
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>

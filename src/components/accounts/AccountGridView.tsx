@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Account } from "@/utils/accountTypes";
 import { copyToClipboard } from "@/utils/accountActions";
-import { Globe, Github, Twitter, Instagram, Linkedin, AtSign } from "lucide-react";
+import { getTypeIcon, getPlatformIcon } from "@/utils/accountUtils";
 
 interface AccountGridViewProps {
   accounts: Account[];
@@ -42,25 +42,6 @@ const AccountGridView: React.FC<AccountGridViewProps> = ({
       </div>
     );
   }
-
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case 'domain':
-        return <Globe className="h-5 w-5" />;
-      case 'github':
-        return <Github className="h-5 w-5" />;
-      case 'twitter':
-        return <Twitter className="h-5 w-5" />;
-      case 'instagram':
-        return <Instagram className="h-5 w-5" />;
-      case 'linkedin':
-        return <Linkedin className="h-5 w-5" />;
-      case 'service':
-        return <AtSign className="h-5 w-5" />;
-      default:
-        return null;
-    }
-  };
 
   const isExpired = (date: string | undefined) => {
     if (!date) return false;
@@ -101,12 +82,18 @@ const AccountGridView: React.FC<AccountGridViewProps> = ({
       animate="show"
     >
       {accounts.map((account) => (
-        <motion.div key={account.id} variants={item} whileHover={{ y: -5 }} transition={{ duration: 0.2 }}>
+        <motion.div key={account.id.toString()} variants={item} whileHover={{ y: -5 }} transition={{ duration: 0.2 }}>
           <Card className="h-full flex flex-col backdrop-blur-xl bg-opacity-50 shadow-lg rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 hover:shadow-xl transition-all duration-300">
             <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
               <Badge variant="secondary" className="flex items-center gap-1 px-2 py-1">
-                {getTypeIcon(account.type)}
-                <span className="capitalize">{account.type}</span>
+                {account.type === "SocialMedia" && account.platform 
+                  ? getPlatformIcon(account.platform) 
+                  : getTypeIcon(account.type)}
+                <span className="capitalize">
+                  {account.type === "SocialMedia" && account.platform 
+                    ? account.platform 
+                    : account.type}
+                </span>
               </Badge>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -135,14 +122,14 @@ const AccountGridView: React.FC<AccountGridViewProps> = ({
             <CardContent className="flex flex-col flex-grow space-y-3">
               <CardTitle className="line-clamp-1 text-lg">{account.name}</CardTitle>
               
-              {account.projectName && (
+              {account.projectId && (
                 <div>
                   <span className="text-xs text-muted-foreground">Project:</span>
                   <Link 
                     to={`/projects/${account.projectId}`} 
                     className="ml-1 text-sm font-medium text-primary hover:underline"
                   >
-                    {account.projectName}
+                    {account.projectName || `Project #${account.projectId}`}
                   </Link>
                 </div>
               )}
@@ -214,8 +201,8 @@ const AccountGridView: React.FC<AccountGridViewProps> = ({
                 rel="noopener noreferrer"
                 className="text-primary hover:text-primary/80 text-sm flex items-center"
               >
-                {account.url.replace(/(^\w+:|^)\/\//, '').substring(0, 20)}
-                {account.url.replace(/(^\w+:|^)\/\//, '').length > 20 ? '...' : ''}
+                {account.url && account.url.replace(/(^\w+:|^)\/\//, '').substring(0, 20)}
+                {account.url && account.url.replace(/(^\w+:|^)\/\//, '').length > 20 ? '...' : ''}
                 <ExternalLink className="ml-1 h-3 w-3" />
               </a>
               
