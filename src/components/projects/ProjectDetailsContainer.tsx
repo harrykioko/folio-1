@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchProjectById, updateProject, deleteProject, Project } from "@/utils/supabaseProjects";
@@ -32,10 +31,18 @@ const ProjectDetailsContainer: React.FC = () => {
   
   // STEP 2: Improve useEffect to prevent invalid fetch
   useEffect(() => {
-    // If this is a new project or we have an invalid ID, don't fetch anything
-    if (isNewProject || numericId === null || isNaN(numericId)) {
-      console.log("Skipping fetch for new/invalid project:", { isNewProject, numericId });
+    // Important: If this is a new project, immediately set loading to false and do nothing else
+    if (isNewProject) {
+      console.log("New project detected, skipping fetch");
       setLoading(false);
+      return;
+    }
+    
+    // If we have an invalid ID, don't fetch anything
+    if (numericId === null || isNaN(numericId)) {
+      console.log("Skipping fetch for invalid project ID:", { numericId });
+      setLoading(false);
+      setError(new Error("Invalid project ID"));
       return;
     }
 
@@ -114,18 +121,18 @@ const ProjectDetailsContainer: React.FC = () => {
     hasProject: !!project
   });
 
-  // Loading state takes precedence
+  // NEW PROJECT CHECK MUST COME FIRST
+  if (isNewProject) {
+    console.log("Rendering NewProjectView for new project");
+    return <NewProjectView onSubmit={handleCreate} />;
+  }
+  
+  // Then handle loading state
   if (loading) {
     console.log("Rendering loading state");
     return <ProjectDetailLoading />;
   }
   
-  // Then check for new project before any other conditions
-  if (isNewProject) {
-    console.log("Rendering NewProjectView for new project");
-    return <NewProjectView onSubmit={handleCreate} />;
-  }
-
   // Then handle error state
   if (error) {
     console.log("Rendering ProjectNotFound due to error:", error.message);
