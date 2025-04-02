@@ -35,7 +35,7 @@ const AccountForm: React.FC<AccountFormProps> = ({ initialData, accountId }) => 
     resolver: zodResolver(accountFormSchema),
     defaultValues: initialData || {
       name: "",
-      type: "",
+      type: undefined, // Changed from empty string to undefined to match the union type
       platform: null,
       url: "",
       username: "",
