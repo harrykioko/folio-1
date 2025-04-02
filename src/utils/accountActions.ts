@@ -36,9 +36,14 @@ export const fetchAccountById = (accountId: string | undefined) => {
 // Create a new account in Supabase
 export const createAccount = async (data: AccountFormValues) => {
   try {
-    console.log("Creating account with data:", data);
+    console.log("Creating account with data:", JSON.stringify(data, null, 2));
+    
+    // Debug: check auth state
+    const { data: sessionData } = await supabase.auth.getSession();
+    console.log("Current auth session:", sessionData);
     
     // Step 1: Insert the base account data
+    console.log("Inserting base account data");
     const { data: accountData, error: accountError } = await supabase
       .from('accounts')
       .insert({
@@ -69,6 +74,7 @@ export const createAccount = async (data: AccountFormValues) => {
 
     // Step 2: Insert type-specific data based on account type
     if (data.type === "Domain" && (data.hostedOn || data.renewalCost !== null)) {
+      console.log("Inserting domain details");
       const { error: domainError } = await supabase
         .from('account_domains')
         .insert({
@@ -84,6 +90,7 @@ export const createAccount = async (data: AccountFormValues) => {
     }
 
     if (data.type === "SocialMedia" && data.platform) {
+      console.log("Inserting social media details");
       const { error: socialMediaError } = await supabase
         .from('account_social_media')
         .insert({
@@ -100,6 +107,7 @@ export const createAccount = async (data: AccountFormValues) => {
     }
 
     if (data.type === "Service" && data.monthlyCost !== null) {
+      console.log("Inserting service details");
       const { error: serviceError } = await supabase
         .from('account_services')
         .insert({

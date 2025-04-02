@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "@/hooks/use-toast";
 import { AccountFormValues } from "@/schemas/accountSchema";
 import { fetchAccountById } from "@/utils/accountActions";
+import { supabase } from "@/integrations/supabase/client";
 
 // Import components
 import AccountForm from "@/components/accounts/AccountForm";
@@ -25,10 +26,19 @@ const AccountDetails: React.FC = () => {
     const loadAccountData = () => {
       setLoading(true);
       try {
+        console.log("Loading account data for ID:", accountId);
+        
+        if (accountId === "new") {
+          console.log("Creating new account, no data to load");
+          setLoading(false);
+          return;
+        }
+        
         if (accountId) {
           const foundAccount = fetchAccountById(accountId);
           
           if (foundAccount) {
+            console.log("Found account:", foundAccount);
             setAccount(foundAccount);
             
             // Set form values
@@ -43,6 +53,8 @@ const AccountDetails: React.FC = () => {
               notes: foundAccount.notes || "",
               savePassword: true,
             });
+          } else {
+            console.log("Account not found for ID:", accountId);
           }
         }
       } catch (error) {
@@ -59,6 +71,16 @@ const AccountDetails: React.FC = () => {
 
     loadAccountData();
   }, [accountId]);
+
+  // Also check authentication status
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data } = await supabase.auth.getSession();
+      console.log("Auth session on account details page:", data);
+    };
+    
+    checkAuth();
+  }, []);
 
   if (loading) {
     return (
@@ -77,7 +99,7 @@ const AccountDetails: React.FC = () => {
           Back
         </Button>
         <h1 className="text-3xl font-bold tracking-tight">
-          {accountId ? "Account Details" : "Create New Account"}
+          {accountId && accountId !== "new" ? "Account Details" : "Create New Account"}
         </h1>
       </div>
 
@@ -92,14 +114,14 @@ const AccountDetails: React.FC = () => {
           <CardContent>
             <AccountForm 
               initialData={initialFormValues} 
-              accountId={accountId}
+              accountId={accountId !== "new" ? accountId : undefined}
             />
           </CardContent>
         </Card>
 
         <div className="space-y-6">
-          <ActivityLog accountId={accountId} />
-          <RelatedResources accountId={accountId} account={account} />
+          <ActivityLog accountId={accountId !== "new" ? accountId : undefined} />
+          <RelatedResources accountId={accountId !== "new" ? accountId : undefined} account={account} />
         </div>
       </div>
     </div>

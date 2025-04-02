@@ -13,36 +13,69 @@ export function useAccounts() {
     try {
       setIsLoading(true);
       setError(null);
-
-      const { data, error } = await supabase
+      
+      console.log("Fetching accounts from view...");
+      const { data: viewData, error: viewError } = await supabase
         .from('account_details')
         .select('*');
 
-      if (error) {
-        throw error;
+      if (viewError) {
+        console.error("Error fetching from view:", viewError);
+        
+        // Fall back to direct query if view fails
+        console.log("Falling back to direct query...");
+        const { data: directData, error: directError } = await supabase
+          .from('accounts')
+          .select('*');
+          
+        if (directError) {
+          throw directError;
+        }
+        
+        if (directData) {
+          console.log("Direct query succeeded, accounts:", directData.length);
+          const formattedAccounts: Account[] = directData.map((account) => ({
+            id: account.id || '',
+            name: account.name || 'Unnamed Account',
+            type: account.type || 'Domain',
+            url: account.url || '',
+            username: account.username || '',
+            password: account.password ? 'password123' : '', 
+            notes: '',
+            expiryDate: account.renewal_date,
+            projectId: account.project_id ? account.project_id.toString() : undefined,
+            projectName: '',
+          }));
+          
+          setAccounts(formattedAccounts);
+          return;
+        }
       }
 
-      // Transform the data to match our Account type
-      const formattedAccounts: Account[] = data.map((account) => ({
-        id: account.id || '',
-        name: account.name || 'Unnamed Account',
-        type: account.type || 'Domain',
-        url: account.url || '',
-        username: account.username || '',
-        password: account.password ? 'password123' : '', // Using dummy password as real passwords are stored encrypted
-        notes: '',
-        expiryDate: account.renewal_date,
-        projectId: account.project_id ? account.project_id.toString() : undefined,
-        projectName: '', // Would need to fetch this separately or in a join
-        platform: account.social_platform,
-        hostedOn: account.hosted_on,
-        renewalCost: account.renewal_cost,
-        monthlyCost: account.monthly_cost,
-        followers: account.followers,
-        impressions: account.impressions,
-      }));
+      if (viewData) {
+        console.log("View query succeeded, accounts:", viewData.length);
+        // Transform the data to match our Account type
+        const formattedAccounts: Account[] = viewData.map((account) => ({
+          id: account.id || '',
+          name: account.name || 'Unnamed Account',
+          type: account.type || 'Domain',
+          url: account.url || '',
+          username: account.username || '',
+          password: account.password ? 'password123' : '', 
+          notes: '',
+          expiryDate: account.renewal_date,
+          projectId: account.project_id ? account.project_id.toString() : undefined,
+          projectName: '', // Would need to fetch this separately or in a join
+          platform: account.social_platform,
+          hostedOn: account.hosted_on,
+          renewalCost: account.renewal_cost,
+          monthlyCost: account.monthly_cost,
+          followers: account.followers,
+          impressions: account.impressions,
+        }));
 
-      setAccounts(formattedAccounts);
+        setAccounts(formattedAccounts);
+      }
     } catch (err) {
       console.error('Error fetching accounts:', err);
       setError(err instanceof Error ? err : new Error('Failed to fetch accounts'));
