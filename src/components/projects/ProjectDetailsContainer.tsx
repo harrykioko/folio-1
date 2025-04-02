@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchProjectById, updateProject, deleteProject, Project } from "@/utils/supabaseProjects";
@@ -63,6 +64,12 @@ const ProjectDetailsContainer: React.FC = () => {
 
   const handleCreate = async (data: ProjectFormValues) => {
     try {
+      // Ensure all required fields are present
+      if (!data.name || !data.description) {
+        toast.error("Project name and description are required");
+        return;
+      }
+      
       const newProject = await createProject(data);
       toast.success("Project created successfully");
       navigate(`/projects/${newProject.id}`);

@@ -1,6 +1,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
+import { ProjectFormValues } from "@/components/projects/form/ProjectFormSchema";
 
 export type Project = {
   id: number;
@@ -19,10 +20,18 @@ export type Project = {
   social?: string[];
 }
 
+// We'll update this type to match our form values structure
 export type ProjectFormData = {
   name: string;
   description: string;
   status: Project["status"];
+  startDate?: string;
+  dueDate?: string;
+  githubRepo?: string;
+  domains?: string;
+  twitter?: string;
+  instagram?: string;
+  linkedin?: string;
 }
 
 // Fetch all projects
@@ -74,7 +83,7 @@ export const fetchProjectById = async (id: number | string) => {
 };
 
 // Create a new project
-export const createProject = async (project: ProjectFormData) => {
+export const createProject = async (project: ProjectFormValues) => {
   // Check if user is authenticated
   const { data: sessionData } = await supabase.auth.getSession();
   
@@ -82,9 +91,17 @@ export const createProject = async (project: ProjectFormData) => {
     throw new Error('You must be logged in to create a project');
   }
   
+  // Extract only the fields that should be sent to the database
+  const projectData = {
+    name: project.name,
+    description: project.description,
+    status: project.status
+    // Additional fields can be added later as the database schema evolves
+  };
+  
   const { data, error } = await supabase
     .from('projects')
-    .insert([project])
+    .insert([projectData])
     .select()
     .single();
   
@@ -97,10 +114,18 @@ export const createProject = async (project: ProjectFormData) => {
 };
 
 // Update an existing project
-export const updateProject = async (id: number, updates: Partial<ProjectFormData>) => {
+export const updateProject = async (id: number, updates: Partial<ProjectFormValues>) => {
+  // Extract only database fields from the updates
+  const projectUpdates = {
+    name: updates.name,
+    description: updates.description,
+    status: updates.status
+    // Add other fields as needed
+  };
+
   const { data, error } = await supabase
     .from('projects')
-    .update(updates)
+    .update(projectUpdates)
     .eq('id', id)
     .select()
     .single();
