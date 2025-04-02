@@ -104,7 +104,9 @@ const PromptDetail: React.FC<PromptDetailProps> = ({
                   <CardTitle className="text-2xl">{prompt.title}</CardTitle>
                   <Badge>{prompt.category}</Badge>
                 </div>
-                <CardDescription className="mt-1">{prompt.description}</CardDescription>
+                <CardDescription className="mt-1">
+                  {prompt.description || "No description provided"}
+                </CardDescription>
               </div>
               <div className="flex gap-2">
                 <Button variant="outline" size="sm" onClick={onEditClick}>

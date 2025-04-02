@@ -60,7 +60,9 @@ const PromptListView: React.FC<PromptListViewProps> = ({ prompts }) => {
                       {promptEffectiveness}
                     </Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground">{prompt.content.substring(0, 100)}...</p>
+                  <p className="text-sm text-muted-foreground">
+                    {prompt.description || "No description provided"}
+                  </p>
                   <div className="flex flex-wrap gap-1 pt-1">
                     {(prompt.tags || []).map(tag => (
                       <Badge key={tag} variant="outline" className="text-xs">

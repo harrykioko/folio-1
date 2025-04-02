@@ -38,10 +38,13 @@ const PromptGridView: React.FC<PromptGridViewProps> = ({ prompts }) => {
                 <Badge variant="secondary">{promptCategory}</Badge>
               </div>
               <p className="text-sm text-muted-foreground line-clamp-2">
-                {prompt.content.substring(0, 100)}...
+                {prompt.description || "No description provided"}
               </p>
             </CardHeader>
             <CardContent className="pb-2">
+              <p className="text-sm line-clamp-2 mb-2">
+                {prompt.content.substring(0, 100)}...
+              </p>
               <div className="flex flex-wrap gap-1 mb-2">
                 {(prompt.tags || []).map(tag => (
                   <Badge key={tag} variant="outline" className="text-xs">

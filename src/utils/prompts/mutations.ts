@@ -19,6 +19,7 @@ export const createPrompt = async (promptData: PromptFormData): Promise<Prompt> 
     const formattedPromptData = {
       name: promptData.name,
       content: promptData.content,
+      description: promptData.description || null,
       tags: promptData.tags || [],
       project_id: promptData.project_id || null,
       created_by: session.user.id,

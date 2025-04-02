@@ -29,7 +29,7 @@ const PromptDetails: React.FC = () => {
               title: fetchedPrompt.name, // Map the name field to title for form
               category: fetchedPrompt.content.includes("marketing") ? "Marketing" : 
                         fetchedPrompt.content.includes("content") ? "Content" : "Development",
-              description: "Generated prompt", // Default description
+              description: fetchedPrompt.description || "Generated prompt", // Use description from database
               prompt: fetchedPrompt.content,
               effectiveness: "Medium",
               dateCreated: fetchedPrompt.created_at,
@@ -83,6 +83,7 @@ const PromptDetails: React.FC = () => {
       const updates = {
         name: values.title, // Map title from form to name in database
         content: values.prompt,
+        description: values.description,
         tags: values.tags || [],
         project_id: values.projectId ? Number(values.projectId) : null
       };
@@ -94,6 +95,7 @@ const PromptDetails: React.FC = () => {
       setPrompt({
         ...prompt,
         title: updatedPrompt.name,
+        description: updatedPrompt.description || "No description provided",
         prompt: updatedPrompt.content,
         tags: updatedPrompt.tags || [],
         projectId: updatedPrompt.project_id

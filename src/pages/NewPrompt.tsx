@@ -50,6 +50,7 @@ const NewPrompt: React.FC = () => {
       const promptData = {
         name: values.title, // Map title from form to name field in database
         content: values.prompt,
+        description: values.description,
         tags: values.tags || [],
         project_id: values.projectId ? parseInt(values.projectId) : null
       };
