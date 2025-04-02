@@ -74,6 +74,7 @@ export type Database = {
           content: string
           created_at: string | null
           created_by: string | null
+          description: string | null
           id: number
           name: string | null
           project_id: number | null
@@ -84,6 +85,7 @@ export type Database = {
           content: string
           created_at?: string | null
           created_by?: string | null
+          description?: string | null
           id?: number
           name?: string | null
           project_id?: number | null
@@ -94,6 +96,7 @@ export type Database = {
           content?: string
           created_at?: string | null
           created_by?: string | null
+          description?: string | null
           id?: number
           name?: string | null
           project_id?: number | null
