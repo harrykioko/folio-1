@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -59,6 +60,13 @@ export const fetchProjectById = async (id: number | string) => {
 
 // Create a new project
 export const createProject = async (project: ProjectFormData) => {
+  // Check if user is authenticated
+  const { data: sessionData } = await supabase.auth.getSession();
+  
+  if (!sessionData.session) {
+    throw new Error('You must be logged in to create a project');
+  }
+  
   const { data, error } = await supabase
     .from('projects')
     .insert([project])

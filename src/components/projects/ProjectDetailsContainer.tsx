@@ -9,6 +9,7 @@ import ProjectNotFound from "@/components/projects/ProjectNotFound";
 import NewProjectView from "@/components/projects/NewProjectView";
 import ProjectContent from "@/components/projects/ProjectContent";
 import { getProjectById } from "@/utils/projectUtils"; // Import for fallback data
+import { useUser } from "@/hooks/useUser";
 
 const ProjectDetailsContainer: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>();
@@ -17,6 +18,7 @@ const ProjectDetailsContainer: React.FC = () => {
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { user } = useUser();
   
   // Check if we're on the new project route
   const isNewProject = location.pathname === "/projects/new" || projectId === "new";
@@ -88,7 +90,7 @@ const ProjectDetailsContainer: React.FC = () => {
         name: data.name,
         description: data.description,
         status: data.status,
-        // Store additional form data as metadata or in separate tables if needed
+        // The created_by field will be automatically filled by the RLS policy
       };
       
       // Call the createProject function from supabaseProjects utility
