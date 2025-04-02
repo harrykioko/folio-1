@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
@@ -13,6 +13,7 @@ import { handleDeleteAccount } from "@/utils/accountActions";
 // Import form components
 import AccountBasicFields from "./AccountBasicFields";
 import AccountTypeSelector from "./AccountTypeSelector";
+import AccountTypeSpecificFields from "./AccountTypeSpecificFields";
 import AccountCredentialsFields from "./AccountCredentialsFields";
 import SavePasswordField from "./SavePasswordField";
 import AccountProjectField from "./AccountProjectField";
@@ -34,6 +35,7 @@ const AccountForm: React.FC<AccountFormProps> = ({ initialData, accountId }) => 
     defaultValues: initialData || {
       name: "",
       type: "",
+      platform: null,
       url: "",
       username: "",
       password: "",
@@ -41,8 +43,30 @@ const AccountForm: React.FC<AccountFormProps> = ({ initialData, accountId }) => 
       expiryDate: "",
       notes: "",
       savePassword: true,
+      hostedOn: null,
+      renewalCost: null,
+      monthlyCost: null,
     },
   });
+
+  // Watch the account type to show/hide conditional fields
+  const accountType = form.watch("type");
+
+  // Reset type-specific fields when account type changes
+  useEffect(() => {
+    if (accountType) {
+      if (accountType !== "SocialMedia") {
+        form.setValue("platform", null);
+      }
+      if (accountType !== "Domain") {
+        form.setValue("hostedOn", null);
+        form.setValue("renewalCost", null);
+      }
+      if (accountType !== "Service") {
+        form.setValue("monthlyCost", null);
+      }
+    }
+  }, [accountType, form]);
 
   // Toggle password visibility
   const togglePasswordVisibility = () => {
@@ -70,6 +94,13 @@ const AccountForm: React.FC<AccountFormProps> = ({ initialData, accountId }) => 
           <AccountBasicFields control={form.control} />
           <AccountTypeSelector control={form.control} />
         </div>
+
+        {/* Type-specific fields */}
+        {accountType && (
+          <div className="grid gap-4 sm:grid-cols-2">
+            <AccountTypeSpecificFields control={form.control} accountType={accountType} />
+          </div>
+        )}
 
         <AccountCredentialsFields 
           control={form.control} 

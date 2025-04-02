@@ -18,7 +18,7 @@ const AccountTypeSelector: React.FC<AccountTypeSelectorProps> = ({ control }) =>
       name="type"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Account Type</FormLabel>
+          <FormLabel>Account Type <span className="text-red-500">*</span></FormLabel>
           <Select
             onValueChange={field.onChange}
             defaultValue={field.value}

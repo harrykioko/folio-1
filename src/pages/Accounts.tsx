@@ -20,7 +20,9 @@ import {
   Twitter,
   Instagram,
   Linkedin,
-  AtSign
+  AtSign,
+  Facebook,
+  TiktokIcon
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -36,13 +38,14 @@ import AccountGridView from "@/components/accounts/AccountGridView";
 import ViewToggle from "@/components/accounts/ViewToggle";
 import { accountsData } from "@/utils/accountData";
 import { AccountFilters as AccountFiltersType } from "@/schemas/accountSchema";
-import { getTypeIcon } from "@/utils/accountIcons";
+import { getTypeIcon, getPlatformIcon } from "@/utils/accountIcons";
 
 const Accounts: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [passwordVisibility, setPasswordVisibility] = useState<Record<string, boolean>>({});
-  const [filters, setFilters] = useState<AccountFiltersType>({
+  const [filters, setFilters] = useState<AccountFiltersType & { platform: string | null }>({
     type: null,
+    platform: null,
     projectId: null,
     expiryStatus: null
   });
@@ -57,6 +60,11 @@ const Accounts: React.FC = () => {
     if (!matchesSearch) return false;
     
     if (filters.type && account.type !== filters.type) return false;
+    
+    // Filter by platform if type is SocialMedia and platform filter is set
+    if (filters.type === "SocialMedia" && filters.platform && account.platform !== filters.platform) {
+      return false;
+    }
     
     if (filters.projectId) {
       if (filters.projectId === "none" && account.projectId) return false;
@@ -249,13 +257,14 @@ const AccountsTable: React.FC<AccountsTableProps> = ({
               <TableCell className="font-medium">{account.name}</TableCell>
               <TableCell>
                 <Badge variant="secondary" className="flex w-fit items-center gap-1">
-                  {getTypeIcon(account.type) === 'Globe' && <Globe className="h-4 w-4" />}
-                  {getTypeIcon(account.type) === 'Github' && <Github className="h-4 w-4" />}
-                  {getTypeIcon(account.type) === 'Twitter' && <Twitter className="h-4 w-4" />}
-                  {getTypeIcon(account.type) === 'Instagram' && <Instagram className="h-4 w-4" />}
-                  {getTypeIcon(account.type) === 'Linkedin' && <Linkedin className="h-4 w-4" />}
-                  {getTypeIcon(account.type) === 'AtSign' && <AtSign className="h-4 w-4" />}
-                  <span className="capitalize">{account.type}</span>
+                  {account.type === "SocialMedia" && account.platform 
+                    ? getPlatformIcon(account.platform) 
+                    : getTypeIcon(account.type)}
+                  <span className="capitalize">
+                    {account.type === "SocialMedia" && account.platform 
+                      ? account.platform 
+                      : account.type}
+                  </span>
                 </Badge>
               </TableCell>
               <TableCell>

@@ -5,3 +5,4 @@ export * from './accountIcons';
 export * from './projectData';
 export * from './accountData';
 export * from './accountActions';
+export * from '../components/icons/TiktokIcon';

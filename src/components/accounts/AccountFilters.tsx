@@ -18,19 +18,22 @@ import {
 import { 
   SlidersHorizontal, 
   X,
-  CalendarClock
+  CalendarClock,
+  Hash
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { accountTypes, projects } from "@/utils/accountUtils";
+import { accountTypes, socialPlatforms, projects } from "@/utils/accountUtils";
 
 interface AccountFiltersProps {
   filters: {
     type: string | null;
+    platform: string | null;
     projectId: string | null;
     expiryStatus: string | null;
   };
   setFilters: React.Dispatch<React.SetStateAction<{
     type: string | null;
+    platform: string | null;
     projectId: string | null;
     expiryStatus: string | null;
   }>>;
@@ -45,6 +48,7 @@ const AccountFilters: React.FC<AccountFiltersProps> = ({
   const handleReset = () => {
     setFilters({
       type: null,
+      platform: null,
       projectId: null,
       expiryStatus: null
     });
@@ -85,7 +89,12 @@ const AccountFilters: React.FC<AccountFiltersProps> = ({
             <Label htmlFor="type-filter">Account Type</Label>
             <Select
               value={filters.type || "all-types"}
-              onValueChange={(value) => setFilters(prev => ({ ...prev, type: value === "all-types" ? null : value }))}
+              onValueChange={(value) => setFilters(prev => ({ 
+                ...prev, 
+                type: value === "all-types" ? null : value,
+                // Reset platform when changing type
+                platform: value !== "SocialMedia" ? null : prev.platform 
+              }))}
             >
               <SelectTrigger id="type-filter">
                 <SelectValue placeholder="All types" />
@@ -100,6 +109,32 @@ const AccountFilters: React.FC<AccountFiltersProps> = ({
               </SelectContent>
             </Select>
           </div>
+
+          {/* Social Media Platform filter - only show when type is SocialMedia */}
+          {filters.type === "SocialMedia" && (
+            <div className="space-y-2">
+              <Label htmlFor="platform-filter">Platform</Label>
+              <Select
+                value={filters.platform || "all-platforms"}
+                onValueChange={(value) => setFilters(prev => ({ 
+                  ...prev, 
+                  platform: value === "all-platforms" ? null : value 
+                }))}
+              >
+                <SelectTrigger id="platform-filter">
+                  <SelectValue placeholder="All platforms" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="all-platforms">All platforms</SelectItem>
+                    {socialPlatforms.map((platform) => (
+                      <SelectItem key={platform.id} value={platform.id}>{platform.name}</SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           
           <div className="space-y-2">
             <Label htmlFor="project-filter">Project</Label>
