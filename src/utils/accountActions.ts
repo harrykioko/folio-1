@@ -3,6 +3,8 @@ import { toast } from "@/hooks/use-toast";
 import { accountsData } from './accountData';
 import { supabase } from "@/integrations/supabase/client";
 import { AccountFormValues } from "@/schemas/accountSchema";
+import { AccountType, SocialPlatform } from "@/utils/accountTypes";
+import { Database } from "@/integrations/supabase/types";
 
 // Copy to clipboard function
 export const copyToClipboard = (text: string, type: string) => {
@@ -39,7 +41,7 @@ export const createAccount = async (data: AccountFormValues) => {
       .from('accounts')
       .insert({
         name: data.name,
-        type: data.type,
+        type: data.type as Database["public"]["Enums"]["account_type"],
         username: data.username || null,
         url: data.url || null,
         password: data.savePassword && data.password ? data.password : null,
@@ -77,7 +79,7 @@ export const createAccount = async (data: AccountFormValues) => {
         .from('account_social_media')
         .insert({
           account_id: accountId,
-          platform: data.platform,
+          platform: data.platform as Database["public"]["Enums"]["social_platform"],
           followers: data.followers || null,
           impressions: data.impressions || null
         });

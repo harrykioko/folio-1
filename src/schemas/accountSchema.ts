@@ -5,8 +5,8 @@ import { AccountType, SocialPlatform } from "@/utils/accountTypes";
 // Create an account form schema with Zod
 export const accountFormSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  type: z.string().min(1, "Account type is required"),
-  platform: z.string().nullable().optional(),
+  type: z.enum(["Domain", "SocialMedia", "Email", "Repository", "Service"]),
+  platform: z.enum(["Instagram", "Facebook", "LinkedIn", "Twitter", "TikTok", "Pinterest"]).nullable().optional(),
   url: z.string().optional().nullable(),
   username: z.string().optional().nullable(),
   password: z.string().optional().nullable(),

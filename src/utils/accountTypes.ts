@@ -27,21 +27,21 @@ export interface Account {
 export type AccountType = Database["public"]["Enums"]["account_type"];
 export type SocialPlatform = Database["public"]["Enums"]["social_platform"];
 
-// Available account types
+// Available account types with stricter typing
 export const accountTypes = [
-  { id: "Domain", name: "Domain" },
-  { id: "SocialMedia", name: "Social Media" },
-  { id: "Email", name: "Email" },
-  { id: "Repository", name: "Repository" },
-  { id: "Service", name: "Service/Platform" }
+  { id: "Domain" as const, name: "Domain" },
+  { id: "SocialMedia" as const, name: "Social Media" },
+  { id: "Email" as const, name: "Email" },
+  { id: "Repository" as const, name: "Repository" },
+  { id: "Service" as const, name: "Service/Platform" }
 ];
 
-// Available social media platforms
+// Available social media platforms with stricter typing
 export const socialPlatforms = [
-  { id: "Instagram", name: "Instagram" },
-  { id: "Facebook", name: "Facebook" },
-  { id: "LinkedIn", name: "LinkedIn" },
-  { id: "Twitter", name: "Twitter" },
-  { id: "TikTok", name: "TikTok" },
-  { id: "Pinterest", name: "Pinterest" }
+  { id: "Instagram" as const, name: "Instagram" },
+  { id: "Facebook" as const, name: "Facebook" },
+  { id: "LinkedIn" as const, name: "LinkedIn" },
+  { id: "Twitter" as const, name: "Twitter" },
+  { id: "TikTok" as const, name: "TikTok" },
+  { id: "Pinterest" as const, name: "Pinterest" }
 ];
