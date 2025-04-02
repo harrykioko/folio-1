@@ -103,38 +103,40 @@ const TaskActivityFeed: React.FC<TaskActivityFeedProps> = ({ taskId }) => {
   }
   
   return (
-    <ScrollArea className="max-h-[250px] rounded-md">
-      <div className="space-y-4 pr-4">
-        {activities.map((activity, index) => {
-          const userInfo = getUserInfo(activity.created_by);
-          
-          return (
-            <div key={activity.id}>
-              <div className="flex gap-4">
-                <Avatar className="h-8 w-8">
-                  <AvatarFallback>{userInfo.initials}</AvatarFallback>
-                </Avatar>
-                
-                <div className="flex-1">
-                  <div className="flex justify-between">
-                    <div className="font-medium">{userInfo.name}</div>
-                    <div className="text-sm text-muted-foreground">
-                      {formatDate(activity.created_at)}
-                    </div>
-                  </div>
+    <div className="h-[250px]">
+      <ScrollArea className="h-full w-full rounded-md">
+        <div className="space-y-4 pr-4 pb-2">
+          {activities.map((activity, index) => {
+            const userInfo = getUserInfo(activity.created_by);
+            
+            return (
+              <div key={activity.id}>
+                <div className="flex gap-4">
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback>{userInfo.initials}</AvatarFallback>
+                  </Avatar>
                   
-                  <p className="text-sm mt-1">{activity.message}</p>
+                  <div className="flex-1">
+                    <div className="flex justify-between">
+                      <div className="font-medium">{userInfo.name}</div>
+                      <div className="text-sm text-muted-foreground">
+                        {formatDate(activity.created_at)}
+                      </div>
+                    </div>
+                    
+                    <p className="text-sm mt-1">{activity.message}</p>
+                  </div>
                 </div>
+                
+                {index < activities.length - 1 && (
+                  <Separator className="my-4" />
+                )}
               </div>
-              
-              {index < activities.length - 1 && (
-                <Separator className="my-4" />
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </ScrollArea>
+            );
+          })}
+        </div>
+      </ScrollArea>
+    </div>
   );
 };
 

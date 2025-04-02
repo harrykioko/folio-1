@@ -112,16 +112,18 @@ const TaskComments: React.FC<TaskCommentsProps> = ({ taskId }) => {
         onCommentAdded={handleCommentAdded}
       />
       
-      <ScrollArea className="max-h-[320px] rounded-md">
-        <CommentList
-          comments={comments}
-          isLoading={isLoading}
-          currentUser={currentUser}
-          getUserInfo={getUserInfo}
-          formatTimeAgo={formatTimeAgo}
-          onDeleteComment={handleDeleteComment}
-        />
-      </ScrollArea>
+      <div className="h-[320px]">
+        <ScrollArea className="h-full w-full rounded-md">
+          <CommentList
+            comments={comments}
+            isLoading={isLoading}
+            currentUser={currentUser}
+            getUserInfo={getUserInfo}
+            formatTimeAgo={formatTimeAgo}
+            onDeleteComment={handleDeleteComment}
+          />
+        </ScrollArea>
+      </div>
     </div>
   );
 };
