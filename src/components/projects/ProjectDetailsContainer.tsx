@@ -112,23 +112,27 @@ const ProjectDetailsContainer: React.FC = () => {
     hasError: !!error
   });
 
-  if (loading) return <ProjectDetailLoading />;
-
-  // Handle new project case immediately after loading check
+  // CRITICAL: Handle the "new" case first, before any other checks
   if (isNewProject) {
-    console.log("Rendering NewProjectView");
+    console.log("Rendering NewProjectView for new project");
     return <NewProjectView onSubmit={handleCreate} />;
   }
 
-  // Error case - only show if we're not on the new project route
+  // Then check loading state
+  if (loading) {
+    console.log("Rendering loading state");
+    return <ProjectDetailLoading />;
+  }
+
+  // Then check error state
   if (error) {
-    console.log("Rendering ProjectNotFound due to error");
+    console.log("Rendering ProjectNotFound due to error:", error.message);
     return <ProjectNotFound error={error.message} />;
   }
 
-  // HARD GUARD to prevent layout rendering without a valid project
+  // Finally, check if we have a valid project
   if (!project || !project.id) {
-    console.log("Rendering null because no valid project");
+    console.log("Rendering ProjectNotFound because no valid project found");
     return <ProjectNotFound error="Project not found or invalid project data" />;
   }
 
