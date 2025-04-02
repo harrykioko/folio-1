@@ -23,6 +23,12 @@ const ProjectDetailsContainer: React.FC = () => {
   const effectiveId = id || projectId;
   const isNewProject = effectiveId === "new";
   
+  // Add debug logs to inspect values on mount
+  console.log("DEBUG effectiveId:", effectiveId);
+  console.log("DEBUG isNewProject:", isNewProject);
+  console.log("DEBUG loading:", loading);
+  console.log("DEBUG project:", project);
+  
   // Add debug log to confirm route parameters
   console.log("ProjectDetailsContainer params:", { id, projectId, effectiveId });
 
