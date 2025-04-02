@@ -10,7 +10,7 @@ import {
   Facebook,
   Database as DatabaseIcon,
 } from "lucide-react";
-import { TiktokIcon } from "./accountUtils";
+import { TiktokIcon } from "../components/icons/TiktokIcon";
 
 export const getTypeIcon = (type: string) => {
   switch (type) {
