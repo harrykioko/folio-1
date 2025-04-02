@@ -29,14 +29,15 @@ export const recordTaskActivity = async (activityData: TaskActivityFormData): Pr
       return null;
     }
     
-    const { data, error } = await supabase
-      .from('task_activity')
+    // Using type assertion to bypass TypeScript errors until Supabase types are updated
+    const { data, error } = await (supabase
+      .from('task_activity' as any)
       .insert([{
         task_id: activityData.task_id,
         type: activityData.type,
         message: activityData.message,
         created_by: session.session.user.id
-      }])
+      }]) as any)
       .select()
       .single();
     
@@ -57,11 +58,12 @@ export const recordTaskActivity = async (activityData: TaskActivityFormData): Pr
  */
 export const fetchTaskActivities = async (taskId: number): Promise<TaskActivity[]> => {
   try {
-    const { data, error } = await supabase
-      .from('task_activity')
+    // Using type assertion to bypass TypeScript errors until Supabase types are updated
+    const { data, error } = await (supabase
+      .from('task_activity' as any)
       .select('*')
       .eq('task_id', taskId)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false }) as any);
     
     if (error) {
       console.error("Error fetching task activities:", error);
