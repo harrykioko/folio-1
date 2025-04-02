@@ -40,6 +40,9 @@ export const fetchProjects = async () => {
 
 // Fetch a single project by ID
 export const fetchProjectById = async (id: number) => {
+  // STEP 4: Add debug logging
+  console.log("Calling fetchProjectById with:", id);
+  
   // Safety check: don't try to fetch if id is invalid
   if (id === undefined || id === null || isNaN(id)) {
     throw new Error("Invalid project ID");

@@ -12,6 +12,7 @@ import { createProject } from "@/utils/supabaseProjects";
 import { toast } from "sonner";
 
 const ProjectDetailsContainer: React.FC = () => {
+  // STEP 1: Standardize param extraction
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [project, setProject] = useState<Project | null>(null);
@@ -22,20 +23,25 @@ const ProjectDetailsContainer: React.FC = () => {
 
   // Determine whether this is a new project or an existing one
   const isNewProject = id === "new";
-  const numericId = isNewProject ? null : parseInt(id as string, 10);
+  const numericId = !isNewProject ? parseInt(id || "", 10) : null;
   
-  // Add debug logs for parameter handling
-  console.log("Route parameters:", { id, isNewProject, numericId });
+  // STEP 4: Add debug logging
+  console.log("Params:", { id });
+  console.log("isNewProject:", isNewProject);
+  console.log("numericId:", numericId);
   
+  // STEP 2: Improve useEffect to prevent invalid fetch
   useEffect(() => {
     // If this is a new project or we have an invalid ID, don't fetch anything
     if (isNewProject || numericId === null || isNaN(numericId)) {
+      console.log("Skipping fetch for new/invalid project:", { isNewProject, numericId });
       setLoading(false);
       return;
     }
 
     const fetchProject = async () => {
       try {
+        console.log("Fetching project with ID:", numericId);
         setLoading(true);
         const fetchedProject = await fetchProjectById(numericId);
         setProject(fetchedProject);
@@ -100,7 +106,7 @@ const ProjectDetailsContainer: React.FC = () => {
     }
   };
 
-  // Safe, ordered rendering logic
+  // STEP 3: Reorder conditional rendering to prevent premature fallback
   console.log("Rendering decision:", { 
     isNewProject, 
     loading, 
@@ -108,18 +114,18 @@ const ProjectDetailsContainer: React.FC = () => {
     hasProject: !!project
   });
 
-  // Handle new project first - this should take precedence over everything else
-  if (isNewProject) {
-    console.log("Rendering NewProjectView for new project");
-    return <NewProjectView onSubmit={handleCreate} />;
-  }
-  
-  // Then handle loading state
+  // Loading state takes precedence
   if (loading) {
     console.log("Rendering loading state");
     return <ProjectDetailLoading />;
   }
   
+  // Then check for new project before any other conditions
+  if (isNewProject) {
+    console.log("Rendering NewProjectView for new project");
+    return <NewProjectView onSubmit={handleCreate} />;
+  }
+
   // Then handle error state
   if (error) {
     console.log("Rendering ProjectNotFound due to error:", error.message);
