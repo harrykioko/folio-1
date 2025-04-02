@@ -7,7 +7,7 @@ export {
   fetchTasks,
   fetchTaskById,
   fetchTasksByProjectId 
-} from './taskQueries';
+} from './queries';
 
 // Export mutation functions
 export { 
