@@ -42,54 +42,57 @@ export const fetchProjects = async () => {
 };
 
 // Fetch a single project by ID
-export const fetchProjectById = async (id: number) => {
+export const fetchProjectById = async (id: number | string) => {
   // Comprehensive input validation
   console.log("fetchProjectById called with:", { id, type: typeof id });
   
-  // Validate ID
+  // Special case: check if ID is the string "new" (for new project route)
+  if (id === "new") {
+    const error = new Error(`Cannot fetch project with ID "new"`);
+    console.error(error);
+    throw error;
+  }
+  
+  // Validate ID is not undefined/null
   if (id === undefined || id === null) {
     const error = new Error(`Invalid project ID: undefined`);
     console.error(error);
     throw error;
   }
   
-  if (isNaN(id)) {
+  // Convert string ID to number if needed
+  const numericId = typeof id === 'string' ? parseInt(id, 10) : id;
+  
+  // Check if conversion resulted in a valid number
+  if (isNaN(numericId)) {
     const error = new Error(`Invalid project ID (not a number): ${id}`);
     console.error(error);
     throw error;
   }
   
-  // Ensure we're not trying to fetch with "new"
-  // Fix: Properly check if a string ID is 'new' without using toLowerCase on a number
-  if (typeof id === 'string' && id === 'new') {
-    const error = new Error(`Cannot fetch project with ID "new"`);
-    console.error(error);
-    throw error;
-  }
-  
   try {
-    console.log(`Making Supabase query for project with ID: ${id}`);
+    console.log(`Making Supabase query for project with ID: ${numericId}`);
     const { data, error } = await supabase
       .from('projects')
       .select('*')
-      .eq('id', id)
+      .eq('id', numericId)
       .maybeSingle();
     
     if (error) {
-      console.error(`Supabase returned an error for project ID ${id}:`, error);
+      console.error(`Supabase returned an error for project ID ${numericId}:`, error);
       throw error;
     }
     
     if (!data) {
-      const notFoundError = new Error(`Project with ID ${id} not found in database`);
+      const notFoundError = new Error(`Project with ID ${numericId} not found in database`);
       console.error(notFoundError);
       throw notFoundError;
     }
     
-    console.log(`Successfully fetched project ${id}:`, data);
+    console.log(`Successfully fetched project ${numericId}:`, data);
     return data as Project;
   } catch (err) {
-    console.error(`Failed to fetch project with ID ${id}:`, err);
+    console.error(`Failed to fetch project with ID ${numericId}:`, err);
     throw err;
   }
 };
