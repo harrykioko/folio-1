@@ -14,7 +14,13 @@ import {
   Copy,
   Eye,
   EyeOff,
-  ExternalLink
+  ExternalLink,
+  Globe,
+  Github,
+  Twitter,
+  Instagram,
+  Linkedin,
+  AtSign
 } from "lucide-react";
 import {
   DropdownMenu,
