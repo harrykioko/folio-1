@@ -14,6 +14,13 @@ import { toast } from "sonner";
 const ProjectDetailsContainer: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  
+  // ✅ Block premature renders before router is ready
+  if (typeof id === "undefined") {
+    console.log("Route param not yet available — skipping render");
+    return null;
+  }
+  
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
