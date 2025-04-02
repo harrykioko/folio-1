@@ -22,21 +22,13 @@ import {
   Hash
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { accountTypes, socialPlatforms, projects } from "@/utils/accountUtils";
+import { accountTypes, socialPlatforms } from "@/utils/accountUtils";
+import { projects } from "@/utils/projectData";
+import { AccountFilters } from "./useAccountFiltering";
 
 interface AccountFiltersProps {
-  filters: {
-    type: string | null;
-    platform: string | null;
-    projectId: string | null;
-    expiryStatus: string | null;
-  };
-  setFilters: React.Dispatch<React.SetStateAction<{
-    type: string | null;
-    platform: string | null;
-    projectId: string | null;
-    expiryStatus: string | null;
-  }>>;
+  filters: AccountFilters;
+  setFilters: React.Dispatch<React.SetStateAction<AccountFilters>>;
   activeFiltersCount: number;
 }
 
@@ -47,10 +39,10 @@ const AccountFilters: React.FC<AccountFiltersProps> = ({
 }) => {
   const handleReset = () => {
     setFilters({
-      type: null,
-      platform: null,
-      projectId: null,
-      expiryStatus: null
+      type: "",
+      platform: "",
+      projectId: "",
+      expiryStatus: ""
     });
   };
 
@@ -91,9 +83,9 @@ const AccountFilters: React.FC<AccountFiltersProps> = ({
               value={filters.type || "all-types"}
               onValueChange={(value) => setFilters(prev => ({ 
                 ...prev, 
-                type: value === "all-types" ? null : value,
+                type: value === "all-types" ? "" : value,
                 // Reset platform when changing type
-                platform: value !== "SocialMedia" ? null : prev.platform 
+                platform: value !== "SocialMedia" ? "" : prev.platform 
               }))}
             >
               <SelectTrigger id="type-filter">
@@ -118,7 +110,7 @@ const AccountFilters: React.FC<AccountFiltersProps> = ({
                 value={filters.platform || "all-platforms"}
                 onValueChange={(value) => setFilters(prev => ({ 
                   ...prev, 
-                  platform: value === "all-platforms" ? null : value 
+                  platform: value === "all-platforms" ? "" : value 
                 }))}
               >
                 <SelectTrigger id="platform-filter">
@@ -140,7 +132,7 @@ const AccountFilters: React.FC<AccountFiltersProps> = ({
             <Label htmlFor="project-filter">Project</Label>
             <Select
               value={filters.projectId || "all-projects"}
-              onValueChange={(value) => setFilters(prev => ({ ...prev, projectId: value === "all-projects" ? null : value }))}
+              onValueChange={(value) => setFilters(prev => ({ ...prev, projectId: value === "all-projects" ? "" : value }))}
             >
               <SelectTrigger id="project-filter">
                 <SelectValue placeholder="All projects" />
@@ -164,7 +156,7 @@ const AccountFilters: React.FC<AccountFiltersProps> = ({
             </Label>
             <Select
               value={filters.expiryStatus || "all-statuses"}
-              onValueChange={(value) => setFilters(prev => ({ ...prev, expiryStatus: value === "all-statuses" ? null : value }))}
+              onValueChange={(value) => setFilters(prev => ({ ...prev, expiryStatus: value === "all-statuses" ? "" : value }))}
             >
               <SelectTrigger id="expiry-filter">
                 <SelectValue placeholder="All statuses" />

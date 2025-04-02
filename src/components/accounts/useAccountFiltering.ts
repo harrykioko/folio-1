@@ -2,21 +2,26 @@
 import { useState, useEffect, useMemo } from "react";
 import { Account, AccountType } from "@/utils/accountTypes";
 
+// Updated to match the expected structure in Accounts.tsx
 export type AccountFilters = {
-  types: AccountType[];
-  projects: number[];
+  type: string;
+  platform: string;
+  projectId: string;
+  expiryStatus: string;
 };
 
 export const useAccountFiltering = (initialAccounts: Account[] = []) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<AccountFilters>({
-    types: [],
-    projects: [],
+    type: "",
+    platform: "",
+    projectId: "",
+    expiryStatus: "",
   });
   
   // Track active filters count for UI
   const activeFiltersCount = useMemo(() => {
-    return filters.types.length + filters.projects.length;
+    return Object.values(filters).filter(value => value !== "").length;
   }, [filters]);
   
   // Function to filter accounts based on search query and filters
@@ -31,14 +36,40 @@ export const useAccountFiltering = (initialAccounts: Account[] = []) => {
 
       // Type filtering
       const matchesType =
-        filters.types.length === 0 || filters.types.includes(account.type);
+        filters.type === "" || account.type === filters.type;
+
+      // Platform filtering
+      const matchesPlatform =
+        filters.platform === "" || 
+        (account.platform && account.platform === filters.platform);
 
       // Project filtering
       const matchesProject =
-        filters.projects.length === 0 ||
-        (account.projectId && filters.projects.includes(account.projectId));
+        filters.projectId === "" ||
+        (filters.projectId === "none" && !account.projectId) ||
+        (account.projectId && account.projectId.toString() === filters.projectId);
 
-      return matchesSearch && matchesType && matchesProject;
+      // Expiry status filtering
+      let matchesExpiryStatus = true;
+      if (filters.expiryStatus !== "") {
+        const today = new Date();
+        const thirtyDaysFromNow = new Date(today);
+        thirtyDaysFromNow.setDate(today.getDate() + 30);
+
+        if (filters.expiryStatus === "expired") {
+          matchesExpiryStatus = account.expiryDate ? new Date(account.expiryDate) < today : false;
+        } else if (filters.expiryStatus === "expiring-soon") {
+          matchesExpiryStatus = account.expiryDate ? 
+            (new Date(account.expiryDate) >= today && new Date(account.expiryDate) <= thirtyDaysFromNow) : 
+            false;
+        } else if (filters.expiryStatus === "active") {
+          matchesExpiryStatus = account.expiryDate ? new Date(account.expiryDate) > thirtyDaysFromNow : false;
+        } else if (filters.expiryStatus === "no-expiry") {
+          matchesExpiryStatus = !account.expiryDate;
+        }
+      }
+
+      return matchesSearch && matchesType && matchesPlatform && matchesProject && matchesExpiryStatus;
     });
   };
 

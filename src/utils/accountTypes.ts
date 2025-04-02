@@ -3,7 +3,7 @@ import { Database } from "@/integrations/supabase/types";
 
 // Type definitions for accounts
 export interface Account {
-  id: number;
+  id: string;  // Changed from number to string to support UUIDs
   name: string;
   type: AccountType;
   url: string;
