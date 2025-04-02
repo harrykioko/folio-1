@@ -35,13 +35,16 @@ const ProjectDetailsContainer: React.FC = () => {
           return;
         }
         
-        // Only fetch project if we have a valid ID and it's not "new"
-        if (effectiveId) {
-          const fetchedProject = await fetchProjectById(effectiveId);
-          setProject(fetchedProject);
-        } else {
-          throw new Error("No project ID provided");
+        // Only fetch if we have a valid ID that's not "new"
+        if (!effectiveId) {
+          console.warn("No project ID provided");
+          setError(new Error("No project ID provided"));
+          setLoading(false);
+          return;
         }
+        
+        const fetchedProject = await fetchProjectById(effectiveId);
+        setProject(fetchedProject);
       } catch (err) {
         console.error("Error fetching project:", err);
         setError(err as Error);
@@ -51,7 +54,7 @@ const ProjectDetailsContainer: React.FC = () => {
     };
 
     fetchProject();
-  }, [effectiveId, isNewProject]);
+  }, [effectiveId]); // Remove isNewProject from dependencies to prevent re-renders
 
   const handleUpdate = async (data: ProjectFormValues) => {
     if (!project) return;
@@ -75,7 +78,14 @@ const ProjectDetailsContainer: React.FC = () => {
       
       const newProject = await createProject(data);
       toast.success("Project created successfully");
-      navigate(`/projects/${newProject.id}`);
+      
+      // Verify we got a valid ID back before navigating
+      if (newProject && newProject.id) {
+        navigate(`/projects/${newProject.id}`);
+      } else {
+        console.error("Created project is missing ID");
+        toast.error("Project created but couldn't retrieve ID");
+      }
     } catch (err) {
       console.error("Error creating project:", err);
       toast.error("Failed to create project");
