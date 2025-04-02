@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchProjectById, updateProject, deleteProject, Project } from "@/utils/supabaseProjects";
@@ -24,25 +25,30 @@ const ProjectDetailsContainer: React.FC = () => {
   const isNewProject = id === "new";
   const numericId = !isNewProject ? parseInt(id || "", 10) : null;
   
-  // STEP 4: Add debug logging
-  console.log("Params:", { id });
-  console.log("isNewProject:", isNewProject);
-  console.log("numericId:", numericId);
+  // Enhanced debug logging
+  console.log("ProjectDetailsContainer rendering with params:", { 
+    id, 
+    isNewProject, 
+    numericId, 
+    currentUrl: window.location.pathname 
+  });
   
   // STEP 2: Improve useEffect to prevent invalid fetch
   useEffect(() => {
-    // Important: If this is a new project, immediately set loading to false and do nothing else
+    // CRITICAL: Check for "new" first, before any other logic
     if (isNewProject) {
-      console.log("New project detected, skipping fetch");
+      console.log("New project view detected, skipping fetch and setting loading=false");
       setLoading(false);
+      setError(null); // Clear any previous errors
+      setProject(null); // Clear any previous project
       return;
     }
     
     // If we have an invalid ID, don't fetch anything
     if (numericId === null || isNaN(numericId)) {
-      console.log("Skipping fetch for invalid project ID:", { numericId });
+      console.log("Invalid project ID detected:", { id, numericId });
       setLoading(false);
-      setError(new Error("Invalid project ID"));
+      setError(new Error(`Invalid project ID: ${id}`));
       return;
     }
 
@@ -51,6 +57,7 @@ const ProjectDetailsContainer: React.FC = () => {
         console.log("Fetching project with ID:", numericId);
         setLoading(true);
         const fetchedProject = await fetchProjectById(numericId);
+        console.log("Project fetched successfully:", fetchedProject);
         setProject(fetchedProject);
         setError(null);
       } catch (err) {
@@ -63,7 +70,7 @@ const ProjectDetailsContainer: React.FC = () => {
     };
 
     fetchProject();
-  }, [isNewProject, numericId]);
+  }, [isNewProject, numericId, id]);
 
   const handleUpdate = async (data: ProjectFormValues) => {
     if (!project) return;
@@ -78,6 +85,7 @@ const ProjectDetailsContainer: React.FC = () => {
   };
 
   const handleCreate = async (data: ProjectFormValues) => {
+    console.log("Creating new project with data:", data);
     try {
       // Ensure all required fields are present
       if (!data.name || !data.description) {
@@ -86,6 +94,7 @@ const ProjectDetailsContainer: React.FC = () => {
       }
       
       const newProject = await createProject(data);
+      console.log("Project created successfully:", newProject);
       toast.success("Project created successfully");
       
       // Verify we got a valid ID back before navigating
@@ -114,16 +123,19 @@ const ProjectDetailsContainer: React.FC = () => {
   };
 
   // STEP 3: Reorder conditional rendering to prevent premature fallback
-  console.log("Rendering decision:", { 
+  // IMPORTANT: Log the state before making render decisions
+  console.log("Render decision state:", { 
     isNewProject, 
     loading, 
     hasError: !!error,
-    hasProject: !!project
+    errorMessage: error?.message,
+    hasProject: !!project,
+    currentUrl: window.location.href
   });
 
-  // NEW PROJECT CHECK MUST COME FIRST
+  // NEW PROJECT CHECK MUST COME FIRST - before loading check
   if (isNewProject) {
-    console.log("Rendering NewProjectView for new project");
+    console.log("✅ Rendering NewProjectView for new project");
     return <NewProjectView onSubmit={handleCreate} />;
   }
   
