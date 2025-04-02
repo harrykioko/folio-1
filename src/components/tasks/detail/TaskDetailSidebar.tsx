@@ -1,7 +1,6 @@
 
 import React from "react";
 import { Card } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { CalendarIcon } from "lucide-react";
 import { Task } from "@/utils/tasks/types";
 import { useTaskMutation } from "@/hooks/useTaskMutation";
@@ -33,7 +32,7 @@ const TaskDetailSidebar: React.FC<TaskDetailSidebarProps> = ({
   const { updateTask, isUpdating } = useTaskMutation();
   
   // Status change handler
-  const handleStatusChange = async (value: string): Promise<void> => {
+  const handleStatusChange = async (value: "todo" | "in_progress" | "completed"): Promise<void> => {
     await updateTask(task.id, { status: value });
   };
   

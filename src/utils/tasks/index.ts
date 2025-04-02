@@ -14,7 +14,7 @@ export {
   createTask,
   updateTask,
   deleteTask 
-} from './taskMutations';
+} from './mutations';
 
 // Export subtask functions
 export {
