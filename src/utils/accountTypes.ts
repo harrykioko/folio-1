@@ -18,6 +18,9 @@ export interface Account {
   hostedOn?: string;
   renewalCost?: number;
   monthlyCost?: number;
+  // Social media specific fields
+  followers?: number;
+  impressions?: number;
 }
 
 // Using the Supabase enum types

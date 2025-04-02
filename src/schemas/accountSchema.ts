@@ -18,6 +18,9 @@ export const accountFormSchema = z.object({
   hostedOn: z.string().optional().nullable(),
   renewalCost: z.number().optional().nullable(),
   monthlyCost: z.number().optional().nullable(),
+  // Fields for social media accounts
+  followers: z.number().optional().nullable(),
+  impressions: z.number().optional().nullable(),
 });
 
 // Type for account form values

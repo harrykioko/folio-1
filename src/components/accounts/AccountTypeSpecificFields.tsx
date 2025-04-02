@@ -18,33 +18,71 @@ const AccountTypeSpecificFields: React.FC<AccountTypeSpecificFieldsProps> = ({
 }) => {
   if (accountType === "SocialMedia") {
     return (
-      <FormField
-        control={control}
-        name="platform"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Platform <span className="text-red-500">*</span></FormLabel>
-            <Select
-              onValueChange={field.onChange}
-              defaultValue={field.value || undefined}
-            >
+      <>
+        <FormField
+          control={control}
+          name="platform"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Platform <span className="text-red-500">*</span></FormLabel>
+              <Select
+                onValueChange={field.onChange}
+                defaultValue={field.value || undefined}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select platform" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {socialPlatforms.map(platform => (
+                    <SelectItem key={platform.id} value={platform.id}>
+                      {platform.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
+          name="followers"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Followers</FormLabel>
               <FormControl>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select platform" />
-                </SelectTrigger>
+                <Input 
+                  type="number" 
+                  value={field.value === null ? '' : field.value}
+                  onChange={e => field.onChange(e.target.value ? parseInt(e.target.value) : null)}
+                  placeholder="0" 
+                />
               </FormControl>
-              <SelectContent>
-                {socialPlatforms.map(platform => (
-                  <SelectItem key={platform.id} value={platform.id}>
-                    {platform.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
+          name="impressions"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Impressions</FormLabel>
+              <FormControl>
+                <Input 
+                  type="number" 
+                  value={field.value === null ? '' : field.value}
+                  onChange={e => field.onChange(e.target.value ? parseInt(e.target.value) : null)}
+                  placeholder="0" 
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </>
     );
   }
 

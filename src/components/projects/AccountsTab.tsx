@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -24,10 +23,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { accountsData } from "@/utils/accountData";
 import { motion } from "framer-motion";
-import { toast } from "@/hooks/use-toast";
+import { copyToClipboard } from "@/utils/accountActions";
 import { Globe, Github, Twitter, Instagram, Linkedin, AtSign } from "lucide-react";
+import { useAccounts } from "@/hooks/useAccounts";
 
 interface AccountsTabProps {
   projectId: number;
@@ -35,10 +34,18 @@ interface AccountsTabProps {
 
 const AccountsTab: React.FC<AccountsTabProps> = ({ projectId }) => {
   const navigate = useNavigate();
-  // Convert the projectId to string for consistent comparison
-  const accounts = accountsData.filter(account => String(account.projectId) === String(projectId));
+  const { accounts, isLoading, error, refreshAccounts } = useAccounts();
+  
+  const projectAccounts = accounts.filter(account => 
+    String(account.projectId) === String(projectId)
+  );
+  
   const [view, setView] = useState<"grid" | "list">("grid");
   const [passwordVisibility, setPasswordVisibility] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    refreshAccounts();
+  }, []);
 
   const handleAddAccount = () => {
     navigate(`/accounts/new?projectId=${projectId}`);
@@ -51,19 +58,11 @@ const AccountsTab: React.FC<AccountsTabProps> = ({ projectId }) => {
     }));
   };
 
-  const copyToClipboard = (text: string, type: string) => {
-    navigator.clipboard.writeText(text);
-    toast({
-      title: "Copied to clipboard",
-      description: `${type} has been copied to your clipboard.`,
-    });
-  };
-
   const getTypeIcon = (type: string) => {
-    switch (type) {
+    switch (type.toLowerCase()) {
       case 'domain':
         return <Globe className="h-5 w-5" />;
-      case 'github':
+      case 'repository':
         return <Github className="h-5 w-5" />;
       case 'twitter':
         return <Twitter className="h-5 w-5" />;
@@ -93,23 +92,36 @@ const AccountsTab: React.FC<AccountsTabProps> = ({ projectId }) => {
     return expiryDate > today && expiryDate < thirtyDaysFromNow;
   };
 
-  // Animation variants for cards
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
+  if (isLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Linked Accounts</CardTitle>
+        </CardHeader>
+        <CardContent className="text-center py-10">
+          <p>Loading accounts...</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
-  const item = {
-    hidden: { y: 20, opacity: 0 },
-    show: { y: 0, opacity: 1, transition: { duration: 0.3 } }
-  };
+  if (error) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Linked Accounts</CardTitle>
+        </CardHeader>
+        <CardContent className="text-center py-10 text-destructive">
+          <p>Error loading accounts. Please try again.</p>
+          <Button variant="outline" className="mt-4" onClick={refreshAccounts}>
+            Retry
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
 
-  if (accounts.length === 0) {
+  if (projectAccounts.length === 0) {
     return (
       <Card>
         <CardHeader>
@@ -133,6 +145,21 @@ const AccountsTab: React.FC<AccountsTabProps> = ({ projectId }) => {
       </Card>
     );
   }
+
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const item = {
+    hidden: { y: 20, opacity: 0 },
+    show: { y: 0, opacity: 1, transition: { duration: 0.3 } }
+  };
 
   return (
     <Card>
@@ -173,7 +200,7 @@ const AccountsTab: React.FC<AccountsTabProps> = ({ projectId }) => {
             initial="hidden"
             animate="show"
           >
-            {accounts.map((account) => (
+            {projectAccounts.map((account) => (
               <motion.div key={account.id} variants={item} whileHover={{ y: -5 }} transition={{ duration: 0.2 }}>
                 <Card className="h-full flex flex-col backdrop-blur-xl bg-opacity-50 shadow-md rounded-xl overflow-hidden border border-gray-100 dark:border-gray-800 hover:shadow-lg transition-all duration-300">
                   <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
@@ -221,7 +248,7 @@ const AccountsTab: React.FC<AccountsTabProps> = ({ projectId }) => {
                             variant="ghost" 
                             size="icon" 
                             className="h-6 w-6 rounded-full"
-                            onClick={() => copyToClipboard(account.username, "Username")}
+                            onClick={() => copyToClipboard(account.username || '', "Username")}
                           >
                             <Copy className="h-3 w-3" />
                           </Button>
@@ -231,14 +258,14 @@ const AccountsTab: React.FC<AccountsTabProps> = ({ projectId }) => {
                       <div className="flex justify-between items-center">
                         <span className="text-xs text-muted-foreground">Password:</span>
                         <div className="flex items-center gap-1">
-                          <span className="text-sm font-medium">{passwordVisibility[account.id.toString()] ? "password123" : "•••••••••"}</span>
+                          <span className="text-sm font-medium">{passwordVisibility[account.id] ? "password123" : "•••••••••"}</span>
                           <Button
                             variant="ghost"
                             size="icon"
                             className="h-6 w-6 rounded-full"
-                            onClick={() => togglePasswordVisibility(account.id.toString())}
+                            onClick={() => togglePasswordVisibility(account.id)}
                           >
-                            {passwordVisibility[account.id.toString()] ? (
+                            {passwordVisibility[account.id] ? (
                               <EyeOff className="h-3 w-3" />
                             ) : (
                               <Eye className="h-3 w-3" />
@@ -279,8 +306,8 @@ const AccountsTab: React.FC<AccountsTabProps> = ({ projectId }) => {
                       rel="noopener noreferrer"
                       className="text-primary hover:text-primary/80 text-sm flex items-center"
                     >
-                      {account.url.replace(/(^\w+:|^)\/\//, '').substring(0, 20)}
-                      {account.url.replace(/(^\w+:|^)\/\//, '').length > 20 ? '...' : ''}
+                      {account.url?.replace(/(^\w+:|^)\/\//, '').substring(0, 20)}
+                      {account.url && account.url.replace(/(^\w+:|^)\/\//, '').length > 20 ? '...' : ''}
                       <ExternalLink className="ml-1 h-3 w-3" />
                     </a>
                   </div>
@@ -300,7 +327,7 @@ const AccountsTab: React.FC<AccountsTabProps> = ({ projectId }) => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {accounts.map((account) => (
+              {projectAccounts.map((account) => (
                 <TableRow 
                   key={account.id} 
                   className="cursor-pointer hover:bg-muted/50"
@@ -316,13 +343,13 @@ const AccountsTab: React.FC<AccountsTabProps> = ({ projectId }) => {
                   <TableCell>{account.username}</TableCell>
                   <TableCell>
                     <a 
-                      href={account.url} 
+                      href={account.url || '#'} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
                       className="text-blue-500 hover:underline"
                     >
-                      {account.url.replace(/(^\w+:|^)\/\//, '')}
+                      {account.url?.replace(/(^\w+:|^)\/\//, '')}
                     </a>
                   </TableCell>
                   <TableCell>

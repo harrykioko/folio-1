@@ -24,7 +24,7 @@ export function useAccounts() {
 
       // Transform the data to match our Account type
       const formattedAccounts: Account[] = data.map((account) => ({
-        id: account.id,
+        id: account.id || '',
         name: account.name || 'Unnamed Account',
         type: account.type || 'Domain',
         url: account.url || '',
@@ -33,10 +33,13 @@ export function useAccounts() {
         notes: '',
         expiryDate: account.renewal_date,
         projectId: account.project_id ? account.project_id.toString() : undefined,
+        projectName: '', // Would need to fetch this separately or in a join
         platform: account.social_platform,
         hostedOn: account.hosted_on,
         renewalCost: account.renewal_cost,
         monthlyCost: account.monthly_cost,
+        followers: account.followers,
+        impressions: account.impressions,
       }));
 
       setAccounts(formattedAccounts);

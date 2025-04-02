@@ -8,7 +8,7 @@ import { AccountFormValues, accountFormSchema } from "@/schemas/accountSchema";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { Trash2, Save } from "lucide-react";
-import { handleDeleteAccount } from "@/utils/accountActions";
+import { handleDeleteAccount, createAccount } from "@/utils/accountActions";
 
 // Import form components
 import AccountBasicFields from "./AccountBasicFields";
@@ -28,6 +28,7 @@ interface AccountFormProps {
 const AccountForm: React.FC<AccountFormProps> = ({ initialData, accountId }) => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   // Initialize form with default values or provided data
   const form = useForm<AccountFormValues>({
@@ -46,6 +47,8 @@ const AccountForm: React.FC<AccountFormProps> = ({ initialData, accountId }) => 
       hostedOn: null,
       renewalCost: null,
       monthlyCost: null,
+      followers: null,
+      impressions: null,
     },
   });
 
@@ -57,6 +60,8 @@ const AccountForm: React.FC<AccountFormProps> = ({ initialData, accountId }) => 
     if (accountType) {
       if (accountType !== "SocialMedia") {
         form.setValue("platform", null);
+        form.setValue("followers", null);
+        form.setValue("impressions", null);
       }
       if (accountType !== "Domain") {
         form.setValue("hostedOn", null);
@@ -74,17 +79,31 @@ const AccountForm: React.FC<AccountFormProps> = ({ initialData, accountId }) => 
   };
 
   // Form submission handler
-  const onSubmit = (data: AccountFormValues) => {
+  const onSubmit = async (data: AccountFormValues) => {
     console.log("Form submitted:", data);
+    setIsSubmitting(true);
     
-    // In a real app, you would send this to an API
-    toast({
-      title: "Success",
-      description: `Account ${accountId ? "updated" : "created"} successfully`,
-    });
-    
-    // Navigate back to accounts list
-    navigate("/accounts");
+    try {
+      // Create account in Supabase
+      await createAccount(data);
+      
+      toast({
+        title: "Success",
+        description: `Account ${accountId ? "updated" : "created"} successfully`,
+      });
+      
+      // Navigate back to accounts list
+      navigate("/accounts");
+    } catch (error) {
+      console.error("Error creating account:", error);
+      toast({
+        title: "Error",
+        description: "Failed to create account. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -124,7 +143,7 @@ const AccountForm: React.FC<AccountFormProps> = ({ initialData, accountId }) => 
             Delete Account
           </Button>
           
-          <Button type="submit">
+          <Button type="submit" disabled={isSubmitting}>
             <Save className="mr-2 h-4 w-4" />
             {accountId ? "Update Account" : "Create Account"}
           </Button>
