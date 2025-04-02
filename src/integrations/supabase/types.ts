@@ -9,6 +9,162 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      account_domains: {
+        Row: {
+          account_id: string
+          hosted_on: string | null
+          renewal_cost: number | null
+        }
+        Insert: {
+          account_id: string
+          hosted_on?: string | null
+          renewal_cost?: number | null
+        }
+        Update: {
+          account_id?: string
+          hosted_on?: string | null
+          renewal_cost?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "account_domains_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: true
+            referencedRelation: "account_details"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "account_domains_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: true
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      account_services: {
+        Row: {
+          account_id: string
+          monthly_cost: number | null
+        }
+        Insert: {
+          account_id: string
+          monthly_cost?: number | null
+        }
+        Update: {
+          account_id?: string
+          monthly_cost?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "account_services_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: true
+            referencedRelation: "account_details"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "account_services_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: true
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      account_social_media: {
+        Row: {
+          account_id: string
+          followers: number | null
+          impressions: number | null
+          platform: Database["public"]["Enums"]["social_platform"]
+        }
+        Insert: {
+          account_id: string
+          followers?: number | null
+          impressions?: number | null
+          platform: Database["public"]["Enums"]["social_platform"]
+        }
+        Update: {
+          account_id?: string
+          followers?: number | null
+          impressions?: number | null
+          platform?: Database["public"]["Enums"]["social_platform"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "account_social_media_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: true
+            referencedRelation: "account_details"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "account_social_media_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: true
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      accounts: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+          owner_id: string | null
+          password: string | null
+          project_id: number | null
+          renewal_date: string | null
+          type: Database["public"]["Enums"]["account_type"]
+          updated_at: string | null
+          url: string | null
+          username: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+          owner_id?: string | null
+          password?: string | null
+          project_id?: number | null
+          renewal_date?: string | null
+          type: Database["public"]["Enums"]["account_type"]
+          updated_at?: string | null
+          url?: string | null
+          username?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+          owner_id?: string | null
+          password?: string | null
+          project_id?: number | null
+          renewal_date?: string | null
+          type?: Database["public"]["Enums"]["account_type"]
+          updated_at?: string | null
+          url?: string | null
+          username?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accounts_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "accounts_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invitations: {
         Row: {
           accepted: boolean | null
@@ -38,6 +194,45 @@ export type Database = {
           role?: string | null
         }
         Relationships: []
+      }
+      project_members: {
+        Row: {
+          created_at: string | null
+          id: number
+          project_id: number | null
+          role: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: number
+          project_id?: number | null
+          role?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: number
+          project_id?: number | null
+          role?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_members_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       projects: {
         Row: {
@@ -198,13 +393,61 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      account_details: {
+        Row: {
+          created_at: string | null
+          followers: number | null
+          hosted_on: string | null
+          id: string | null
+          impressions: number | null
+          monthly_cost: number | null
+          name: string | null
+          owner_id: string | null
+          password: string | null
+          project_id: number | null
+          renewal_cost: number | null
+          renewal_date: string | null
+          social_platform: Database["public"]["Enums"]["social_platform"] | null
+          type: Database["public"]["Enums"]["account_type"] | null
+          updated_at: string | null
+          url: string | null
+          username: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accounts_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "accounts_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      account_type:
+        | "Domain"
+        | "SocialMedia"
+        | "Email"
+        | "Repository"
+        | "Service"
+      social_platform:
+        | "Instagram"
+        | "Facebook"
+        | "LinkedIn"
+        | "Twitter"
+        | "TikTok"
+        | "Pinterest"
     }
     CompositeTypes: {
       [_ in never]: never

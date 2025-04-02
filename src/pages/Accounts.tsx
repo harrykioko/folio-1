@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -5,18 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   MoreHorizontal, 
   Plus, 
   Search, 
-  Globe, 
-  Github,
-  Twitter, 
-  Instagram, 
-  Linkedin, 
-  AtSign, 
-  Bookmark,
   Shield,
   Copy,
   Eye,
@@ -31,9 +24,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "@/hooks/use-toast";
+import { motion } from "framer-motion";
 import AccountFilters from "@/components/accounts/AccountFilters";
-import { AccountFilters as AccountFiltersType } from "@/schemas/accountSchema";
+import AccountGridView from "@/components/accounts/AccountGridView";
+import ViewToggle from "@/components/accounts/ViewToggle";
 import { accountsData } from "@/utils/accountData";
+import { AccountFilters as AccountFiltersType } from "@/schemas/accountSchema";
 import { getTypeIcon } from "@/utils/accountIcons";
 
 const Accounts: React.FC = () => {
@@ -44,6 +40,7 @@ const Accounts: React.FC = () => {
     projectId: null,
     expiryStatus: null
   });
+  const [view, setView] = useState<"grid" | "list">("grid");
   
   const filteredAccounts = accountsData.filter(account => {
     const matchesSearch = 
@@ -95,41 +92,45 @@ const Accounts: React.FC = () => {
       description: `${type} has been copied to your clipboard.`,
     });
   };
-
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case 'domain':
-        return <Globe className="h-4 w-4" />;
-      case 'github':
-        return <Github className="h-4 w-4" />;
-      case 'twitter':
-        return <Twitter className="h-4 w-4" />;
-      case 'instagram':
-        return <Instagram className="h-4 w-4" />;
-      case 'linkedin':
-        return <Linkedin className="h-4 w-4" />;
-      case 'service':
-        return <AtSign className="h-4 w-4" />;
-      default:
-        return <Bookmark className="h-4 w-4" />;
-    }
-  };
   
   const activeFiltersCount = Object.values(filters).filter(Boolean).length;
 
-  return (
-    <div className="space-y-6 animate-fade-in">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">Account Management</h1>
-        <Button asChild>
-          <Link to="/accounts/new">
-            <Plus className="mr-2 h-4 w-4" />
-            Add Account
-          </Link>
-        </Button>
-      </div>
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
 
-      <div className="flex flex-col sm:flex-row gap-4">
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.3 } }
+  };
+
+  return (
+    <motion.div 
+      className="space-y-6 animate-fade-in"
+      variants={container}
+      initial="hidden"
+      animate="show"
+    >
+      <motion.div variants={item} className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold tracking-tight">Account Management</h1>
+        <div className="flex items-center gap-3">
+          <ViewToggle view={view} onChange={setView} />
+          <Button asChild>
+            <Link to="/accounts/new">
+              <Plus className="mr-2 h-4 w-4" />
+              Add Account
+            </Link>
+          </Button>
+        </div>
+      </motion.div>
+
+      <motion.div variants={item} className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -144,94 +145,60 @@ const Accounts: React.FC = () => {
           setFilters={setFilters} 
           activeFiltersCount={activeFiltersCount}
         />
-      </div>
+      </motion.div>
 
-      <Tabs defaultValue="all" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="all">All Accounts</TabsTrigger>
-          <TabsTrigger value="domains">Domains</TabsTrigger>
-          <TabsTrigger value="social">Social Media</TabsTrigger>
-          <TabsTrigger value="services">Services</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="all">
+      <motion.div variants={item}>
+        {view === "grid" ? (
+          <AccountGridView 
+            accounts={filteredAccounts} 
+            passwordVisibility={passwordVisibility}
+            togglePasswordVisibility={togglePasswordVisibility}
+          />
+        ) : (
           <AccountsTable 
             accounts={filteredAccounts} 
             passwordVisibility={passwordVisibility}
             togglePasswordVisibility={togglePasswordVisibility}
             copyToClipboard={copyToClipboard}
-            getTypeIcon={getTypeIcon}
           />
-        </TabsContent>
+        )}
+      </motion.div>
 
-        <TabsContent value="domains">
-          <AccountsTable 
-            accounts={filteredAccounts.filter(account => account.type === 'domain')} 
-            passwordVisibility={passwordVisibility}
-            togglePasswordVisibility={togglePasswordVisibility}
-            copyToClipboard={copyToClipboard}
-            getTypeIcon={getTypeIcon}
-          />
-        </TabsContent>
-
-        <TabsContent value="social">
-          <AccountsTable 
-            accounts={filteredAccounts.filter(account => 
-              ['twitter', 'instagram', 'linkedin'].includes(account.type)
-            )} 
-            passwordVisibility={passwordVisibility}
-            togglePasswordVisibility={togglePasswordVisibility}
-            copyToClipboard={copyToClipboard}
-            getTypeIcon={getTypeIcon}
-          />
-        </TabsContent>
-
-        <TabsContent value="services">
-          <AccountsTable 
-            accounts={filteredAccounts.filter(account => 
-              ['service', 'github'].includes(account.type)
-            )} 
-            passwordVisibility={passwordVisibility}
-            togglePasswordVisibility={togglePasswordVisibility}
-            copyToClipboard={copyToClipboard}
-            getTypeIcon={getTypeIcon}
-          />
-        </TabsContent>
-      </Tabs>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Security Information</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <Shield className="h-5 w-5 text-primary" />
-              <div className="text-sm">
-                <strong>Secure Storage:</strong> All login credentials are encrypted at rest using AES-256 encryption.
+      <motion.div variants={item}>
+        <Card>
+          <CardHeader>
+            <CardTitle>Security Information</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Shield className="h-5 w-5 text-primary" />
+                <div className="text-sm">
+                  <strong>Secure Storage:</strong> All login credentials are encrypted at rest using AES-256 encryption.
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Shield className="h-5 w-5 text-primary" />
+                <div className="text-sm">
+                  <strong>Access Control:</strong> Only authorized team members can view full account details.
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Shield className="h-5 w-5 text-primary" />
+                <div className="text-sm">
+                  <strong>Audit Trail:</strong> All credential access is logged for security purposes.
+                </div>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Shield className="h-5 w-5 text-primary" />
-              <div className="text-sm">
-                <strong>Access Control:</strong> Only authorized team members can view full account details.
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Shield className="h-5 w-5 text-primary" />
-              <div className="text-sm">
-                <strong>Audit Trail:</strong> All credential access is logged for security purposes.
-              </div>
-            </div>
-          </div>
-        </CardContent>
-        <CardFooter>
-          <Button variant="outline" size="sm" asChild>
-            <Link to="/settings/security">Security Settings</Link>
-          </Button>
-        </CardFooter>
-      </Card>
-    </div>
+          </CardContent>
+          <CardFooter>
+            <Button variant="outline" size="sm" asChild>
+              <Link to="/settings/security">Security Settings</Link>
+            </Button>
+          </CardFooter>
+        </Card>
+      </motion.div>
+    </motion.div>
   );
 };
 
@@ -240,15 +207,13 @@ interface AccountsTableProps {
   passwordVisibility: Record<string, boolean>;
   togglePasswordVisibility: (id: string) => void;
   copyToClipboard: (text: string, type: string) => void;
-  getTypeIcon: (type: string) => JSX.Element;
 }
 
 const AccountsTable: React.FC<AccountsTableProps> = ({ 
   accounts, 
   passwordVisibility, 
   togglePasswordVisibility, 
-  copyToClipboard,
-  getTypeIcon
+  copyToClipboard
 }) => {
   if (accounts.length === 0) {
     return (
@@ -278,7 +243,12 @@ const AccountsTable: React.FC<AccountsTableProps> = ({
               <TableCell className="font-medium">{account.name}</TableCell>
               <TableCell>
                 <Badge variant="secondary" className="flex w-fit items-center gap-1">
-                  {getTypeIcon(account.type)}
+                  {getTypeIcon(account.type) === 'Globe' && <Globe className="h-4 w-4" />}
+                  {getTypeIcon(account.type) === 'Github' && <Github className="h-4 w-4" />}
+                  {getTypeIcon(account.type) === 'Twitter' && <Twitter className="h-4 w-4" />}
+                  {getTypeIcon(account.type) === 'Instagram' && <Instagram className="h-4 w-4" />}
+                  {getTypeIcon(account.type) === 'Linkedin' && <Linkedin className="h-4 w-4" />}
+                  {getTypeIcon(account.type) === 'AtSign' && <AtSign className="h-4 w-4" />}
                   <span className="capitalize">{account.type}</span>
                 </Badge>
               </TableCell>
