@@ -24,25 +24,15 @@ const ProjectDetailsContainer: React.FC = () => {
   const isNewProject = effectiveId === "new";
 
   useEffect(() => {
+    // Only run fetch if we have a valid project ID and it's not the "new" route
+    if (!effectiveId || effectiveId === "new") {
+      setLoading(false);
+      return;
+    }
+
     const fetchProject = async () => {
       try {
         setLoading(true);
-        
-        // For new projects, just set loading to false and return early
-        // This prevents trying to fetch a non-existent project
-        if (isNewProject) {
-          setLoading(false);
-          return;
-        }
-        
-        // Only fetch if we have a valid ID that's not "new"
-        if (!effectiveId) {
-          console.warn("No project ID provided");
-          setError(new Error("No project ID provided"));
-          setLoading(false);
-          return;
-        }
-        
         const fetchedProject = await fetchProjectById(effectiveId);
         setProject(fetchedProject);
       } catch (err) {
@@ -54,7 +44,7 @@ const ProjectDetailsContainer: React.FC = () => {
     };
 
     fetchProject();
-  }, [effectiveId]); // Remove isNewProject from dependencies to prevent re-renders
+  }, [effectiveId]);
 
   const handleUpdate = async (data: ProjectFormValues) => {
     if (!project) return;
