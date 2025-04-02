@@ -24,7 +24,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { accountTypes, socialPlatforms } from "@/utils/accountUtils";
 import { projects } from "@/utils/projectData";
-import { AccountFilters } from "./useAccountFiltering";
+import type { AccountFilters } from "./useAccountFiltering";
 
 interface AccountFiltersProps {
   filters: AccountFilters;

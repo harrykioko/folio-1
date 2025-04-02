@@ -26,5 +26,5 @@ export const handleDeleteAccount = (accountId: string, navigate: (path: string) 
 // Fetch account data by ID
 export const fetchAccountById = (accountId: string | undefined) => {
   if (!accountId) return null;
-  return accountsData.find(a => a.id === parseInt(accountId));
+  return accountsData.find(a => a.id === accountId);
 };

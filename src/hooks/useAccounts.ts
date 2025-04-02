@@ -32,7 +32,7 @@ export function useAccounts() {
         password: account.password ? 'password123' : '', // Using dummy password as real passwords are stored encrypted
         notes: '',
         expiryDate: account.renewal_date,
-        projectId: account.project_id,
+        projectId: account.project_id ? account.project_id.toString() : undefined,
         platform: account.social_platform,
         hostedOn: account.hosted_on,
         renewalCost: account.renewal_cost,

@@ -2,7 +2,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { Account, AccountType } from "@/utils/accountTypes";
 
-// Updated to match the expected structure in Accounts.tsx
+// Define AccountFilters type
 export type AccountFilters = {
   type: string;
   platform: string;

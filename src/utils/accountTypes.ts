@@ -3,7 +3,7 @@ import { Database } from "@/integrations/supabase/types";
 
 // Type definitions for accounts
 export interface Account {
-  id: string;  // Changed from number to string to support UUIDs
+  id: string;  // Using string to support UUIDs
   name: string;
   type: AccountType;
   url: string;
@@ -11,7 +11,7 @@ export interface Account {
   password: string;
   notes?: string;
   expiryDate?: string;
-  projectId?: number;
+  projectId?: string;  // Changed from number to string
   projectName?: string;
   // Additional fields for specific account types
   platform?: SocialPlatform;

@@ -30,7 +30,7 @@ const AccountProjectField: React.FC<AccountProjectFieldProps> = ({ control }) =>
             <SelectContent>
               <SelectItem value="none">None</SelectItem>
               {projects.map(project => (
-                <SelectItem key={project.id} value={project.id.toString()}>
+                <SelectItem key={project.id.toString()} value={project.id.toString()}>
                   {project.name}
                 </SelectItem>
               ))}
