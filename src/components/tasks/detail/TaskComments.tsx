@@ -5,6 +5,7 @@ import { useUsers } from "@/hooks/useUsers";
 import { TaskActivity } from "@/utils/tasks/taskActivity";
 import { toast } from "sonner";
 import { CommentForm, CommentList, formatTimeAgo } from "./comments";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface TaskCommentsProps {
   taskId: number;
@@ -111,14 +112,16 @@ const TaskComments: React.FC<TaskCommentsProps> = ({ taskId }) => {
         onCommentAdded={handleCommentAdded}
       />
       
-      <CommentList
-        comments={comments}
-        isLoading={isLoading}
-        currentUser={currentUser}
-        getUserInfo={getUserInfo}
-        formatTimeAgo={formatTimeAgo}
-        onDeleteComment={handleDeleteComment}
-      />
+      <ScrollArea className="max-h-[320px] rounded-md">
+        <CommentList
+          comments={comments}
+          isLoading={isLoading}
+          currentUser={currentUser}
+          getUserInfo={getUserInfo}
+          formatTimeAgo={formatTimeAgo}
+          onDeleteComment={handleDeleteComment}
+        />
+      </ScrollArea>
     </div>
   );
 };

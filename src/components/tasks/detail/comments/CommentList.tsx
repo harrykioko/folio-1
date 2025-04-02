@@ -23,7 +23,7 @@ const CommentList: React.FC<CommentListProps> = ({
 }) => {
   if (isLoading) {
     return (
-      <div className="space-y-4 pt-4">
+      <div className="space-y-4 pt-4 pr-4">
         <Skeleton className="h-12 w-full" />
         <Skeleton className="h-12 w-full" />
       </div>
@@ -32,14 +32,14 @@ const CommentList: React.FC<CommentListProps> = ({
 
   if (comments.length === 0) {
     return (
-      <p className="text-center text-muted-foreground py-4">
+      <p className="text-center text-muted-foreground py-4 pr-4">
         No comments yet. Be the first to comment!
       </p>
     );
   }
 
   return (
-    <div className="space-y-4 pt-4">
+    <div className="space-y-4 pt-4 pr-4">
       {comments.map((comment) => {
         const userInfo = getUserInfo(comment.created_by);
         const isOwner = currentUser === comment.created_by;
