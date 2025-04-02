@@ -6,8 +6,9 @@ import { toast } from "sonner";
 // Fetch subtasks for a specific task
 export const fetchSubtasksByTaskId = async (taskId: number): Promise<Subtask[]> => {
   try {
+    // Using type assertions to work around the type issues until Supabase types are updated
     const { data, error } = await supabase
-      .from('subtasks')
+      .from('subtasks' as any)
       .select('*')
       .eq('task_id', taskId)
       .order('created_at', { ascending: true });
@@ -17,7 +18,7 @@ export const fetchSubtasksByTaskId = async (taskId: number): Promise<Subtask[]> 
       throw error;
     }
     
-    return data as Subtask[];
+    return data as unknown as Subtask[];
   } catch (error) {
     toast.error("Failed to fetch subtasks. Please try again later.");
     throw error;
@@ -27,8 +28,9 @@ export const fetchSubtasksByTaskId = async (taskId: number): Promise<Subtask[]> 
 // Create a new subtask
 export const createSubtask = async (taskId: number, subtaskData: SubtaskFormData): Promise<Subtask> => {
   try {
+    // Using type assertions to work around the type issues until Supabase types are updated
     const { data, error } = await supabase
-      .from('subtasks')
+      .from('subtasks' as any)
       .insert([{ 
         task_id: taskId,
         title: subtaskData.title,
@@ -43,7 +45,7 @@ export const createSubtask = async (taskId: number, subtaskData: SubtaskFormData
       throw error;
     }
     
-    return data as Subtask;
+    return data as unknown as Subtask;
   } catch (error) {
     toast.error("Failed to create subtask. Please try again later.");
     throw error;
@@ -53,8 +55,9 @@ export const createSubtask = async (taskId: number, subtaskData: SubtaskFormData
 // Update an existing subtask
 export const updateSubtask = async (id: string, updates: Partial<SubtaskFormData>): Promise<Subtask> => {
   try {
+    // Using type assertions to work around the type issues until Supabase types are updated
     const { data, error } = await supabase
-      .from('subtasks')
+      .from('subtasks' as any)
       .update(updates)
       .eq('id', id)
       .select()
@@ -65,7 +68,7 @@ export const updateSubtask = async (id: string, updates: Partial<SubtaskFormData
       throw error;
     }
     
-    return data as Subtask;
+    return data as unknown as Subtask;
   } catch (error) {
     toast.error("Failed to update subtask. Please try again later.");
     throw error;
@@ -75,8 +78,9 @@ export const updateSubtask = async (id: string, updates: Partial<SubtaskFormData
 // Delete a subtask
 export const deleteSubtask = async (id: string): Promise<boolean> => {
   try {
+    // Using type assertions to work around the type issues until Supabase types are updated
     const { error } = await supabase
-      .from('subtasks')
+      .from('subtasks' as any)
       .delete()
       .eq('id', id);
     
