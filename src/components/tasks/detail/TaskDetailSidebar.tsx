@@ -1,20 +1,21 @@
 
 import React from "react";
 import { Card } from "@/components/ui/card";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { CalendarIcon } from "lucide-react";
 import { Task } from "@/utils/tasks/types";
 import { useTaskMutation } from "@/hooks/useTaskMutation";
-import {
-  TaskStatusField,
-  TaskPriorityField,
-  TaskAssigneeField,
-  TaskProjectField,
-  TaskDueDateField
+import { 
+  TaskStatusField, 
+  TaskPriorityField, 
+  TaskAssigneeField, 
+  TaskProjectField, 
+  TaskDueDateField 
 } from "./sidebar";
 
 interface TaskDetailSidebarProps {
   task: Task;
   formattedTask: {
-    title: string;
     status: string;
     priority: string;
     project: string;
@@ -25,27 +26,44 @@ interface TaskDetailSidebarProps {
   };
 }
 
-const TaskDetailSidebar: React.FC<TaskDetailSidebarProps> = ({ task, formattedTask }) => {
+const TaskDetailSidebar: React.FC<TaskDetailSidebarProps> = ({ 
+  task, 
+  formattedTask 
+}) => {
   const { updateTask, isUpdating } = useTaskMutation();
-
-  const handleStatusChange = async (value: string) => {
-    return updateTask(task.id, { status: value as 'todo' | 'in_progress' | 'completed' });
+  
+  // Status change handler
+  const handleStatusChange = async (value: string): Promise<void> => {
+    await updateTask(task.id, { status: value });
   };
-
-  const handlePriorityChange = async (value: string) => {
-    return updateTask(task.id, { priority: value.toLowerCase() as 'low' | 'medium' | 'high' | 'urgent' });
+  
+  // Priority change handler
+  const handlePriorityChange = async (value: string): Promise<void> => {
+    await updateTask(task.id, { priority: value.toLowerCase() as Task['priority'] });
   };
-
-  const handleAssigneeChange = async (value: string) => {
-    return updateTask(task.id, { assigned_to: value === "unassigned" ? null : value });
+  
+  // Project change handler
+  const handleProjectChange = async (value: string): Promise<void> => {
+    await updateTask(task.id, { project_id: value === "unassigned" ? null : Number(value) });
   };
-
-  const handleProjectChange = async (value: string) => {
-    return updateTask(task.id, { project_id: value === "none" ? null : parseInt(value, 10) });
+  
+  // Assignee change handler
+  const handleAssigneeChange = async (value: string): Promise<void> => {
+    await updateTask(task.id, { assigned_to: value === "unassigned" ? null : value });
   };
-
-  const handleDueDateChange = async (date: Date | undefined) => {
-    return updateTask(task.id, { deadline: date ? date.toISOString() : null });
+  
+  // Due date change handler
+  const handleDueDateChange = async (date: Date): Promise<void> => {
+    await updateTask(task.id, { deadline: date.toISOString() });
+  };
+  
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "No date set";
+    return new Date(dateString).toLocaleDateString(undefined, { 
+      month: 'short', 
+      day: 'numeric', 
+      year: 'numeric' 
+    });
   };
 
   return (
@@ -57,30 +75,38 @@ const TaskDetailSidebar: React.FC<TaskDetailSidebarProps> = ({ task, formattedTa
           onStatusChange={handleStatusChange} 
           isUpdating={isUpdating} 
         />
-
+        
         <TaskPriorityField 
           task={task} 
           onPriorityChange={handlePriorityChange} 
           isUpdating={isUpdating} 
         />
-
+        
         <TaskAssigneeField 
           task={task} 
           onAssigneeChange={handleAssigneeChange} 
           isUpdating={isUpdating} 
         />
-
+        
         <TaskProjectField 
           task={task} 
           onProjectChange={handleProjectChange} 
           isUpdating={isUpdating} 
         />
-
+        
         <TaskDueDateField 
           task={task} 
           onDueDateChange={handleDueDateChange} 
           isUpdating={isUpdating} 
         />
+        
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-muted-foreground">Created</label>
+          <div className="flex items-center gap-2 text-sm">
+            <CalendarIcon className="h-4 w-4 text-muted-foreground" />
+            <span>{formatDate(task.created_at)}</span>
+          </div>
+        </div>
       </div>
     </Card>
   );
