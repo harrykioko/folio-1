@@ -115,7 +115,7 @@ export function useAccounts() {
       const { data: projectsData, error: projectsError } = await supabase
         .from('projects')
         .select('id, name')
-        .in('id', uniqueProjectIds);
+        .in('id', uniqueProjectIds.map(id => parseInt(id as string, 10)));
         
       if (projectsError) {
         console.error("Error fetching project names:", projectsError);

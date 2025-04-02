@@ -12,7 +12,13 @@ import {
   MoreHorizontal,
   AlertTriangle,
   LayoutGrid,
-  List
+  List,
+  Globe,
+  Github,
+  Twitter,
+  Instagram,
+  Linkedin,
+  AtSign
 } from "lucide-react";
 import { Toggle } from "@/components/ui/toggle";
 import { Badge } from "@/components/ui/badge";
@@ -56,25 +62,6 @@ const AccountsTab: React.FC<AccountsTabProps> = ({ projectId }) => {
       ...prev,
       [id]: !prev[id]
     }));
-  };
-
-  const getTypeIcon = (type: string) => {
-    switch (type.toLowerCase()) {
-      case 'domain':
-        return <Globe className="h-5 w-5" />;
-      case 'repository':
-        return <Github className="h-5 w-5" />;
-      case 'twitter':
-        return <Twitter className="h-5 w-5" />;
-      case 'instagram':
-        return <Instagram className="h-5 w-5" />;
-      case 'linkedin':
-        return <Linkedin className="h-5 w-5" />;
-      case 'service':
-        return <AtSign className="h-5 w-5" />;
-      default:
-        return null;
-    }
   };
 
   const isExpired = (date: string | undefined) => {
