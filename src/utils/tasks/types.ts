@@ -1,3 +1,4 @@
+
 import type { Database } from "@/integrations/supabase/types";
 
 export type Task = {

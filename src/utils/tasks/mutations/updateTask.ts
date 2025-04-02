@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { recordTaskActivity } from "../taskActivity";
 
 // Update an existing task
-export const updateTask = async (id: number, taskData: TaskFormData): Promise<Task> => {
+export const updateTask = async (id: number, taskData: Partial<TaskFormData>): Promise<Task> => {
   try {
     // Check authentication before updating
     const { data: session } = await supabase.auth.getSession();
@@ -15,15 +15,15 @@ export const updateTask = async (id: number, taskData: TaskFormData): Promise<Ta
     }
     
     // Prepare the task data - ensure all fields are properly formatted
-    const formattedTaskData = {
-      title: taskData.title,
-      description: taskData.description || null,
-      project_id: taskData.project_id ? Number(taskData.project_id) : null,
-      assigned_to: taskData.assigned_to || null,
-      priority: taskData.priority,
-      deadline: taskData.deadline || null,
-      status: taskData.status,
-    };
+    const formattedTaskData: Record<string, any> = {};
+    
+    if (taskData.title !== undefined) formattedTaskData.title = taskData.title;
+    if (taskData.description !== undefined) formattedTaskData.description = taskData.description || null;
+    if (taskData.project_id !== undefined) formattedTaskData.project_id = taskData.project_id ? Number(taskData.project_id) : null;
+    if (taskData.assigned_to !== undefined) formattedTaskData.assigned_to = taskData.assigned_to || null;
+    if (taskData.priority !== undefined) formattedTaskData.priority = taskData.priority;
+    if (taskData.deadline !== undefined) formattedTaskData.deadline = taskData.deadline || null;
+    if (taskData.status !== undefined) formattedTaskData.status = taskData.status;
     
     const { data, error } = await supabase
       .from('tasks')
@@ -47,11 +47,26 @@ export const updateTask = async (id: number, taskData: TaskFormData): Promise<Ta
       throw new Error('Failed to update task: No data returned');
     }
 
+    // Record appropriate activity type based on what changed
+    let activityType: "status_change" | "assignment" | "priority_change" | "creation" | "comment" = "comment";
+    let message = `Task "${data.title}" updated`;
+    
+    if (taskData.status !== undefined) {
+      activityType = "status_change";
+      message = `Task status changed to ${data.status}`;
+    } else if (taskData.assigned_to !== undefined) {
+      activityType = "assignment";
+      message = `Task assigned to ${data.assigned_to || 'no one'}`;
+    } else if (taskData.priority !== undefined) {
+      activityType = "priority_change";
+      message = `Task priority changed to ${data.priority}`;
+    }
+    
     // Record task update activity
     await recordTaskActivity({
       task_id: data.id,
-      type: 'update',
-      message: `Task "${data.title}" updated`
+      type: activityType,
+      message
     });
     
     return data as Task;
