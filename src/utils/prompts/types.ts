@@ -1,6 +1,4 @@
 
-import { User } from "@/integrations/supabase/types";
-
 export type Prompt = {
   id: number;
   name: string;

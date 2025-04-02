@@ -1,7 +1,8 @@
 
-import { Prompt } from "@/utils/supabasePrompts";
+import { Prompt } from "@/utils/prompts";
+import { toast } from "@/hooks/use-toast";
 
-// Calculate display category based on content keywords
+// Function to determine prompt category based on content
 export const getPromptCategory = (prompt: Prompt): string => {
   if (prompt.content.toLowerCase().includes("marketing")) return "Marketing";
   if (prompt.content.toLowerCase().includes("development")) return "Development";
@@ -11,14 +12,23 @@ export const getPromptCategory = (prompt: Prompt): string => {
   return "Other";
 };
 
-// Determine effectiveness based on content length
+// Function to determine prompt effectiveness (simplified)
 export const getPromptEffectiveness = (prompt: Prompt): string => {
-  if (prompt.content.length > 500) return "High";
-  if (prompt.content.length > 200) return "Medium";
+  // This is a placeholder - in a real app, this might be based on user ratings or other metrics
+  const length = prompt.content.length;
+  if (length > 300) return "High";
+  if (length > 150) return "Medium";
   return "Low";
 };
 
-// Helper function to copy prompt to clipboard
+// Function to copy prompt content to clipboard
 export const copyPromptToClipboard = (content: string): void => {
-  navigator.clipboard.writeText(content);
+  navigator.clipboard.writeText(content).catch(err => {
+    console.error('Failed to copy text: ', err);
+    toast({
+      title: "Copy failed",
+      description: "Could not copy to clipboard. Please try again.",
+      variant: "destructive",
+    });
+  });
 };

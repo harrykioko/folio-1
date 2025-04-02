@@ -21,7 +21,7 @@ import Tasks from "./pages/Tasks";
 import TaskDetails from "./pages/TaskDetails";
 import Accounts from "./pages/Accounts";
 import AccountDetails from "./pages/AccountDetails";
-import Prompts from "./pages/Prompts";
+import Prompts from "./pages/prompts"; // Updated import path
 import PromptDetails from "./pages/PromptDetails";
 import NewPrompt from "./pages/NewPrompt";
 import Settings from "./pages/Settings";
