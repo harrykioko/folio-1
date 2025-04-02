@@ -13,6 +13,7 @@ export type Task = {
   created_at: string;
   updated_at: string;
   created_by: string | null;
+  subtasks?: Subtask[]; // Added optional subtasks
 }
 
 export type TaskFormData = {
