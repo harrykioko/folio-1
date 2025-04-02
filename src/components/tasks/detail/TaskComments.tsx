@@ -1,10 +1,14 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Send } from "lucide-react";
+import { Send, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useUsers } from "@/hooks/useUsers";
+import { Skeleton } from "@/components/ui/skeleton";
+import { recordTaskActivity, TaskActivity } from "@/utils/tasks/taskActivity";
+import { toast } from "sonner";
 
 interface TaskCommentsProps {
   taskId: number;
@@ -13,9 +17,12 @@ interface TaskCommentsProps {
 const TaskComments: React.FC<TaskCommentsProps> = ({ taskId }) => {
   const [comment, setComment] = useState("");
   const [currentUser, setCurrentUser] = useState<string | null>(null);
+  const [comments, setComments] = useState<TaskActivity[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const { users, isLoading: isLoadingUsers } = useUsers();
   
   // Get current user ID for comments
-  React.useEffect(() => {
+  useEffect(() => {
     const getUserSession = async () => {
       const { data } = await supabase.auth.getSession();
       if (data.session?.user) {
@@ -25,37 +32,91 @@ const TaskComments: React.FC<TaskCommentsProps> = ({ taskId }) => {
     getUserSession();
   }, []);
   
-  // For demonstration purposes only - will be replaced with actual data in future
-  const mockComments = [
-    {
-      id: 1,
-      user_id: currentUser || "",
-      message: "Looks good so far!",
-      created_at: new Date(Date.now() - 7200000).toISOString() // 2 hours ago
-    },
-    {
-      id: 2,
-      user_id: currentUser || "",
-      message: "I'll handle attachments next",
-      created_at: new Date(Date.now() - 300000).toISOString() // 5 minutes ago
+  // Fetch comments from task_activity table
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        setIsLoading(true);
+        const { data, error } = await supabase
+          .from('task_activity')
+          .select('*')
+          .eq('task_id', taskId)
+          .eq('type', 'comment')
+          .order('created_at', { ascending: false });
+          
+        if (error) {
+          console.error('Error fetching comments:', error);
+          throw error;
+        }
+        
+        setComments(data as TaskActivity[]);
+      } catch (error) {
+        console.error('Failed to fetch comments:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    if (taskId) {
+      fetchComments();
     }
-  ];
+  }, [taskId]);
   
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (comment.trim()) {
-      // This is a placeholder for future implementation
-      // We'll implement the actual backend in a follow-up task
-      console.log("Comment submitted:", comment);
-      setComment("");
+      try {
+        const newComment = await recordTaskActivity({
+          task_id: taskId,
+          type: 'comment',
+          message: comment.trim()
+        });
+        
+        if (newComment) {
+          // Add the new comment to the list
+          setComments(prevComments => [newComment, ...prevComments]);
+          setComment("");
+          toast.success("Comment added");
+        }
+      } catch (error) {
+        console.error('Error adding comment:', error);
+        toast.error("Failed to add comment");
+      }
+    }
+  };
+  
+  const handleDeleteComment = async (commentId: string) => {
+    try {
+      const { error } = await supabase
+        .from('task_activity')
+        .delete()
+        .eq('id', commentId)
+        .eq('created_by', currentUser || ''); // Ensure only owner can delete
+        
+      if (error) throw error;
+      
+      // Remove the deleted comment from state
+      setComments(prevComments => prevComments.filter(c => c.id !== commentId));
+      toast.success("Comment deleted");
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+      toast.error("Failed to delete comment");
     }
   };
   
   // Get user information from the users hook
   const getUserInfo = (userId: string) => {
-    // Since we don't have the useUsers hook available in this simpler approach,
-    // we'll just return a placeholder
-    const name = "User";
-    const initials = "U";
+    if (isLoadingUsers) return { name: "Loading...", initials: "..." };
+    
+    const user = users?.find(user => user.id === userId);
+    const name = user?.full_name || user?.email || "Unknown User";
+    
+    // Generate initials from name
+    const initials = name
+      .split(' ')
+      .map(part => part[0])
+      .join('')
+      .slice(0, 2)
+      .toUpperCase();
     
     return { name, initials };
   };
@@ -92,29 +153,47 @@ const TaskComments: React.FC<TaskCommentsProps> = ({ taskId }) => {
         <Button 
           size="sm" 
           onClick={handleSubmit}
-          disabled={!comment.trim()}
+          disabled={!comment.trim() || !currentUser}
         >
           <Send className="h-4 w-4 mr-2" />
           Send
         </Button>
       </div>
       
-      {mockComments.length > 0 ? (
+      {isLoading ? (
         <div className="space-y-4 pt-4">
-          {mockComments.map((comment) => {
-            const userInfo = getUserInfo(comment.user_id);
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-12 w-full" />
+        </div>
+      ) : comments.length > 0 ? (
+        <div className="space-y-4 pt-4">
+          {comments.map((comment) => {
+            const userInfo = getUserInfo(comment.created_by);
+            const isOwner = currentUser === comment.created_by;
             
             return (
-              <div key={comment.id} className="flex gap-3">
+              <div key={comment.id} className="flex gap-3 group">
                 <Avatar className="h-8 w-8">
                   <AvatarFallback>{userInfo.initials}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium">{userInfo.name}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {formatTimeAgo(comment.created_at)}
-                    </span>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">{userInfo.name}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {formatTimeAgo(comment.created_at)}
+                      </span>
+                    </div>
+                    {isOwner && (
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={() => handleDeleteComment(comment.id)}
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    )}
                   </div>
                   <p className="text-sm">{comment.message}</p>
                 </div>

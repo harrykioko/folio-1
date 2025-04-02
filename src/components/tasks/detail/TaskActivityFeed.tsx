@@ -22,8 +22,14 @@ const TaskActivityFeed: React.FC<TaskActivityFeedProps> = ({ taskId }) => {
     const loadActivities = async () => {
       try {
         setIsLoading(true);
-        const data = await fetchTaskActivities(taskId);
-        setActivities(data);
+        const allActivities = await fetchTaskActivities(taskId);
+        
+        // Filter out comment activities
+        const nonCommentActivities = allActivities.filter(
+          activity => activity.type !== 'comment'
+        );
+        
+        setActivities(nonCommentActivities);
       } catch (err) {
         setError(err instanceof Error ? err : new Error('Failed to load activities'));
       } finally {

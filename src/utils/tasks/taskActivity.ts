@@ -31,7 +31,7 @@ export const recordTaskActivity = async (activityData: TaskActivityFormData): Pr
     
     // Using type assertion to bypass TypeScript errors until Supabase types are updated
     const { data, error } = await (supabase
-      .from('task_activity' as any)
+      .from('task_activity')
       .insert([{
         task_id: activityData.task_id,
         type: activityData.type,
@@ -43,6 +43,7 @@ export const recordTaskActivity = async (activityData: TaskActivityFormData): Pr
     
     if (error) {
       console.error("Error recording task activity:", error);
+      toast.error("Failed to record activity");
       return null;
     }
     
@@ -60,7 +61,7 @@ export const fetchTaskActivities = async (taskId: number): Promise<TaskActivity[
   try {
     // Using type assertion to bypass TypeScript errors until Supabase types are updated
     const { data, error } = await (supabase
-      .from('task_activity' as any)
+      .from('task_activity')
       .select('*')
       .eq('task_id', taskId)
       .order('created_at', { ascending: false }) as any);
