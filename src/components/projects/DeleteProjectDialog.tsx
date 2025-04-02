@@ -3,6 +3,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { CardTitle, CardDescription } from "@/components/ui/card";
 
 interface DeleteProjectDialogProps {
@@ -15,11 +16,13 @@ const DeleteProjectDialog: React.FC<DeleteProjectDialogProps> = ({
   onDelete,
 }) => {
   return (
-    <>
-      <CardTitle className="text-xl mb-2">Delete Project</CardTitle>
-      <CardDescription className="mb-4">
-        Are you sure you want to delete this project? This action cannot be undone.
-      </CardDescription>
+    <DialogContent>
+      <DialogHeader>
+        <CardTitle className="text-xl">Delete Project</CardTitle>
+        <CardDescription>
+          Are you sure you want to delete this project? This action cannot be undone.
+        </CardDescription>
+      </DialogHeader>
       
       <Alert variant="destructive" className="mb-4">
         <AlertCircle className="h-4 w-4" />
@@ -37,7 +40,7 @@ const DeleteProjectDialog: React.FC<DeleteProjectDialogProps> = ({
           Delete Project
         </Button>
       </div>
-    </>
+    </DialogContent>
   );
 };
 
