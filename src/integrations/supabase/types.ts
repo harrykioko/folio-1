@@ -308,6 +308,42 @@ export type Database = {
           },
         ]
       }
+      related_tasks: {
+        Row: {
+          created_at: string | null
+          id: string
+          related_task_id: number | null
+          task_id: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          related_task_id?: number | null
+          task_id?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          related_task_id?: number | null
+          task_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "related_tasks_related_task_id_fkey"
+            columns: ["related_task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "related_tasks_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subtasks: {
         Row: {
           created_at: string

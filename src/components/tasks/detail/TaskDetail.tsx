@@ -1,14 +1,13 @@
 
 import React from "react";
 import { Card } from "@/components/ui/card";
-import { useUsers } from "@/hooks/useUsers";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Task } from "@/utils/tasks/types";
 import TaskDescription from "./TaskDescription";
 import TaskChecklist from "./TaskChecklist";
 import TaskActivityFeed from "./TaskActivityFeed";
 import TaskDetailSidebar from "./TaskDetailSidebar";
 import TaskComments from "./TaskComments";
+import RelatedTasks from "./related/RelatedTasks";
 
 interface TaskDetailProps {
   task: Task;
@@ -64,15 +63,7 @@ const TaskDetail: React.FC<TaskDetailProps> = ({ task, formattedTask }) => {
           </div>
         </Card>
         
-        <Card className="p-6">
-          <h3 className="text-lg font-medium mb-4">Related Items</h3>
-          <div className="text-center text-muted-foreground py-8">
-            <p className="mb-4">No related items yet</p>
-            <button className="text-primary hover:underline">
-              + Link Task
-            </button>
-          </div>
-        </Card>
+        <RelatedTasks taskId={task.id} />
       </div>
     </div>
   );

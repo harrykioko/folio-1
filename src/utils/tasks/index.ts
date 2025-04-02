@@ -37,5 +37,15 @@ export {
   fetchTaskActivities
 } from './taskActivity';
 
+// Export related tasks functions
+export {
+  fetchRelatedTasks,
+  linkTask,
+  unlinkTask
+} from './relatedTasks';
+
 // Export activity types
 export type { TaskActivity, TaskActivityFormData } from './taskActivity';
+
+// Export related task types
+export type { RelatedTask } from './relatedTasks';
