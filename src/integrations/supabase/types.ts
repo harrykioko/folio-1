@@ -69,6 +69,44 @@ export type Database = {
         }
         Relationships: []
       }
+      prompts: {
+        Row: {
+          content: string
+          created_at: string | null
+          created_by: string | null
+          id: number
+          project_id: number | null
+          tags: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: number
+          project_id?: number | null
+          tags?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: number
+          project_id?: number | null
+          tags?: string[] | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prompts_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tasks: {
         Row: {
           assigned_to: string | null
