@@ -17,6 +17,7 @@ interface KanbanBoardProps {
 const KanbanBoard: React.FC<KanbanBoardProps> = ({ tasks, refreshTasks }) => {
   const { users } = useUsers();
   const [activeTask, setActiveTask] = useState<Task | null>(null);
+  const [isUpdating, setIsUpdating] = useState(false);
   
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -45,7 +46,7 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({ tasks, refreshTasks }) => {
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
     
-    if (!over) {
+    if (!over || isUpdating) {
       setActiveTask(null);
       return;
     }
@@ -55,13 +56,13 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({ tasks, refreshTasks }) => {
     const task = tasks.find(task => task.id === taskId);
     
     if (task && task.status !== newStatus) {
-      try {
-        // Ensure newStatus is one of the valid status values
-        if (newStatus === 'todo' || newStatus === 'in_progress' || newStatus === 'completed') {
-          // Update UI optimistically
+      // Only proceed if the task status is being changed to a valid status
+      if (newStatus === 'todo' || newStatus === 'in_progress' || newStatus === 'completed') {
+        try {
+          setIsUpdating(true);
           console.log(`Updating task ${taskId} status from ${task.status} to ${newStatus}`);
           
-          // Make API call
+          // Make API call with explicit type casting to ensure correct status value
           await updateTask(taskId, { 
             status: newStatus as 'todo' | 'in_progress' | 'completed' 
           });
@@ -71,13 +72,15 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({ tasks, refreshTasks }) => {
           
           // Show success message
           toast.success(`Task moved to ${newStatus === 'todo' ? 'To Do' : newStatus === 'in_progress' ? 'In Progress' : 'Completed'}`);
-        } else {
-          console.error(`Invalid status value: ${newStatus}`);
-          toast.error("Invalid status value");
+        } catch (error) {
+          console.error("Failed to update task status:", error);
+          toast.error("Failed to update task status");
+        } finally {
+          setIsUpdating(false);
         }
-      } catch (error) {
-        console.error("Failed to update task status:", error);
-        toast.error("Failed to update task status");
+      } else {
+        console.error(`Invalid status value: ${newStatus}`);
+        toast.error("Invalid status value");
       }
     }
     

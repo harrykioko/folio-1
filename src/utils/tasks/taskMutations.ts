@@ -80,11 +80,16 @@ export const updateTask = async (id: number, updates: Partial<TaskFormData>): Pr
       formattedUpdates.project_id = parseInt(formattedUpdates.project_id, 10);
     }
     
+    // Log the actual update being performed for debugging
+    console.log('Formatted updates being sent to Supabase:', formattedUpdates);
+    console.log('Task ID being updated:', id);
+    
+    // Explicitly add the returning option to ensure data is returned
     const { data, error } = await supabase
       .from('tasks')
       .update(formattedUpdates)
       .eq('id', id)
-      .select();
+      .select('*');
     
     if (error) {
       console.error("Supabase error:", error);
@@ -97,11 +102,14 @@ export const updateTask = async (id: number, updates: Partial<TaskFormData>): Pr
       throw error;
     }
     
+    // Validate that we got data back
     if (!data || data.length === 0) {
+      console.error("No data returned after task update. Task ID:", id);
       toast.error("No data returned after updating task");
       throw new Error("Failed to update task: No data returned");
     }
     
+    console.log('Updated task data received:', data[0]);
     return data[0] as Task;
   } catch (error) {
     console.error("Error updating task:", error);
