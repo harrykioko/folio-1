@@ -36,6 +36,8 @@ export const fetchAccountById = (accountId: string | undefined) => {
 // Create a new account in Supabase
 export const createAccount = async (data: AccountFormValues) => {
   try {
+    console.log("Creating account with data:", data);
+    
     // Step 1: Insert the base account data
     const { data: accountData, error: accountError } = await supabase
       .from('accounts')
@@ -54,10 +56,16 @@ export const createAccount = async (data: AccountFormValues) => {
 
     if (accountError) {
       console.error("Error creating account:", accountError);
-      throw new Error("Failed to create account");
+      throw new Error(`Failed to create account: ${accountError.message}`);
+    }
+
+    if (!accountData) {
+      console.error("No account data returned");
+      throw new Error("Failed to create account: No data returned");
     }
 
     const accountId = accountData.id;
+    console.log("Account created with ID:", accountId);
 
     // Step 2: Insert type-specific data based on account type
     if (data.type === "Domain" && (data.hostedOn || data.renewalCost !== null)) {
@@ -71,7 +79,7 @@ export const createAccount = async (data: AccountFormValues) => {
 
       if (domainError) {
         console.error("Error creating domain details:", domainError);
-        throw new Error("Failed to create domain details");
+        throw new Error(`Failed to create domain details: ${domainError.message}`);
       }
     }
 
@@ -87,7 +95,7 @@ export const createAccount = async (data: AccountFormValues) => {
 
       if (socialMediaError) {
         console.error("Error creating social media details:", socialMediaError);
-        throw new Error("Failed to create social media details");
+        throw new Error(`Failed to create social media details: ${socialMediaError.message}`);
       }
     }
 
@@ -101,7 +109,7 @@ export const createAccount = async (data: AccountFormValues) => {
 
       if (serviceError) {
         console.error("Error creating service details:", serviceError);
-        throw new Error("Failed to create service details");
+        throw new Error(`Failed to create service details: ${serviceError.message}`);
       }
     }
 

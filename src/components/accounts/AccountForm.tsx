@@ -36,7 +36,7 @@ const AccountForm: React.FC<AccountFormProps> = ({ initialData, accountId }) => 
     resolver: zodResolver(accountFormSchema),
     defaultValues: initialData || {
       name: "",
-      type: undefined, // Changed from empty string to undefined to match the union type
+      type: undefined,
       platform: null,
       url: "",
       username: "",
@@ -87,20 +87,26 @@ const AccountForm: React.FC<AccountFormProps> = ({ initialData, accountId }) => 
     
     try {
       // Create account in Supabase
-      await createAccount(data);
+      const accountId = await createAccount(data);
       
       toast({
         title: "Success",
-        description: `Account ${accountId ? "updated" : "created"} successfully`,
+        description: `Account ${accountId ? "created" : "updated"} successfully`,
       });
       
       // Navigate back to accounts list
       navigate("/accounts");
     } catch (error) {
-      console.error("Error creating account:", error);
+      console.error("Error in form submission:", error);
+      
+      // Improved error handling
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : "Failed to create account. Please try again.";
+      
       toast({
         title: "Error",
-        description: "Failed to create account. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -152,7 +158,7 @@ const AccountForm: React.FC<AccountFormProps> = ({ initialData, accountId }) => 
           
           <Button type="submit" disabled={isSubmitting}>
             <Save className="mr-2 h-4 w-4" />
-            {accountId ? "Update Account" : "Create Account"}
+            {isSubmitting ? "Creating..." : (accountId ? "Update Account" : "Create Account")}
           </Button>
         </div>
       </form>
