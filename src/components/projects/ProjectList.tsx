@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Project } from "@/utils/supabaseProjects";
+import { Project } from "@/utils/projects";
 import ProjectCard from "./ProjectCard";
 import { CheckCircle2, Clock, AlertCircle } from "lucide-react";
 
