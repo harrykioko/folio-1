@@ -3,17 +3,17 @@ import React from "react";
 import { Card } from "@/components/ui/card";
 import { useTasksTab } from "./useTasksTab";
 import TasksTabHeader from "./TasksTabHeader";
-import TasksTable from "./TasksTable";
 import TasksEmptyState from "./TasksEmptyState";
 import TasksLoadingState from "./TasksLoadingState";
 import TasksErrorState from "./TasksErrorState";
+import KanbanBoard from "@/components/tasks/kanban/KanbanBoard";
 
 interface TasksTabContainerProps {
   projectId: number;
 }
 
 const TasksTabContainer: React.FC<TasksTabContainerProps> = ({ projectId }) => {
-  const { tasks, isLoading, error, users, isLoadingUsers, handleAddTask } = useTasksTab(projectId);
+  const { tasks, isLoading, error, users, isLoadingUsers, handleAddTask, refreshTasks } = useTasksTab(projectId);
 
   return (
     <Card>
@@ -28,13 +28,12 @@ const TasksTabContainer: React.FC<TasksTabContainerProps> = ({ projectId }) => {
       )}
       
       {!isLoading && !error && tasks && tasks.length > 0 && (
-        <Card className="p-6">
-          <TasksTable 
+        <div className="p-6">
+          <KanbanBoard 
             tasks={tasks} 
-            users={users} 
-            isLoadingUsers={isLoadingUsers} 
+            refreshTasks={refreshTasks}
           />
-        </Card>
+        </div>
       )}
     </Card>
   );

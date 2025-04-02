@@ -5,7 +5,7 @@ import { useUsers } from "@/hooks/useUsers";
 
 export const useTasksTab = (projectId: number) => {
   const navigate = useNavigate();
-  const { tasks, isLoading, error } = useTasks(projectId);
+  const { tasks, isLoading, error, refreshTasks } = useTasks(projectId);
   const { users, isLoading: isLoadingUsers } = useUsers();
   
   const handleAddTask = () => {
@@ -18,6 +18,7 @@ export const useTasksTab = (projectId: number) => {
     error,
     users,
     isLoadingUsers,
-    handleAddTask
+    handleAddTask,
+    refreshTasks
   };
 };

@@ -145,6 +145,14 @@ export default {
 					'100%': {
 						transform: 'rotate(360deg) translateX(10px) rotate(-360deg)'
 					}
+				},
+				'shimmer': {
+					'0%': {
+						backgroundPosition: '-200% 0',
+					},
+					'100%': {
+						backgroundPosition: '200% 0',
+					},
 				}
 			},
 			animation: {
@@ -155,13 +163,15 @@ export default {
 				'scale-in': 'scale-in 0.2s ease-out',
 				'pulse-glow': 'pulse-glow 3s ease-in-out infinite',
 				'float': 'float 6s ease-in-out infinite',
-				'orbit': 'orbit 15s linear infinite'
+				'orbit': 'orbit 15s linear infinite',
+				'shimmer': 'shimmer 2s linear infinite'
 			},
 			backgroundImage: {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
 				'hero-pattern': 'url("/src/assets/constellation-bg.svg")',
 				'landing-gradient': 'linear-gradient(to bottom right, #111827, #0F172A, #1E3A8A)',
 				'landing-image': 'url("/lovable-uploads/3fafdbe9-5566-4218-8441-e326c0384c7b.png")',
+				'shimmer': 'linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 20%, rgba(255,255,255,0.2) 60%, rgba(255,255,255,0))',
 			},
 			backdropFilter: {
 				'none': 'none',
