@@ -20,7 +20,7 @@ const TasksOverviewCard: React.FC<TasksOverviewCardProps> = ({ projectId, progre
   
   useEffect(() => {
     if (tasks) {
-      const completed = tasks.filter(task => task.status === "done").length;
+      const completed = tasks.filter(task => task.status === "completed").length;
       const inProgress = tasks.filter(task => task.status === "in_progress").length;
       
       setTaskStats({
