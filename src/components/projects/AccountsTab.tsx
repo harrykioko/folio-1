@@ -35,7 +35,8 @@ interface AccountsTabProps {
 
 const AccountsTab: React.FC<AccountsTabProps> = ({ projectId }) => {
   const navigate = useNavigate();
-  const accounts = accountsData.filter(account => account.projectId === projectId);
+  // Convert the projectId to string for consistent comparison
+  const accounts = accountsData.filter(account => String(account.projectId) === String(projectId));
   const [view, setView] = useState<"grid" | "list">("grid");
   const [passwordVisibility, setPasswordVisibility] = useState<Record<string, boolean>>({});
 
