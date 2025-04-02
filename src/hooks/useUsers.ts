@@ -1,6 +1,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export type User = {
   id: string;
@@ -22,22 +23,19 @@ export function useUsers() {
       setIsLoading(true);
       setError(null);
       
-      console.log('Fetching users from Supabase');
       const { data, error } = await supabase
         .from('users')
         .select('id, full_name, email')
         .order('full_name', { ascending: true });
       
       if (error) {
-        console.error('Error fetching users:', error);
         throw error;
       }
       
-      console.log(`Successfully fetched ${data?.length || 0} users`);
       setUsers(data as User[]);
     } catch (err) {
-      console.error('Error loading users:', err);
       setError(err instanceof Error ? err : new Error('Failed to load users'));
+      toast.error("Failed to load users. Please try again later.");
     } finally {
       setIsLoading(false);
     }

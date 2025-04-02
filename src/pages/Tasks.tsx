@@ -56,11 +56,6 @@ const Tasks: React.FC = () => {
     }
   };
 
-  // Function to format the status for display
-  const getDisplayStatus = (status: string) => {
-    return formatTaskStatus(status);
-  };
-
   // Loading state
   if (isLoading) {
     return (
@@ -154,7 +149,7 @@ const Tasks: React.FC = () => {
                               {task.priority}
                             </Badge>
                           </div>
-                          <Badge variant="outline">{getDisplayStatus(task.status)}</Badge>
+                          <Badge variant="outline">{formatTaskStatus(task.status)}</Badge>
                         </div>
                         <div className="mt-2 text-sm text-muted-foreground">
                           {task.project_id && (

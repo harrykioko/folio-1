@@ -6,12 +6,9 @@ import { toast } from "sonner";
 // Create a new task
 export const createTask = async (taskData: TaskFormData): Promise<Task> => {
   try {
-    console.log('Creating new task with data:', JSON.stringify(taskData, null, 2));
-    
     // Ensure user is authenticated
     const { data: session } = await supabase.auth.getSession();
     if (!session?.session) {
-      console.error('User is not authenticated');
       toast.error("You must be logged in to create tasks");
       throw new Error('User not authenticated');
     }
@@ -29,8 +26,6 @@ export const createTask = async (taskData: TaskFormData): Promise<Task> => {
       created_by: session.session.user.id
     };
     
-    console.log('Formatted task data for insert:', JSON.stringify(formattedTaskData, null, 2));
-    
     const { data, error } = await supabase
       .from('tasks')
       .insert([formattedTaskData])
@@ -38,9 +33,6 @@ export const createTask = async (taskData: TaskFormData): Promise<Task> => {
       .single();
     
     if (error) {
-      console.error('Error creating task:', error);
-      console.error('Error details:', JSON.stringify(error, null, 2));
-      
       if (error.code === '42501') {
         toast.error("Permission denied: Task creation failed due to security policy. Please check you have the right access level.");
       } else {
@@ -51,14 +43,15 @@ export const createTask = async (taskData: TaskFormData): Promise<Task> => {
     }
     
     if (!data) {
-      console.error('No data returned after creating task');
+      toast.error('No data returned after creating task');
       throw new Error('Failed to create task: No data returned');
     }
     
-    console.log('Successfully created task:', data);
     return data as Task;
   } catch (error) {
-    console.error('Failed to create task:', error);
+    if (error instanceof Error && !error.message.includes('User not authenticated')) {
+      toast.error("Failed to create task. Please try again later.");
+    }
     throw error;
   }
 };
@@ -66,12 +59,9 @@ export const createTask = async (taskData: TaskFormData): Promise<Task> => {
 // Update an existing task
 export const updateTask = async (id: number, updates: Partial<TaskFormData>): Promise<Task> => {
   try {
-    console.log(`Updating task with ID ${id} with data:`, updates);
-    
     // Check authentication before updating
     const { data: session } = await supabase.auth.getSession();
     if (!session?.session) {
-      console.error('User is not authenticated');
       toast.error("You must be logged in to update tasks");
       throw new Error('User not authenticated');
     }
@@ -84,8 +74,6 @@ export const updateTask = async (id: number, updates: Partial<TaskFormData>): Pr
       .single();
     
     if (error) {
-      console.error(`Error updating task with ID ${id}:`, error);
-      
       if (error.code === '42501') {
         toast.error("Permission denied: Task update failed due to security policy. Please check you have the right access level.");
       } else {
@@ -95,10 +83,11 @@ export const updateTask = async (id: number, updates: Partial<TaskFormData>): Pr
       throw error;
     }
     
-    console.log('Successfully updated task:', data);
     return data as Task;
   } catch (error) {
-    console.error(`Failed to update task with ID ${id}:`, error);
+    if (error instanceof Error && !error.message.includes('User not authenticated')) {
+      toast.error("Failed to update task. Please try again later.");
+    }
     throw error;
   }
 };
@@ -106,12 +95,9 @@ export const updateTask = async (id: number, updates: Partial<TaskFormData>): Pr
 // Delete a task
 export const deleteTask = async (id: number): Promise<boolean> => {
   try {
-    console.log(`Deleting task with ID: ${id}`);
-    
     // Check authentication before deleting
     const { data: session } = await supabase.auth.getSession();
     if (!session?.session) {
-      console.error('User is not authenticated');
       toast.error("You must be logged in to delete tasks");
       throw new Error('User not authenticated');
     }
@@ -122,8 +108,6 @@ export const deleteTask = async (id: number): Promise<boolean> => {
       .eq('id', id);
     
     if (error) {
-      console.error(`Error deleting task with ID ${id}:`, error);
-      
       if (error.code === '42501') {
         toast.error("Permission denied: Task deletion failed due to security policy. Please check you have the right access level.");
       } else {
@@ -133,10 +117,11 @@ export const deleteTask = async (id: number): Promise<boolean> => {
       throw error;
     }
     
-    console.log(`Successfully deleted task with ID: ${id}`);
     return true;
   } catch (error) {
-    console.error(`Failed to delete task with ID ${id}:`, error);
+    if (error instanceof Error && !error.message.includes('User not authenticated')) {
+      toast.error("Failed to delete task. Please try again later.");
+    }
     throw error;
   }
 };

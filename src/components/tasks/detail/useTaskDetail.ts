@@ -46,7 +46,6 @@ export const useTaskDetail = () => {
         setTask(fetchedTask);
         setError(null);
       } catch (err) {
-        console.error("Error loading task:", err);
         setError("Task not found or you don't have permission to view it");
       } finally {
         setIsLoading(false);
@@ -103,8 +102,7 @@ export const useTaskDetail = () => {
         }
       }
     } catch (error) {
-      console.error("Error saving task:", error);
-      // Toast is now handled in the createTask/updateTask functions
+      // Toast is handled in the API functions
     } finally {
       setIsSubmitting(false);
     }
@@ -118,8 +116,7 @@ export const useTaskDetail = () => {
         navigate("/tasks");
       }
     } catch (error) {
-      console.error("Error deleting task:", error);
-      // Toast is now handled in the deleteTask function
+      // Toast is handled in the API function
     }
   };
 

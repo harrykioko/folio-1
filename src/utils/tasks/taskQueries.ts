@@ -1,26 +1,24 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import type { Task } from "./types";
+import { toast } from "sonner";
 
 // Fetch all tasks
 export const fetchTasks = async (): Promise<Task[]> => {
   try {
-    console.log('Fetching all tasks from Supabase');
-    
     const { data, error } = await supabase
       .from('tasks')
       .select('*')
       .order('created_at', { ascending: false });
     
     if (error) {
-      console.error('Error fetching tasks:', error);
+      toast.error(`Error fetching tasks: ${error.message}`);
       throw error;
     }
     
-    console.log(`Successfully fetched ${data?.length || 0} tasks`);
     return data as Task[];
   } catch (error) {
-    console.error('Failed to fetch tasks:', error);
+    toast.error("Failed to fetch tasks. Please try again later.");
     throw error;
   }
 };
@@ -28,7 +26,6 @@ export const fetchTasks = async (): Promise<Task[]> => {
 // Fetch a single task by ID
 export const fetchTaskById = async (id: number | string): Promise<Task> => {
   try {
-    console.log(`Fetching task with ID: ${id}`);
     const numericId = typeof id === 'string' ? parseInt(id, 10) : id;
     
     const { data, error } = await supabase
@@ -38,14 +35,19 @@ export const fetchTaskById = async (id: number | string): Promise<Task> => {
       .single();
     
     if (error) {
-      console.error(`Error fetching task with ID ${id}:`, error);
+      if (error.code === 'PGRST116') {
+        toast.error(`Task not found with ID ${id}`);
+      } else {
+        toast.error(`Error fetching task: ${error.message}`);
+      }
       throw error;
     }
     
-    console.log('Successfully fetched task:', data);
     return data as Task;
   } catch (error) {
-    console.error(`Failed to fetch task with ID ${id}:`, error);
+    if (error instanceof Error && !error.message.includes('Task not found')) {
+      toast.error("Failed to fetch task details. Please try again later.");
+    }
     throw error;
   }
 };
@@ -53,8 +55,6 @@ export const fetchTaskById = async (id: number | string): Promise<Task> => {
 // Fetch tasks for a specific project
 export const fetchTasksByProjectId = async (projectId: number): Promise<Task[]> => {
   try {
-    console.log(`Fetching tasks for project ID: ${projectId}`);
-    
     const { data, error } = await supabase
       .from('tasks')
       .select('*')
@@ -62,14 +62,13 @@ export const fetchTasksByProjectId = async (projectId: number): Promise<Task[]> 
       .order('created_at', { ascending: false });
     
     if (error) {
-      console.error(`Error fetching tasks for project ID ${projectId}:`, error);
+      toast.error(`Error fetching project tasks: ${error.message}`);
       throw error;
     }
     
-    console.log(`Successfully fetched ${data?.length || 0} tasks for project ID ${projectId}`);
     return data as Task[];
   } catch (error) {
-    console.error(`Failed to fetch tasks for project ID ${projectId}:`, error);
+    toast.error("Failed to fetch project tasks. Please try again later.");
     throw error;
   }
 };

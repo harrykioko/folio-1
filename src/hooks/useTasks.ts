@@ -1,7 +1,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { fetchTasks, fetchTasksByProjectId, Task } from '@/utils/tasks';
-import { toast } from 'sonner';
 
 /**
  * Hook for fetching and managing tasks data
@@ -19,18 +18,15 @@ export function useTasks(projectId?: number) {
       
       let data;
       if (projectId) {
-        console.log(`Fetching tasks for project ID: ${projectId}`);
         data = await fetchTasksByProjectId(projectId);
       } else {
-        console.log('Fetching all tasks');
         data = await fetchTasks();
       }
       
       setTasks(data);
     } catch (err) {
-      console.error('Error loading tasks:', err);
       setError(err instanceof Error ? err : new Error('Failed to load tasks'));
-      toast.error('Failed to load tasks. Please try again later.');
+      // Toast errors are handled in the API functions
     } finally {
       setIsLoading(false);
     }
