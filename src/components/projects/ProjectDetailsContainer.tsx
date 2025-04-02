@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchProjectById, updateProject, deleteProject, Project } from "@/utils/supabaseProjects";
@@ -7,6 +6,8 @@ import ProjectHeader from "@/components/projects/ProjectHeader";
 import ProjectModernLayout from "@/components/projects/layout/ProjectModernLayout";
 import ProjectDetailLoading from "@/components/projects/ProjectDetailLoading";
 import ProjectNotFound from "@/components/projects/ProjectNotFound";
+import NewProjectView from "@/components/projects/NewProjectView";
+import { createProject } from "@/utils/supabaseProjects";
 import { toast } from "sonner";
 
 const ProjectDetailsContainer: React.FC = () => {
@@ -18,21 +19,22 @@ const ProjectDetailsContainer: React.FC = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-  // Use the correct ID parameter, either 'id' or 'projectId' depending on the route
   const effectiveId = id || projectId;
+  const isNewProject = effectiveId === "new";
 
   useEffect(() => {
     const fetchProject = async () => {
       try {
         setLoading(true);
         
-        // Check if effectiveId exists and is not "new" before fetching
-        if (effectiveId && effectiveId !== "new") {
+        if (isNewProject) {
+          setLoading(false);
+          return;
+        }
+        
+        if (effectiveId) {
           const fetchedProject = await fetchProjectById(effectiveId);
           setProject(fetchedProject);
-        } else if (effectiveId === "new") {
-          // Handle "new" project case if needed
-          setProject(null);
         } else {
           throw new Error("No project ID provided");
         }
@@ -45,7 +47,7 @@ const ProjectDetailsContainer: React.FC = () => {
     };
 
     fetchProject();
-  }, [effectiveId]);
+  }, [effectiveId, isNewProject]);
 
   const handleUpdate = async (data: ProjectFormValues) => {
     if (!project) return;
@@ -56,6 +58,17 @@ const ProjectDetailsContainer: React.FC = () => {
     } catch (err) {
       console.error("Error updating project:", err);
       toast.error("Failed to update project");
+    }
+  };
+
+  const handleCreate = async (data: ProjectFormValues) => {
+    try {
+      const newProject = await createProject(data);
+      toast.success("Project created successfully");
+      navigate(`/projects/${newProject.id}`);
+    } catch (err) {
+      console.error("Error creating project:", err);
+      toast.error("Failed to create project");
     }
   };
 
@@ -73,8 +86,13 @@ const ProjectDetailsContainer: React.FC = () => {
 
   if (loading) return <ProjectDetailLoading />;
   
-  // Ensure we pass the error message to ProjectNotFound
-  if (error || !project) return <ProjectNotFound error={error ? error.message : "The requested project could not be found."} />;
+  if (isNewProject) {
+    return <NewProjectView onSubmit={handleCreate} />;
+  }
+  
+  if (error || !project) {
+    return <ProjectNotFound error={error ? error.message : "The requested project could not be found."} />;
+  }
 
   return (
     <div className="container mx-auto p-4 animate-fade-in">
