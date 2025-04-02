@@ -7,10 +7,10 @@ import {
   Instagram, 
   Linkedin, 
   AtSign, 
-  Facebook, 
+  Facebook,
   Database as DatabaseIcon,
-  TiktokIcon
 } from "lucide-react";
+import { TiktokIcon } from "./accountUtils";
 
 export const getTypeIcon = (type: string) => {
   switch (type) {

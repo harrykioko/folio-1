@@ -21,9 +21,9 @@ import {
   Instagram,
   Linkedin,
   AtSign,
-  Facebook,
-  TiktokIcon
+  Facebook
 } from "lucide-react";
+import { TiktokIcon } from "@/utils/accountUtils";
 import {
   DropdownMenu,
   DropdownMenuContent,
