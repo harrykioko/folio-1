@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CalendarClock, Edit, Trash } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useUsers } from "@/hooks/useUsers";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface TaskHeaderProps {
   title: string;
@@ -28,6 +30,16 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
   setIsEditMode,
   setIsDeleteDialogOpen,
 }) => {
+  const { users, isLoading: isLoadingUsers } = useUsers();
+  
+  const getAssigneeName = () => {
+    if (!assignee) return null;
+    if (isLoadingUsers) return <Skeleton className="h-4 w-24 inline-block" />;
+    
+    const user = users?.find(user => user.id === assignee);
+    return user?.full_name || user?.email || "Unknown User";
+  };
+
   // Function to determine the badge variant based on priority
   const getPriorityVariant = (priority: string) => {
     switch (priority.toLowerCase()) {
@@ -68,7 +80,9 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
         </div>
         <h1 className="text-3xl font-bold">{title}</h1>
         <div className="flex items-center text-sm text-muted-foreground gap-2">
-          {assignee && <span>Assigned to: {assignee}</span>}
+          {assignee && (
+            <span>Assigned to: {getAssigneeName()}</span>
+          )}
           {dueDate && (
             <>
               <span>•</span>

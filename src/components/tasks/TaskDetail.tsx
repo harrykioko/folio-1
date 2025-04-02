@@ -1,6 +1,8 @@
 
 import React from "react";
 import { Card } from "@/components/ui/card";
+import { useUsers } from "@/hooks/useUsers";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface TaskDetailProps {
   task: {
@@ -13,6 +15,16 @@ interface TaskDetailProps {
 }
 
 const TaskDetail: React.FC<TaskDetailProps> = ({ task }) => {
+  const { users, isLoading: isLoadingUsers } = useUsers();
+  
+  const getAssigneeName = () => {
+    if (!task.assignee) return "Unassigned";
+    if (isLoadingUsers) return <Skeleton className="h-5 w-32" />;
+    
+    const user = users?.find(user => user.id === task.assignee);
+    return user?.full_name || user?.email || "Unknown User";
+  };
+
   return (
     <div className="grid gap-6 md:grid-cols-3">
       <div className="md:col-span-2 space-y-6">
@@ -37,7 +49,7 @@ const TaskDetail: React.FC<TaskDetailProps> = ({ task }) => {
           <dl className="space-y-4">
             <div>
               <dt className="text-sm font-medium text-muted-foreground">Assignee</dt>
-              <dd className="mt-1">{task.assignee || "Unassigned"}</dd>
+              <dd className="mt-1">{getAssigneeName()}</dd>
             </div>
             <div>
               <dt className="text-sm font-medium text-muted-foreground">Project</dt>

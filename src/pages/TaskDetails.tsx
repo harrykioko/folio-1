@@ -9,7 +9,9 @@ import TaskDetail from "@/components/tasks/TaskDetail";
 import DeleteTaskDialog from "@/components/tasks/DeleteTaskDialog";
 import { TaskFormValues } from "@/components/tasks/form/TaskFormSchema";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { useUsers } from "@/hooks/useUsers";
 import { 
   createTask, 
   updateTask, 
@@ -32,6 +34,7 @@ const TaskDetails: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [task, setTask] = useState<Task | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { users, isLoading: isLoadingUsers } = useUsers();
   
   const projectIdFromQuery = searchParams.get('projectId');
   const isNewTask = location.pathname === "/tasks/new" || taskId === "new";
@@ -69,6 +72,14 @@ const TaskDetails: React.FC = () => {
       toast.error("Task not found");
     }
   }, [task, isNewTask, navigate, isLoading]);
+
+  const getUserName = (userId: string | null) => {
+    if (!userId) return "Unassigned";
+    if (isLoadingUsers) return "Loading...";
+    
+    const user = users?.find(user => user.id === userId);
+    return user?.full_name || user?.email || "Unknown User";
+  };
 
   const handleSubmit = async (data: TaskFormValues) => {
     try {
@@ -177,7 +188,7 @@ const TaskDetails: React.FC = () => {
     priority: task.priority.charAt(0).toUpperCase() + task.priority.slice(1),
     project: task.project_id ? `Project #${task.project_id}` : "No Project",
     projectId: task.project_id,
-    assignee: task.assigned_to || "Unassigned",
+    assignee: task.assigned_to,
     dueDate: task.deadline ? new Date(task.deadline).toLocaleDateString() : "No due date",
     created: task.created_at ? new Date(task.created_at).toLocaleDateString() : undefined
   };
@@ -201,7 +212,8 @@ const TaskDetails: React.FC = () => {
           <TaskForm 
             task={{
               ...formattedTask,
-              description: task.description || ""
+              description: task.description || "",
+              assignee: task.assigned_to || "unassigned"
             }}
             onSubmit={handleSubmit} 
             onCancel={() => setIsEditMode(false)}

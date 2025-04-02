@@ -7,6 +7,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { useTasks } from "@/hooks/useTasks";
+import { useUsers } from "@/hooks/useUsers";
 import { formatTaskStatus } from "@/utils/tasks";
 
 interface TasksTabProps {
@@ -16,6 +17,15 @@ interface TasksTabProps {
 const TasksTab: React.FC<TasksTabProps> = ({ projectId }) => {
   const navigate = useNavigate();
   const { tasks, isLoading, error } = useTasks(projectId);
+  const { users, isLoading: isLoadingUsers } = useUsers();
+  
+  const getUserName = (userId: string | null) => {
+    if (!userId) return "Unassigned";
+    if (isLoadingUsers) return "Loading...";
+    
+    const user = users?.find(user => user.id === userId);
+    return user?.full_name || user?.email || "Unknown User";
+  };
 
   const getPriorityColor = (priority: string) => {
     switch (priority.toLowerCase()) {
@@ -156,7 +166,7 @@ const TasksTab: React.FC<TasksTabProps> = ({ projectId }) => {
                     {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
                   </Badge>
                 </TableCell>
-                <TableCell>{task.assigned_to || "Unassigned"}</TableCell>
+                <TableCell>{getUserName(task.assigned_to)}</TableCell>
                 <TableCell>
                   {task.deadline ? new Date(task.deadline).toLocaleDateString() : "No due date"}
                 </TableCell>

@@ -8,12 +8,24 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Clock, Plus, Search, Loader2 } from "lucide-react";
 import { useTasks } from "@/hooks/useTasks";
+import { useUsers } from "@/hooks/useUsers";
 import { formatTaskStatus } from "@/utils/tasks";
+import { Task } from "@/utils/tasks/types";
 
 const Tasks: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("all");
   const { tasks, isLoading, error } = useTasks();
+  const { users, isLoading: isLoadingUsers } = useUsers();
+
+  // Function to get the user's full name
+  const getUserName = (userId: string | null) => {
+    if (!userId) return "Unassigned";
+    if (isLoadingUsers) return "Loading...";
+    
+    const user = users?.find(user => user.id === userId);
+    return user?.full_name || user?.email || "Unknown User";
+  };
 
   // Filter tasks based on search query and active tab
   const filteredTasks = tasks ? tasks.filter((task) => {
@@ -157,7 +169,7 @@ const Tasks: React.FC = () => {
                           {task.assigned_to && (
                             <>
                               <span className="mx-2">•</span>
-                              <span>Assigned to {task.assigned_to}</span>
+                              <span>Assigned to {getUserName(task.assigned_to)}</span>
                             </>
                           )}
                         </div>
