@@ -2,6 +2,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { Task, TaskFormData } from "./types";
 import { toast } from "sonner";
+import { recordTaskActivity } from "./taskActivity";
 
 // Create a new task
 export const createTask = async (taskData: TaskFormData): Promise<Task> => {
@@ -46,6 +47,13 @@ export const createTask = async (taskData: TaskFormData): Promise<Task> => {
       toast.error('No data returned after creating task');
       throw new Error('Failed to create task: No data returned');
     }
+
+    // Record task creation activity
+    await recordTaskActivity({
+      task_id: data.id,
+      type: 'creation',
+      message: `Task "${data.title}" created`
+    });
     
     return data as Task;
   } catch (error) {
@@ -67,6 +75,13 @@ export const updateTask = async (id: number, updates: Partial<TaskFormData>): Pr
     }
     
     console.log(`Updating task ${id} with:`, updates);
+
+    // Get the current task data for comparison
+    const { data: currentTask } = await supabase
+      .from('tasks')
+      .select('*')
+      .eq('id', id)
+      .single();
     
     // Ensure status is valid if it's being updated
     if (updates.status && !['todo', 'in_progress', 'completed'].includes(updates.status)) {
@@ -109,8 +124,51 @@ export const updateTask = async (id: number, updates: Partial<TaskFormData>): Pr
       throw new Error("Failed to update task: No data returned");
     }
     
-    console.log('Updated task data received:', data[0]);
-    return data[0] as Task;
+    const updatedTask = data[0] as Task;
+    console.log('Updated task data received:', updatedTask);
+
+    // Record activities for changes
+    if (currentTask) {
+      // Status change activity
+      if (updates.status && updates.status !== currentTask.status) {
+        await recordTaskActivity({
+          task_id: id,
+          type: 'status_change',
+          message: `Status changed from "${currentTask.status}" to "${updates.status}"`
+        });
+      }
+
+      // Assignment change activity
+      if (updates.assigned_to && updates.assigned_to !== currentTask.assigned_to) {
+        let assigneeName = "Unassigned";
+        if (updates.assigned_to !== "unassigned") {
+          const { data: userData } = await supabase
+            .from('users')
+            .select('full_name, email')
+            .eq('id', updates.assigned_to)
+            .single();
+          
+          assigneeName = userData?.full_name || userData?.email || updates.assigned_to;
+        }
+        
+        await recordTaskActivity({
+          task_id: id,
+          type: 'assignment',
+          message: `Task assigned to ${assigneeName}`
+        });
+      }
+
+      // Priority change activity
+      if (updates.priority && updates.priority !== currentTask.priority) {
+        await recordTaskActivity({
+          task_id: id,
+          type: 'priority_change',
+          message: `Priority changed from "${currentTask.priority}" to "${updates.priority}"`
+        });
+      }
+    }
+    
+    return updatedTask;
   } catch (error) {
     console.error("Error updating task:", error);
     if (error instanceof Error && !error.message.includes('User not authenticated')) {

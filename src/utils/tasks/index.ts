@@ -30,3 +30,12 @@ export {
   parseTaskStatus,
   parseTaskPriority 
 } from './taskHelpers';
+
+// Export activity functions
+export {
+  recordTaskActivity,
+  fetchTaskActivities
+} from './taskActivity';
+
+// Export activity types
+export type { TaskActivity, TaskActivityFormData } from './taskActivity';

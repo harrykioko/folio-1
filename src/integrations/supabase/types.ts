@@ -316,6 +316,7 @@ export type Database = {
           is_complete: boolean
           task_id: number | null
           title: string
+          updated_at: string | null
         }
         Insert: {
           created_at?: string
@@ -324,6 +325,7 @@ export type Database = {
           is_complete?: boolean
           task_id?: number | null
           title: string
+          updated_at?: string | null
         }
         Update: {
           created_at?: string
@@ -332,10 +334,46 @@ export type Database = {
           is_complete?: boolean
           task_id?: number | null
           title?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "subtasks_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_activity: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          message: string
+          task_id: number | null
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          message: string
+          task_id?: number | null
+          type: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          message?: string
+          task_id?: number | null
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_activity_task_id_fkey"
             columns: ["task_id"]
             isOneToOne: false
             referencedRelation: "tasks"

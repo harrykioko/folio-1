@@ -1,42 +1,38 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Loader2 } from "lucide-react";
 import { useUsers } from "@/hooks/useUsers";
-
-interface ActivityItem {
-  id: string;
-  type: 'status_change' | 'assignment' | 'priority_change' | 'creation' | 'comment';
-  description: string;
-  created_by: string;
-  created_at: string;
-}
+import { fetchTaskActivities, TaskActivity } from "@/utils/tasks/taskActivity";
 
 interface TaskActivityFeedProps {
   taskId: number;
 }
 
 const TaskActivityFeed: React.FC<TaskActivityFeedProps> = ({ taskId }) => {
-  // This will be replaced with actual data loading from API once backend is set up
-  const mockActivities: ActivityItem[] = [
-    {
-      id: '1',
-      type: 'creation',
-      description: 'Task created',
-      created_by: 'auth0|user123',
-      created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2).toISOString() // 2 days ago
-    },
-    {
-      id: '2',
-      type: 'status_change',
-      description: 'Status changed from "To Do" to "In Progress"',
-      created_by: 'auth0|user456',
-      created_at: new Date(Date.now() - 1000 * 60 * 60 * 12).toISOString() // 12 hours ago
-    }
-  ];
+  const [activities, setActivities] = useState<TaskActivity[] | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
   
   const { users, isLoading: isLoadingUsers } = useUsers();
+  
+  useEffect(() => {
+    const loadActivities = async () => {
+      try {
+        setIsLoading(true);
+        const data = await fetchTaskActivities(taskId);
+        setActivities(data);
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to load activities'));
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadActivities();
+  }, [taskId]);
   
   const getUserInfo = (userId: string) => {
     if (isLoadingUsers) return { name: "Loading...", initials: "..." };
@@ -68,7 +64,30 @@ const TaskActivityFeed: React.FC<TaskActivityFeedProps> = ({ taskId }) => {
     return date.toLocaleDateString();
   };
   
-  if (mockActivities.length === 0) {
+  const getActivityIcon = (type: string) => {
+    // This could be expanded to return different icons based on activity type
+    return null;
+  };
+  
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="flex justify-center py-8">
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="text-center text-muted-foreground py-8">
+        <p className="text-destructive mb-2">Failed to load activity</p>
+      </div>
+    );
+  }
+  
+  if (!activities || activities.length === 0) {
     return (
       <div className="text-center text-muted-foreground py-8">
         No activity recorded yet.
@@ -78,7 +97,7 @@ const TaskActivityFeed: React.FC<TaskActivityFeedProps> = ({ taskId }) => {
   
   return (
     <div className="space-y-4">
-      {mockActivities.map((activity, index) => {
+      {activities.map((activity, index) => {
         const userInfo = getUserInfo(activity.created_by);
         
         return (
@@ -96,11 +115,11 @@ const TaskActivityFeed: React.FC<TaskActivityFeedProps> = ({ taskId }) => {
                   </div>
                 </div>
                 
-                <p className="text-sm mt-1">{activity.description}</p>
+                <p className="text-sm mt-1">{activity.message}</p>
               </div>
             </div>
             
-            {index < mockActivities.length - 1 && (
+            {index < activities.length - 1 && (
               <Separator className="my-4" />
             )}
           </div>
