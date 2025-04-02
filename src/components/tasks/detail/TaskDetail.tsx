@@ -10,6 +10,8 @@ import TaskDetailSidebar from "./TaskDetailSidebar";
 import TaskDescription from "./TaskDescription";
 import TaskActivityFeed from "./TaskActivityFeed";
 import TaskChecklist from "./TaskChecklist";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 interface TaskDetailProps {
   task: Task;
@@ -95,6 +97,3 @@ const TaskDetail: React.FC<TaskDetailProps> = ({ task, formattedTask }) => {
 };
 
 export default TaskDetail;
-
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";

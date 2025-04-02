@@ -52,7 +52,7 @@ const TaskDetailSidebar: React.FC<TaskDetailSidebarProps> = ({ task, formattedTa
   };
 
   const handleProjectChange = (value: string) => {
-    updateTask(task.id, { project_id: value ? parseInt(value, 10) : null });
+    updateTask(task.id, { project_id: value === "none" ? null : parseInt(value, 10) });
   };
 
   const handleDueDateChange = (date: Date | undefined) => {
@@ -136,7 +136,7 @@ const TaskDetailSidebar: React.FC<TaskDetailSidebarProps> = ({ task, formattedTa
             <Skeleton className="h-10 w-full" />
           ) : (
             <Select 
-              value={task.project_id?.toString() || ""} 
+              value={task.project_id?.toString() || "none"} 
               onValueChange={handleProjectChange}
               disabled={isUpdating}
             >
@@ -144,7 +144,7 @@ const TaskDetailSidebar: React.FC<TaskDetailSidebarProps> = ({ task, formattedTa
                 <SelectValue placeholder="Select project" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">No Project</SelectItem>
+                <SelectItem value="none">No Project</SelectItem>
                 {projects?.map(project => (
                   <SelectItem key={project.id} value={project.id.toString()}>
                     {project.name}
