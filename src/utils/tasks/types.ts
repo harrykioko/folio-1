@@ -9,7 +9,7 @@ export type Task = {
   assigned_to: string | null;
   priority: 'low' | 'medium' | 'high' | 'urgent';
   deadline: string | null;
-  status: 'todo' | 'in_progress' | 'done';
+  status: 'todo' | 'in_progress' | 'completed';
   created_at: string;
   updated_at: string;
   created_by: string | null;
@@ -22,5 +22,5 @@ export type TaskFormData = {
   assigned_to?: string | null;
   priority: 'low' | 'medium' | 'high' | 'urgent';
   deadline?: string | null;
-  status: 'todo' | 'in_progress' | 'done';
+  status: 'todo' | 'in_progress' | 'completed';
 }
