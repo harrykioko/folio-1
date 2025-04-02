@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import PromptForm from "@/components/prompts/PromptForm";
-import { createPrompt } from "@/utils/prompts";
+import { createPrompt } from "@/utils/prompts/mutations";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 

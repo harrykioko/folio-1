@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from "react";
-import { fetchPrompts, Prompt } from "@/utils/prompts";
+import { fetchPrompts, Prompt } from "@/utils/prompts/queries";
 import { toast } from "@/hooks/use-toast";
 import PromptHeader from "./components/PromptHeader";
 import PromptFilters from "./components/PromptFilters";

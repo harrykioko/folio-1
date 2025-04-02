@@ -58,7 +58,7 @@ const ProjectDetailsContainer: React.FC = () => {
   };
 
   if (loading) return <ProjectDetailLoading />;
-  if (error || !project) return <ProjectNotFound />;
+  if (error || !project) return <ProjectNotFound error={error ? error.message : null} />;
 
   return (
     <div className="container mx-auto p-4 animate-fade-in">
