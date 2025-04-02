@@ -46,7 +46,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ project }) => {
           hasGithub={hasGithub} 
           socialAccounts={socialAccounts} 
         />
-        <TasksOverviewCard progress={progress} />
+        <TasksOverviewCard projectId={project.id} progress={progress} />
       </div>
     </div>
   );

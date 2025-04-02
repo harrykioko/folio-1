@@ -2,11 +2,12 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Loader2 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { getTasksByProjectId } from "@/utils/taskUtils";
+import { useTasks } from "@/hooks/useTasks";
+import { formatTaskStatus } from "@/utils/tasks";
 
 interface TasksTabProps {
   projectId: number;
@@ -14,23 +15,26 @@ interface TasksTabProps {
 
 const TasksTab: React.FC<TasksTabProps> = ({ projectId }) => {
   const navigate = useNavigate();
-  const tasks = getTasksByProjectId(projectId);
+  const { tasks, isLoading, error } = useTasks(projectId);
 
   const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "Urgent": return "bg-red-500";
-      case "High": return "bg-orange-500";
-      case "Medium": return "bg-blue-500";
-      case "Low": return "bg-green-500";
+    switch (priority.toLowerCase()) {
+      case "urgent": return "bg-red-500";
+      case "high": return "bg-orange-500";
+      case "medium": return "bg-blue-500";
+      case "low": return "bg-green-500";
       default: return "bg-slate-500";
     }
   };
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case "In Progress": return "bg-blue-500";
-      case "To Do": return "bg-slate-500";
-      case "Done": return "bg-green-500";
+    switch (status.toLowerCase()) {
+      case "in_progress": 
+      case "in progress": return "bg-blue-500";
+      case "todo": 
+      case "to do": return "bg-slate-500";
+      case "done": 
+      case "completed": return "bg-green-500";
       default: return "bg-slate-500";
     }
   };
@@ -39,7 +43,55 @@ const TasksTab: React.FC<TasksTabProps> = ({ projectId }) => {
     navigate(`/tasks/new?projectId=${projectId}`);
   };
 
-  if (tasks.length === 0) {
+  // Loading state
+  if (isLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>Tasks</CardTitle>
+            <Button onClick={handleAddTask}>
+              <Plus className="mr-2 h-4 w-4" />
+              Add Task
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="flex justify-center py-10">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>Tasks</CardTitle>
+            <Button onClick={handleAddTask}>
+              <Plus className="mr-2 h-4 w-4" />
+              Add Task
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-10 text-destructive">
+            <p>Failed to load tasks. Please try again later.</p>
+            <Button variant="outline" className="mt-4" onClick={() => window.location.reload()}>
+              Refresh
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // No tasks state
+  if (!tasks || tasks.length === 0) {
     return (
       <Card>
         <CardHeader>
@@ -95,13 +147,19 @@ const TasksTab: React.FC<TasksTabProps> = ({ projectId }) => {
               >
                 <TableCell className="font-medium">{task.title}</TableCell>
                 <TableCell>
-                  <Badge className={getStatusColor(task.status)}>{task.status}</Badge>
+                  <Badge className={getStatusColor(task.status)}>
+                    {formatTaskStatus(task.status)}
+                  </Badge>
                 </TableCell>
                 <TableCell>
-                  <Badge className={getPriorityColor(task.priority)}>{task.priority}</Badge>
+                  <Badge className={getPriorityColor(task.priority)}>
+                    {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+                  </Badge>
                 </TableCell>
-                <TableCell>{task.assignee}</TableCell>
-                <TableCell>{task.dueDate}</TableCell>
+                <TableCell>{task.assigned_to || "Unassigned"}</TableCell>
+                <TableCell>
+                  {task.deadline ? new Date(task.deadline).toLocaleDateString() : "No due date"}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

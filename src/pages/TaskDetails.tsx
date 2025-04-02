@@ -2,8 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
-import { getTaskById } from "@/utils/taskUtils";
-import { getProjectById } from "@/utils/projectUtils";
 import TaskForm from "@/components/tasks/TaskForm";
 import TaskHeader from "@/components/tasks/TaskHeader";
 import NewTaskHeader from "@/components/tasks/NewTaskHeader";
@@ -11,12 +9,15 @@ import TaskDetail from "@/components/tasks/TaskDetail";
 import DeleteTaskDialog from "@/components/tasks/DeleteTaskDialog";
 import { TaskFormValues } from "@/components/tasks/form/TaskFormSchema";
 import { Card } from "@/components/ui/card";
+import { Loader2 } from "lucide-react";
 import { 
   createTask, 
   updateTask, 
   deleteTask, 
+  fetchTaskById,
   parseTaskStatus, 
   parseTaskPriority,
+  formatTaskStatus,
   type Task
 } from "@/utils/tasks";
 
@@ -28,30 +29,46 @@ const TaskDetails: React.FC = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [task, setTask] = useState<Task | null>(null);
+  const [error, setError] = useState<string | null>(null);
   
   const projectIdFromQuery = searchParams.get('projectId');
-  
-  console.log("Current taskId param:", taskId);
-  console.log("Current path:", location.pathname);
-  console.log("Project ID from query:", projectIdFromQuery);
-  
   const isNewTask = location.pathname === "/tasks/new" || taskId === "new";
   
-  console.log("Is new task:", isNewTask);
-  
-  const task = isNewTask ? null : getTaskById(taskId);
-  
-  const linkedProject = projectIdFromQuery ? getProjectById(projectIdFromQuery) : null;
-  
-  console.log("Linked project:", linkedProject);
-  
   useEffect(() => {
-    if (!task && !isNewTask) {
-      console.log("Task not found, taskId:", taskId);
+    const loadTask = async () => {
+      if (isNewTask) {
+        setIsLoading(false);
+        return;
+      }
+      
+      try {
+        setIsLoading(true);
+        if (!taskId) {
+          throw new Error("Task ID is required");
+        }
+        
+        const fetchedTask = await fetchTaskById(Number(taskId));
+        setTask(fetchedTask);
+        setError(null);
+      } catch (err) {
+        console.error("Error loading task:", err);
+        setError("Task not found or you don't have permission to view it");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadTask();
+  }, [taskId, isNewTask]);
+
+  useEffect(() => {
+    if (!isLoading && !task && !isNewTask) {
       navigate("/tasks");
       toast.error("Task not found");
     }
-  }, [task, isNewTask, navigate, taskId]);
+  }, [task, isNewTask, navigate, isLoading]);
 
   const handleSubmit = async (data: TaskFormValues) => {
     try {
@@ -60,9 +77,6 @@ const TaskDetails: React.FC = () => {
       // Use the helper functions to ensure correct typing
       const priority = parseTaskPriority(data.priority);
       const status = parseTaskStatus(data.status);
-      
-      console.log(`Parsed priority: ${priority}, type: ${typeof priority}`);
-      console.log(`Parsed status: ${status}, type: ${typeof status}`);
       
       const formattedData = {
         title: data.title,
@@ -73,8 +87,6 @@ const TaskDetails: React.FC = () => {
         deadline: data.dueDate || null,
         status
       };
-      
-      console.log("New task data:", formattedData);
       
       if (isNewTask) {
         await createTask(formattedData);
@@ -88,6 +100,11 @@ const TaskDetails: React.FC = () => {
       } else {
         if (taskId) {
           await updateTask(Number(taskId), formattedData);
+          
+          // Refresh the task data
+          const updatedTask = await fetchTaskById(Number(taskId));
+          setTask(updatedTask);
+          
           toast.success("Task updated successfully!");
           setIsEditMode(false);
         }
@@ -113,10 +130,21 @@ const TaskDetails: React.FC = () => {
     }
   };
 
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
+        <p className="text-muted-foreground">Loading task details...</p>
+      </div>
+    );
+  }
+
+  // New task form
   if (isNewTask) {
     return (
       <div className="max-w-4xl mx-auto animate-fade-in">
-        <NewTaskHeader linkedProject={linkedProject} />
+        <NewTaskHeader linkedProject={null} />
         <Card className="p-6">
           <TaskForm 
             onSubmit={handleSubmit} 
@@ -128,19 +156,41 @@ const TaskDetails: React.FC = () => {
     );
   }
 
-  if (!task) {
-    return null;
+  // Error state
+  if (error || !task) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64">
+        <p className="text-destructive mb-4">{error || "Task not found"}</p>
+        <Button variant="outline" onClick={() => navigate("/tasks")}>
+          Back to Tasks
+        </Button>
+      </div>
+    );
   }
+
+  // Format the task for display components
+  const formattedTask = {
+    id: task.id,
+    title: task.title,
+    description: task.description,
+    status: formatTaskStatus(task.status),
+    priority: task.priority.charAt(0).toUpperCase() + task.priority.slice(1),
+    project: task.project_id ? `Project #${task.project_id}` : "No Project",
+    projectId: task.project_id,
+    assignee: task.assigned_to || "Unassigned",
+    dueDate: task.deadline ? new Date(task.deadline).toLocaleDateString() : "No due date",
+    created: task.created_at ? new Date(task.created_at).toLocaleDateString() : undefined
+  };
 
   return (
     <div className="space-y-6 animate-fade-in">
       <TaskHeader
-        title={task.title}
-        status={task.status}
-        priority={task.priority}
-        project={task.project}
-        assignee={task.assignee}
-        dueDate={task.dueDate}
+        title={formattedTask.title}
+        status={formattedTask.status}
+        priority={formattedTask.priority}
+        project={formattedTask.project}
+        assignee={formattedTask.assignee}
+        dueDate={formattedTask.dueDate}
         isEditMode={isEditMode}
         setIsEditMode={setIsEditMode}
         setIsDeleteDialogOpen={setIsDeleteDialogOpen}
@@ -149,14 +199,17 @@ const TaskDetails: React.FC = () => {
       {isEditMode ? (
         <Card className="p-6">
           <TaskForm 
-            task={task} 
+            task={{
+              ...formattedTask,
+              description: task.description || ""
+            }}
             onSubmit={handleSubmit} 
             onCancel={() => setIsEditMode(false)}
             isSubmitting={isSubmitting}
           />
         </Card>
       ) : (
-        <TaskDetail task={task} />
+        <TaskDetail task={formattedTask} />
       )}
 
       <DeleteTaskDialog 

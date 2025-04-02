@@ -1,31 +1,32 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Clock, Plus, Search } from "lucide-react";
-import { tasks } from "@/utils/taskUtils";
+import { Clock, Plus, Search, Loader2 } from "lucide-react";
+import { useTasks } from "@/hooks/useTasks";
+import { formatTaskStatus } from "@/utils/tasks";
 
 const Tasks: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("all");
+  const { tasks, isLoading, error } = useTasks();
 
   // Filter tasks based on search query and active tab
-  const filteredTasks = tasks.filter((task) => {
+  const filteredTasks = tasks ? tasks.filter((task) => {
     const matchesSearch = task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         task.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         task.project.toLowerCase().includes(searchQuery.toLowerCase());
+                         (task.description?.toLowerCase() || "").includes(searchQuery.toLowerCase());
     
     if (activeTab === "all") return matchesSearch;
-    if (activeTab === "to-do") return matchesSearch && task.status.toLowerCase() === "to do";
-    if (activeTab === "in-progress") return matchesSearch && task.status.toLowerCase() === "in progress";
-    if (activeTab === "completed") return matchesSearch && task.status.toLowerCase() === "completed";
+    if (activeTab === "to-do") return matchesSearch && task.status === "todo";
+    if (activeTab === "in-progress") return matchesSearch && task.status === "in_progress";
+    if (activeTab === "done") return matchesSearch && task.status === "done";
     
     return matchesSearch;
-  });
+  }) : [];
 
   // Function to determine the badge variant based on priority
   const getPriorityVariant = (priority: string) => {
@@ -42,6 +43,33 @@ const Tasks: React.FC = () => {
         return "secondary";
     }
   };
+
+  // Function to format the status for display
+  const getDisplayStatus = (status: string) => {
+    return formatTaskStatus(status);
+  };
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
+        <p className="text-muted-foreground">Loading tasks...</p>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64">
+        <p className="text-destructive mb-4">Failed to load tasks</p>
+        <Button variant="outline" onClick={() => window.location.reload()}>
+          Try Again
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -79,7 +107,7 @@ const Tasks: React.FC = () => {
           <TabsTrigger value="all">All Tasks</TabsTrigger>
           <TabsTrigger value="to-do">To Do</TabsTrigger>
           <TabsTrigger value="in-progress">In Progress</TabsTrigger>
-          <TabsTrigger value="completed">Completed</TabsTrigger>
+          <TabsTrigger value="done">Done</TabsTrigger>
         </TabsList>
 
         <TabsContent value={activeTab} className="space-y-4">
@@ -88,7 +116,7 @@ const Tasks: React.FC = () => {
               <CardTitle>
                 {activeTab === "all" ? "All Tasks" : 
                  activeTab === "to-do" ? "To Do" : 
-                 activeTab === "in-progress" ? "In Progress" : "Completed"}
+                 activeTab === "in-progress" ? "In Progress" : "Done"}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -114,16 +142,22 @@ const Tasks: React.FC = () => {
                               {task.priority}
                             </Badge>
                           </div>
-                          <Badge variant="outline">{task.status}</Badge>
+                          <Badge variant="outline">{getDisplayStatus(task.status)}</Badge>
                         </div>
                         <div className="mt-2 text-sm text-muted-foreground">
-                          <span>{task.project}</span>
-                          <span className="mx-2">•</span>
-                          <span>Due {task.dueDate}</span>
-                          {task.assignee && (
+                          {task.project_id && (
+                            <span>Project ID: {task.project_id}</span>
+                          )}
+                          {task.deadline && (
                             <>
                               <span className="mx-2">•</span>
-                              <span>Assigned to {task.assignee}</span>
+                              <span>Due {new Date(task.deadline).toLocaleDateString()}</span>
+                            </>
+                          )}
+                          {task.assigned_to && (
+                            <>
+                              <span className="mx-2">•</span>
+                              <span>Assigned to {task.assigned_to}</span>
                             </>
                           )}
                         </div>
