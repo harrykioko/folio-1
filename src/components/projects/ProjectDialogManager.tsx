@@ -2,7 +2,6 @@
 import React from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import DeleteProjectDialog from "@/components/projects/DeleteProjectDialog";
-import ProjectHeader from "@/components/projects/ProjectHeader";
 import EditProjectDialog from "@/components/projects/EditProjectDialog";
 import { Project } from "@/utils/supabaseProjects";
 import { ProjectFormValues } from "@/components/projects/form/ProjectFormSchema";
@@ -28,15 +27,6 @@ const ProjectDialogManager: React.FC<ProjectDialogManagerProps> = ({
 }) => {
   return (
     <>
-      <ProjectHeader 
-        name={project.name}
-        description={project.description || ""}
-        status={project.status}
-        projectId={project.id}
-        setIsEditDialogOpen={setIsEditDialogOpen}
-        setIsDeleteDialogOpen={setIsDeleteDialogOpen}
-      />
-      
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent>
           <EditProjectDialog 
