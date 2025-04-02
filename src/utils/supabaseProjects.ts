@@ -42,7 +42,22 @@ export const fetchProjects = async () => {
 
 // Fetch a single project by ID
 export const fetchProjectById = async (id: number | string) => {
+  // Safety check: don't try to fetch if id is undefined or null
+  if (id === undefined || id === null) {
+    throw new Error("Project ID is required");
+  }
+  
+  // Handle "new" case separately if necessary
+  if (id === "new") {
+    throw new Error("Cannot fetch project with ID 'new'");
+  }
+  
   const numericId = typeof id === 'string' ? parseInt(id, 10) : id;
+  
+  // Validate that we have a valid numeric ID
+  if (isNaN(numericId)) {
+    throw new Error(`Invalid project ID: ${id}`);
+  }
   
   const { data, error } = await supabase
     .from('projects')

@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -21,7 +20,7 @@ import Tasks from "./pages/Tasks";
 import TaskDetails from "./pages/TaskDetails";
 import Accounts from "./pages/Accounts";
 import AccountDetails from "./pages/AccountDetails";
-import Prompts from "./pages/prompts"; // Updated import path
+import Prompts from "./pages/prompts";
 import PromptDetails from "./pages/PromptDetails";
 import NewPrompt from "./pages/NewPrompt";
 import Settings from "./pages/Settings";
@@ -53,7 +52,7 @@ const App = () => (
                   
                   {/* Project details routes - Order matters! Put specific routes first */}
                   <Route path="/projects/new" element={<ProjectDetails />} />
-                  <Route path="/projects/:projectId" element={<ProjectDetails />} />
+                  <Route path="/projects/:id" element={<ProjectDetails />} />
                   
                   {/* Tasks routes */}
                   <Route path="/tasks" element={<Tasks />} />

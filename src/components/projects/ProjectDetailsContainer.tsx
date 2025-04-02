@@ -10,18 +10,30 @@ import ProjectNotFound from "@/components/projects/ProjectNotFound";
 import { toast } from "sonner";
 
 const ProjectDetailsContainer: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id, projectId } = useParams<{ id?: string; projectId?: string }>();
   const navigate = useNavigate();
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
 
+  // Use the correct ID parameter, either 'id' or 'projectId' depending on the route
+  const effectiveId = id || projectId;
+
   useEffect(() => {
     const fetchProject = async () => {
       try {
         setLoading(true);
-        const fetchedProject = await fetchProjectById(id as string);
-        setProject(fetchedProject);
+        
+        // Check if effectiveId exists and is not "new" before fetching
+        if (effectiveId && effectiveId !== "new") {
+          const fetchedProject = await fetchProjectById(effectiveId);
+          setProject(fetchedProject);
+        } else if (effectiveId === "new") {
+          // Handle "new" project case if needed
+          setProject(null);
+        } else {
+          throw new Error("No project ID provided");
+        }
       } catch (err) {
         console.error("Error fetching project:", err);
         setError(err as Error);
@@ -31,7 +43,7 @@ const ProjectDetailsContainer: React.FC = () => {
     };
 
     fetchProject();
-  }, [id]);
+  }, [effectiveId]);
 
   const handleUpdate = async (data: ProjectFormValues) => {
     if (!project) return;
@@ -58,7 +70,9 @@ const ProjectDetailsContainer: React.FC = () => {
   };
 
   if (loading) return <ProjectDetailLoading />;
-  if (error || !project) return <ProjectNotFound error={error ? error.message : null} />;
+  
+  // Ensure we pass the error message to ProjectNotFound
+  if (error || !project) return <ProjectNotFound error={error ? error.message : "The requested project could not be found."} />;
 
   return (
     <div className="container mx-auto p-4 animate-fade-in">
