@@ -5,9 +5,9 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import TaskForm from "@/components/tasks/TaskForm";
-import TaskHeader from "@/components/tasks/TaskHeader";
+import TaskHeader from "@/components/tasks/detail/TaskHeader";
 import NewTaskHeader from "@/components/tasks/NewTaskHeader";
-import TaskDetail from "@/components/tasks/TaskDetail";
+import TaskDetail from "@/components/tasks/detail/TaskDetail";
 import DeleteTaskDialog from "@/components/tasks/DeleteTaskDialog";
 import { Card } from "@/components/ui/card";
 import { useTaskDetail } from "./useTaskDetail";
@@ -66,14 +66,10 @@ const TaskContainer: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6 animate-fade-in max-w-7xl mx-auto">
       <TaskHeader
-        title={formattedTask.title}
-        status={formattedTask.status}
-        priority={formattedTask.priority}
-        project={formattedTask.project}
-        assignee={formattedTask.assignee}
-        dueDate={formattedTask.dueDate}
+        task={task}
+        formattedTask={formattedTask}
         isEditMode={isEditMode}
         setIsEditMode={setIsEditMode}
         setIsDeleteDialogOpen={setIsDeleteDialogOpen}
@@ -93,7 +89,10 @@ const TaskContainer: React.FC = () => {
           />
         </Card>
       ) : (
-        <TaskDetail task={formattedTask} />
+        <TaskDetail 
+          task={task}
+          formattedTask={formattedTask}
+        />
       )}
 
       <DeleteTaskDialog 
