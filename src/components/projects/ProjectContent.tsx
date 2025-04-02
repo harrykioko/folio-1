@@ -9,15 +9,21 @@ interface ProjectContentProps {
   project: Project;
   onUpdate: (data: ProjectFormValues) => Promise<void>;
   onDelete: () => Promise<void>;
+  isEditDialogOpen: boolean;
+  setIsEditDialogOpen: (isOpen: boolean) => void;
+  isDeleteDialogOpen: boolean;
+  setIsDeleteDialogOpen: (isOpen: boolean) => void;
 }
 
 const ProjectContent: React.FC<ProjectContentProps> = ({
   project,
   onUpdate,
-  onDelete
+  onDelete,
+  isEditDialogOpen,
+  setIsEditDialogOpen,
+  isDeleteDialogOpen,
+  setIsDeleteDialogOpen
 }) => {
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
 
   return (

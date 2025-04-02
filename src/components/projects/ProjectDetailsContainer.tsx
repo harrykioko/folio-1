@@ -15,6 +15,8 @@ const ProjectDetailsContainer: React.FC = () => {
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   // Use the correct ID parameter, either 'id' or 'projectId' depending on the route
   const effectiveId = id || projectId;
@@ -81,14 +83,18 @@ const ProjectDetailsContainer: React.FC = () => {
         description={project.description || ""}
         status={project.status}
         projectId={project.id}
-        setIsEditDialogOpen={() => {}}
-        setIsDeleteDialogOpen={() => {}}
+        setIsEditDialogOpen={setIsEditDialogOpen}
+        setIsDeleteDialogOpen={setIsDeleteDialogOpen}
       />
       
       <ProjectContent
         project={project}
         onUpdate={handleUpdate}
         onDelete={handleDelete}
+        isEditDialogOpen={isEditDialogOpen}
+        setIsEditDialogOpen={setIsEditDialogOpen}
+        isDeleteDialogOpen={isDeleteDialogOpen}
+        setIsDeleteDialogOpen={setIsDeleteDialogOpen}
       />
     </div>
   );
