@@ -6,7 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Loader2 } from "lucide-react";
-import { fetchPromptsByProjectId, Prompt, formatTagsString } from "@/utils/supabasePrompts";
+import { fetchPromptsByProjectId, Prompt } from "@/utils/supabasePrompts";
 import { toast } from "sonner";
 
 interface PromptsTabProps {

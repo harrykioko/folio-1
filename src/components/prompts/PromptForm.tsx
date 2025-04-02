@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { X, Save } from "lucide-react";
+import { X, Save, Loader2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 const promptCategories = [
@@ -48,14 +48,18 @@ interface PromptFormProps {
   defaultValues?: Partial<PromptFormValues>;
   onSubmit: (values: PromptFormValues) => void;
   isEditing?: boolean;
+  isSubmitting?: boolean;
   projects?: { id: string; name: string }[];
+  initialProjectId?: string | null;
 }
 
 const PromptForm: React.FC<PromptFormProps> = ({
   defaultValues,
   onSubmit,
   isEditing = false,
+  isSubmitting = false,
   projects = [],
+  initialProjectId = null,
 }) => {
   const [tagInput, setTagInput] = React.useState("");
   const form = useForm<PromptFormValues>({
@@ -66,7 +70,7 @@ const PromptForm: React.FC<PromptFormProps> = ({
       description: "",
       prompt: "",
       effectiveness: "Medium",
-      projectId: "",
+      projectId: initialProjectId || "",
       tags: [],
       ...defaultValues,
     },
@@ -313,9 +317,18 @@ const PromptForm: React.FC<PromptFormProps> = ({
         </div>
 
         <div className="flex justify-end gap-2">
-          <Button type="submit" className="gap-2">
-            <Save className="h-4 w-4" />
-            {isEditing ? "Update Prompt" : "Create Prompt"}
+          <Button type="submit" className="gap-2" disabled={isSubmitting}>
+            {isSubmitting ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                {isEditing ? "Updating..." : "Creating..."}
+              </>
+            ) : (
+              <>
+                <Save className="h-4 w-4" />
+                {isEditing ? "Update Prompt" : "Create Prompt"}
+              </>
+            )}
           </Button>
         </div>
       </form>

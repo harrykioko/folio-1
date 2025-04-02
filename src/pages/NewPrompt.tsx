@@ -1,38 +1,67 @@
 
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import PromptForm from "@/components/prompts/PromptForm";
-import { createPrompt, getProjectOptions } from "@/utils/promptUtils";
-import { toast } from "@/hooks/use-toast";
+import { createPrompt } from "@/utils/supabasePrompts";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const NewPrompt: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const projectId = searchParams.get("projectId");
   const [projects, setProjects] = useState<{id: string; name: string}[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Fetch projects for the dropdown
-    const projectOptions = getProjectOptions();
-    setProjects(projectOptions);
+    const fetchProjects = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('projects')
+          .select('id, name');
+        
+        if (error) {
+          throw error;
+        }
+        
+        if (data) {
+          setProjects(data.map(project => ({
+            id: project.id.toString(),
+            name: project.name
+          })));
+        }
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+        toast.error('Failed to load projects');
+      }
+    };
+
+    fetchProjects();
   }, []);
 
-  const handleSubmit = (values: any) => {
+  const handleSubmit = async (values: any) => {
     try {
-      const newPrompt = createPrompt(values);
-      toast({
-        title: "Prompt created",
-        description: "Your new prompt has been created successfully.",
-      });
+      setLoading(true);
+      
+      // Format the data for submission
+      const promptData = {
+        content: values.prompt,
+        tags: values.tags || [],
+        project_id: values.projectId ? parseInt(values.projectId) : null
+      };
+      
+      const newPrompt = await createPrompt(promptData);
+      
+      toast.success("Prompt created successfully");
       navigate(`/prompts/${newPrompt.id}`);
     } catch (error) {
       console.error("Error creating prompt:", error);
-      toast({
-        title: "Error",
-        description: "There was an error creating the prompt. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Failed to create prompt. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -52,7 +81,12 @@ const NewPrompt: React.FC = () => {
         Create a reusable prompt template for AI generation with customizable variables.
       </p>
 
-      <PromptForm onSubmit={handleSubmit} projects={projects} />
+      <PromptForm 
+        onSubmit={handleSubmit} 
+        projects={projects} 
+        isSubmitting={loading}
+        initialProjectId={projectId}
+      />
     </div>
   );
 };
