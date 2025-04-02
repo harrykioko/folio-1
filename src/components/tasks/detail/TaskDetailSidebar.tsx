@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Task } from "@/utils/tasks/types";
 import { useTaskMutation } from "@/hooks/useTaskMutation";
 import { format } from "date-fns";
+import { toast } from "sonner";
 import {
   Select,
   SelectContent,
@@ -39,24 +39,55 @@ const TaskDetailSidebar: React.FC<TaskDetailSidebarProps> = ({ task, formattedTa
   const { projects, isLoading: isLoadingProjects } = useProjects();
   const { updateTask, isUpdating } = useTaskMutation();
 
-  const handleStatusChange = (value: string) => {
-    updateTask(task.id, { status: value as 'todo' | 'in_progress' | 'completed' });
+  const handleStatusChange = async (value: string) => {
+    try {
+      await updateTask(task.id, { status: value as 'todo' | 'in_progress' | 'completed' });
+      toast.success(`Task status updated to ${value === 'todo' ? 'To Do' : value === 'in_progress' ? 'In Progress' : 'Completed'}`);
+    } catch (error) {
+      // Error handling is already managed in updateTask
+    }
   };
 
-  const handlePriorityChange = (value: string) => {
-    updateTask(task.id, { priority: value.toLowerCase() as 'low' | 'medium' | 'high' | 'urgent' });
+  const handlePriorityChange = async (value: string) => {
+    try {
+      await updateTask(task.id, { priority: value.toLowerCase() as 'low' | 'medium' | 'high' | 'urgent' });
+      toast.success(`Priority updated to ${value}`);
+    } catch (error) {
+      // Error handling is already managed in updateTask
+    }
   };
 
-  const handleAssigneeChange = (value: string) => {
-    updateTask(task.id, { assigned_to: value === "unassigned" ? null : value });
+  const handleAssigneeChange = async (value: string) => {
+    try {
+      await updateTask(task.id, { assigned_to: value === "unassigned" ? null : value });
+      const assigneeName = value === "unassigned" 
+        ? "Unassigned" 
+        : users?.find(user => user.id === value)?.full_name || "selected user";
+      toast.success(`Task assigned to ${assigneeName}`);
+    } catch (error) {
+      // Error handling is already managed in updateTask
+    }
   };
 
-  const handleProjectChange = (value: string) => {
-    updateTask(task.id, { project_id: value === "none" ? null : parseInt(value, 10) });
+  const handleProjectChange = async (value: string) => {
+    try {
+      await updateTask(task.id, { project_id: value === "none" ? null : parseInt(value, 10) });
+      const projectName = value === "none" 
+        ? "No Project" 
+        : projects?.find(project => project.id.toString() === value)?.name || "selected project";
+      toast.success(`Task moved to ${projectName}`);
+    } catch (error) {
+      // Error handling is already managed in updateTask
+    }
   };
 
-  const handleDueDateChange = (date: Date | undefined) => {
-    updateTask(task.id, { deadline: date ? date.toISOString() : null });
+  const handleDueDateChange = async (date: Date | undefined) => {
+    try {
+      await updateTask(task.id, { deadline: date ? date.toISOString() : null });
+      toast.success(date ? `Due date set to ${format(date, 'PPP')}` : "Due date removed");
+    } catch (error) {
+      // Error handling is already managed in updateTask
+    }
   };
 
   const getDeadlineDate = () => {
