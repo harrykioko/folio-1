@@ -17,7 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Prompt } from "@/utils/supabasePrompts";
+import { Prompt } from "@/utils/prompts";
 import { getPromptCategory, getPromptEffectiveness, copyPromptToClipboard } from "../utils/promptDisplayUtils";
 import { toast } from "@/hooks/use-toast";
 

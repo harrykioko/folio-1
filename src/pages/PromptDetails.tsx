@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import PromptDetail from "@/components/prompts/PromptDetail";
 import PromptForm from "@/components/prompts/PromptForm";
-import { fetchPromptById, updatePrompt, deletePrompt } from "@/utils/supabasePrompts";
+import { fetchPromptById, updatePrompt, deletePrompt } from "@/utils/prompts";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 

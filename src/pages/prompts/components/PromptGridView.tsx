@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Copy, Tag, Sparkles } from "lucide-react";
-import { Prompt } from "@/utils/supabasePrompts";
+import { Prompt } from "@/utils/prompts";
 import { getPromptCategory, getPromptEffectiveness, copyPromptToClipboard } from "../utils/promptDisplayUtils";
 import { toast } from "@/hooks/use-toast";
 

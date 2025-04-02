@@ -1,11 +1,10 @@
-
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import PromptGridView from "./PromptGridView";
 import PromptListView from "./PromptListView";
-import { Prompt } from "@/utils/supabasePrompts";
+import { Prompt } from "@/utils/prompts";
 
 interface PromptTabsProps {
   prompts: Prompt[];

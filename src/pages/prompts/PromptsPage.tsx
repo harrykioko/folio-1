@@ -1,14 +1,12 @@
-
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Plus, Loader2, Lightbulb } from "lucide-react";
-import { fetchPrompts, Prompt } from "@/utils/supabasePrompts";
+import { fetchPrompts, Prompt } from "@/utils/prompts";
 import { toast } from "@/hooks/use-toast";
 import PromptHeader from "./components/PromptHeader";
 import PromptFilters from "./components/PromptFilters";
 import PromptTabs from "./components/PromptTabs";
 import EmptyState from "./components/EmptyState";
+import { Loader2, Lightbulb } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const PromptsPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -41,11 +39,9 @@ const PromptsPage: React.FC = () => {
     loadPrompts();
   }, []);
 
-  // Get unique categories and tags from the actual data
   const allCategories = Array.from(
     new Set(
       prompts.map(p => 
-        // Map database content to a category based on keywords
         p.content.toLowerCase().includes("marketing") ? "Marketing" :
         p.content.toLowerCase().includes("development") ? "Development" :
         p.content.toLowerCase().includes("content") ? "Content" :
@@ -63,7 +59,6 @@ const PromptsPage: React.FC = () => {
   );
 
   const filteredPrompts = prompts.filter(prompt => {
-    // Calculate display category
     const promptCategory = 
       prompt.content.toLowerCase().includes("marketing") ? "Marketing" :
       prompt.content.toLowerCase().includes("development") ? "Development" :
@@ -72,16 +67,13 @@ const PromptsPage: React.FC = () => {
       prompt.content.toLowerCase().includes("support") ? "Support" :
       "Other";
       
-    // Search filter
     const matchesSearch = 
       (prompt.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
       prompt.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (prompt.tags || []).some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
     
-    // Category filter
     const matchesCategory = !selectedCategory || promptCategory === selectedCategory;
     
-    // Tags filter
     const matchesTags = selectedTags.length === 0 || 
       (prompt.tags && selectedTags.every(tag => prompt.tags.includes(tag)));
     

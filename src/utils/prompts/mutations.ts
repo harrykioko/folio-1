@@ -1,80 +1,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-
-// TypeScript type definitions
-export type Prompt = {
-  id: number;
-  name: string;
-  content: string;
-  tags: string[] | null;
-  project_id: number | null;
-  created_by: string | null;
-  created_at: string;
-  updated_at: string;
-}
-
-export type PromptFormData = {
-  name: string;
-  content: string;
-  tags?: string[];
-  project_id?: number | null;
-}
-
-// Helper function to format tags as comma-separated string
-export const formatTagsString = (tags: string[] | null): string => {
-  if (!tags || tags.length === 0) return "";
-  return tags.join(", ");
-};
-
-// Fetch all prompts
-export const fetchPrompts = async (): Promise<Prompt[]> => {
-  try {
-    console.log("Fetching all prompts");
-    const { data, error } = await supabase
-      .from('prompts')
-      .select('*')
-      .order('created_at', { ascending: false });
-    
-    if (error) {
-      console.error("Error fetching prompts:", error);
-      toast.error(`Error fetching prompts: ${error.message}`);
-      throw error;
-    }
-    
-    console.log(`Successfully fetched ${data?.length || 0} prompts`);
-    return data as Prompt[];
-  } catch (error) {
-    console.error("Failed to fetch prompts:", error);
-    toast.error("Failed to fetch prompts. Please try again later.");
-    throw error;
-  }
-};
-
-// Fetch a single prompt by ID
-export const fetchPromptById = async (id: number): Promise<Prompt> => {
-  try {
-    console.log(`Fetching prompt with ID: ${id}`);
-    const { data, error } = await supabase
-      .from('prompts')
-      .select('*')
-      .eq('id', id)
-      .single();
-    
-    if (error) {
-      console.error(`Error fetching prompt with ID ${id}:`, error);
-      toast.error(`Error fetching prompt: ${error.message}`);
-      throw error;
-    }
-    
-    console.log(`Successfully fetched prompt with ID: ${id}`);
-    return data as Prompt;
-  } catch (error) {
-    console.error(`Failed to fetch prompt with ID ${id}:`, error);
-    toast.error("Failed to fetch prompt details. Please try again later.");
-    throw error;
-  }
-};
+import { Prompt, PromptFormData } from "./types";
 
 // Create a new prompt
 export const createPrompt = async (promptData: PromptFormData): Promise<Prompt> => {
@@ -192,31 +119,6 @@ export const deletePrompt = async (id: number): Promise<boolean> => {
     if (!(error instanceof Error) || !error.message.includes("You must be logged in")) {
       toast.error("Failed to delete prompt. Please try again later.");
     }
-    throw error;
-  }
-};
-
-// Fetch prompts for a specific project
-export const fetchPromptsByProjectId = async (projectId: number): Promise<Prompt[]> => {
-  try {
-    console.log(`Fetching prompts for project ID: ${projectId}`);
-    const { data, error } = await supabase
-      .from('prompts')
-      .select('*')
-      .eq('project_id', projectId)
-      .order('created_at', { ascending: false });
-    
-    if (error) {
-      console.error(`Error fetching prompts for project ID ${projectId}:`, error);
-      toast.error(`Error fetching project prompts: ${error.message}`);
-      throw error;
-    }
-    
-    console.log(`Successfully fetched ${data?.length || 0} prompts for project ID: ${projectId}`);
-    return data as Prompt[];
-  } catch (error) {
-    console.error(`Failed to fetch prompts for project ID ${projectId}:`, error);
-    toast.error("Failed to fetch project prompts. Please try again later.");
     throw error;
   }
 };
