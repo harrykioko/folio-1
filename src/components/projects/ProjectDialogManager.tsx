@@ -3,7 +3,7 @@ import React from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import DeleteProjectDialog from "@/components/projects/DeleteProjectDialog";
 import EditProjectDialog from "@/components/projects/EditProjectDialog";
-import { Project } from "@/utils/supabaseProjects";
+import { Project } from "@/utils/projects";
 import { ProjectFormValues } from "@/components/projects/form/ProjectFormSchema";
 
 interface ProjectDialogManagerProps {

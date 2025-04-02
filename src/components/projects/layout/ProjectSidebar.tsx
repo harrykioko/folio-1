@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Project } from "@/utils/supabaseProjects";
+import { Project } from "@/utils/projects";
 import { Card } from "@/components/ui/card";
 import { 
   ChevronDown, 

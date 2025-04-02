@@ -2,7 +2,7 @@
 import React from "react";
 import { CardTitle, CardDescription } from "@/components/ui/card";
 import ProjectForm from "@/components/projects/ProjectForm";
-import { Project } from "@/utils/supabaseProjects";
+import { Project } from "@/utils/projects";
 import { ProjectFormValues } from "@/components/projects/form/ProjectFormSchema";
 
 interface EditProjectDialogProps {

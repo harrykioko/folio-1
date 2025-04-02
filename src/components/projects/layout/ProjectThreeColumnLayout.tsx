@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Project } from "@/utils/supabaseProjects";
+import { Project } from "@/utils/projects";
 import ProjectLeftPanel from "./ProjectLeftPanel";
 import ProjectMainPanel from "./ProjectMainPanel";
 import ProjectRightPanel from "./ProjectRightPanel";

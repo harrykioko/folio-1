@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Project } from "@/utils/supabaseProjects";
+import { Project } from "@/utils/projects";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import OverviewTab from "../OverviewTab";

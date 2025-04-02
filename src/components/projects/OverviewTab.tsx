@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Project } from "@/utils/supabaseProjects";
+import { Project } from "@/utils/projects";
 import { Twitter, Instagram, Linkedin } from "lucide-react";
 import {
   ProgressCard,

@@ -1,11 +1,10 @@
-
 import React from "react";
 import { UseFormReturn } from "react-hook-form";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TaskFormValues } from "../TaskFormSchema";
-import { Project } from "@/utils/supabaseProjects";
+import { Project } from "@/utils/projects";
 
 interface ProjectFieldProps {
   form: UseFormReturn<TaskFormValues>;

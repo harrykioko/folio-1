@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Project } from "@/utils/supabaseProjects";
+import { Project } from "@/utils/projects";
 import { ProjectFormValues } from "@/components/projects/form/ProjectFormSchema";
 import ProjectDialogManager from "@/components/projects/ProjectDialogManager";
 import ProjectMilestones from "@/components/projects/milestones/ProjectMilestones";

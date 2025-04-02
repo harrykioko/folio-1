@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Calendar, Clock, Plus, ChevronDown, ChevronUp } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Project } from "@/utils/supabaseProjects";
+import { Project } from "@/utils/projects";
 import { getTasksByProjectId } from "@/utils/tasks/mockTaskUtils";
 
 interface ProjectLeftPanelProps {
