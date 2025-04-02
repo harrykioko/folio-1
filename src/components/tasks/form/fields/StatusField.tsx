@@ -18,7 +18,7 @@ export const StatusField: React.FC<StatusFieldProps> = ({ form }) => (
         <FormLabel>Status</FormLabel>
         <Select 
           onValueChange={field.onChange} 
-          defaultValue={field.value}
+          defaultValue={field.value || "todo"}
         >
           <FormControl>
             <SelectTrigger>
@@ -26,9 +26,9 @@ export const StatusField: React.FC<StatusFieldProps> = ({ form }) => (
             </SelectTrigger>
           </FormControl>
           <SelectContent>
-            <SelectItem value="To Do">To Do</SelectItem>
-            <SelectItem value="In Progress">In Progress</SelectItem>
-            <SelectItem value="Completed">Completed</SelectItem>
+            <SelectItem value="todo">To Do</SelectItem>
+            <SelectItem value="in_progress">In Progress</SelectItem>
+            <SelectItem value="done">Completed</SelectItem>
           </SelectContent>
         </Select>
         <FormMessage />

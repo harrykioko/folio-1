@@ -44,7 +44,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
     defaultValues: {
       title: task?.title || "",
       description: task?.description || "",
-      status: task?.status || "To Do",
+      status: task?.status || "todo", // Default to "todo" if no status
       priority: task?.priority || "Medium",
       projectId: task?.projectId || defaultProjectId || "",
       assignee: task?.assignee || "unassigned",
