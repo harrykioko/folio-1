@@ -3,8 +3,6 @@
 // It exists only for backward compatibility during the refactoring process.
 
 import { 
-  Project, 
-  ProjectFormData,
   fetchProjects,
   fetchProjectById,
   createProject,
@@ -12,9 +10,12 @@ import {
   deleteProject
 } from './projects';
 
+// Use 'export type' for type re-exports when isolatedModules is enabled
+export type { Project } from './projects/types';
+export type { ProjectFormData } from './projects/types';
+
+// Re-export functions
 export { 
-  Project, 
-  ProjectFormData,
   fetchProjects,
   fetchProjectById,
   createProject,
