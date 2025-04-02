@@ -541,7 +541,33 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      check_task_relation_exists: {
+        Args: {
+          task_id_param: number
+          related_task_id_param: number
+        }
+        Returns: boolean
+      }
+      get_related_task_ids: {
+        Args: {
+          current_task_id: number
+        }
+        Returns: number[]
+      }
+      link_related_task: {
+        Args: {
+          task_id_param: number
+          related_task_id_param: number
+        }
+        Returns: undefined
+      }
+      unlink_related_task: {
+        Args: {
+          task_id_param: number
+          related_task_id_param: number
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       account_type:

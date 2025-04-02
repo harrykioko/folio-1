@@ -14,7 +14,7 @@ export type RelatedTask = {
 // Fetch related tasks for a specific task
 export const fetchRelatedTasks = async (taskId: number): Promise<Task[]> => {
   try {
-    // First get the IDs of related tasks using raw SQL query
+    // First get the IDs of related tasks using our custom RPC function
     const { data: relatedTaskIds, error: relatedError } = await supabase
       .rpc('get_related_task_ids', { current_task_id: taskId });
     
@@ -50,7 +50,7 @@ export const fetchRelatedTasks = async (taskId: number): Promise<Task[]> => {
 // Link a task to another task
 export const linkTask = async (taskId: number, relatedTaskId: number): Promise<boolean> => {
   try {
-    // Check if relation already exists using a custom RPC function
+    // Check if relation already exists using our custom RPC function
     const { data: existing, error: checkError } = await supabase
       .rpc('check_task_relation_exists', { 
         task_id_param: taskId, 
@@ -68,7 +68,7 @@ export const linkTask = async (taskId: number, relatedTaskId: number): Promise<b
       return true;
     }
     
-    // Use a custom RPC function to insert the relation
+    // Use our custom RPC function to insert the relation
     const { error } = await supabase
       .rpc('link_related_task', {
         task_id_param: taskId,
@@ -92,7 +92,7 @@ export const linkTask = async (taskId: number, relatedTaskId: number): Promise<b
 // Unlink a task from another task
 export const unlinkTask = async (taskId: number, relatedTaskId: number): Promise<boolean> => {
   try {
-    // Use a custom RPC function to delete the relation
+    // Use our custom RPC function to delete the relation
     const { error } = await supabase
       .rpc('unlink_related_task', {
         task_id_param: taskId,

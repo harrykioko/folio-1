@@ -7,6 +7,7 @@ export type User = {
   id: string;
   full_name: string | null;
   email: string | null;
+  avatar_url: string | null;
 }
 
 /**
@@ -25,7 +26,7 @@ export function useUsers() {
       
       const { data, error } = await supabase
         .from('users')
-        .select('id, full_name, email')
+        .select('id, full_name, email, avatar_url')
         .order('full_name', { ascending: true });
       
       if (error) {
