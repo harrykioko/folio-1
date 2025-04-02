@@ -60,7 +60,8 @@ export const fetchProjectById = async (id: number) => {
   }
   
   // Ensure we're not trying to fetch with "new"
-  if (typeof id === 'string' && (id === 'new' || id.toLowerCase() === 'new')) {
+  // Fix: Properly check if a string ID is 'new' without using toLowerCase on a number
+  if (typeof id === 'string' && id === 'new') {
     const error = new Error(`Cannot fetch project with ID "new"`);
     console.error(error);
     throw error;
