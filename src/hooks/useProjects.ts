@@ -1,6 +1,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
-import { fetchProjects, Project } from '@/utils/supabaseProjects';
+import { fetchProjects, Project } from '@/utils/projects';
 
 /**
  * Hook for fetching and managing projects data
