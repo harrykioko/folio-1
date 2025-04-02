@@ -38,13 +38,13 @@ const AccountOwnerField: React.FC<AccountOwnerFieldProps> = ({ control }) => {
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              <SelectItem value="">None</SelectItem>
+              <SelectItem value="none">None</SelectItem>
               {users && users.map(user => (
                 <SelectItem key={user.id} value={user.id}>
                   {user.full_name || user.email}
                 </SelectItem>
               ))}
-              {error && <SelectItem value="" disabled>Error loading users</SelectItem>}
+              {error && <SelectItem value="error" disabled>Error loading users</SelectItem>}
             </SelectContent>
           </Select>
           <FormDescription>

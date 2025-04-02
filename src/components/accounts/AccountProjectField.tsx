@@ -38,13 +38,13 @@ const AccountProjectField: React.FC<AccountProjectFieldProps> = ({ control }) =>
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              <SelectItem value="">None</SelectItem>
+              <SelectItem value="none">None</SelectItem>
               {projects && projects.map(project => (
                 <SelectItem key={project.id.toString()} value={project.id.toString()}>
                   {project.name}
                 </SelectItem>
               ))}
-              {error && <SelectItem value="" disabled>Error loading projects</SelectItem>}
+              {error && <SelectItem value="error" disabled>Error loading projects</SelectItem>}
             </SelectContent>
           </Select>
           <FormDescription>
