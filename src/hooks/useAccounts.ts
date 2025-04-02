@@ -53,6 +53,9 @@ export function useAccounts() {
             projectName: '',
           }));
           
+          // Fetch project names for accounts with project IDs
+          await enrichWithProjectNames(formattedAccounts);
+          
           setAccounts(formattedAccounts);
           return;
         }
@@ -71,7 +74,7 @@ export function useAccounts() {
           notes: '',
           expiryDate: account.renewal_date,
           projectId: account.project_id ? account.project_id.toString() : undefined,
-          projectName: '', // Would need to fetch this separately or in a join
+          projectName: '', // Will be filled below
           platform: account.social_platform,
           hostedOn: account.hosted_on,
           renewalCost: account.renewal_cost,
@@ -79,6 +82,9 @@ export function useAccounts() {
           followers: account.followers,
           impressions: account.impressions,
         }));
+        
+        // Fetch project names for accounts with project IDs
+        await enrichWithProjectNames(formattedAccounts);
 
         setAccounts(formattedAccounts);
       }
@@ -93,6 +99,41 @@ export function useAccounts() {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Helper function to fetch project names
+  const enrichWithProjectNames = async (accounts: Account[]) => {
+    const accountsWithProjects = accounts.filter(account => account.projectId);
+    
+    if (accountsWithProjects.length === 0) return;
+    
+    // Get unique project IDs to minimize API calls
+    const uniqueProjectIds = [...new Set(accountsWithProjects.map(a => a.projectId))];
+    
+    try {
+      const { data: projectsData, error: projectsError } = await supabase
+        .from('projects')
+        .select('id, name')
+        .in('id', uniqueProjectIds);
+        
+      if (projectsError) {
+        console.error("Error fetching project names:", projectsError);
+        return;
+      }
+      
+      if (projectsData) {
+        const projectMap = new Map(projectsData.map(p => [p.id.toString(), p.name]));
+        
+        // Update accounts with project names
+        accounts.forEach(account => {
+          if (account.projectId && projectMap.has(account.projectId)) {
+            account.projectName = projectMap.get(account.projectId) || '';
+          }
+        });
+      }
+    } catch (error) {
+      console.error("Error enriching accounts with project names:", error);
     }
   };
 

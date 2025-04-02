@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { motion } from "framer-motion";
 import { copyToClipboard } from "@/utils/accountActions";
-import { Globe, Github, Twitter, Instagram, Linkedin, AtSign } from "lucide-react";
+import { getTypeIcon, getPlatformIcon } from "@/utils/accountUtils";
 import { useAccounts } from "@/hooks/useAccounts";
 
 interface AccountsTabProps {
