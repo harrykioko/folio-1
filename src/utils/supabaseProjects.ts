@@ -1,208 +1,23 @@
 
-import { supabase } from "@/integrations/supabase/client";
-import type { Database } from "@/integrations/supabase/types";
-import { ProjectFormValues } from "@/components/projects/form/ProjectFormSchema";
+// This file is deprecated. Use imports from '@/utils/projects' instead.
+// It exists only for backward compatibility during the refactoring process.
 
-export type Project = {
-  id: number;
-  name: string;
-  description: string | null;
-  status: "active" | "development" | "archive" | "ideation";
-  created_by: string | null;
-  created_at: string;
-  updated_at: string;
-  progress?: number;
-  startDate?: string;
-  dueDate?: string;
-  team?: number;
-  domains?: string[];
-  hasGithub?: boolean;
-  social?: string[];
-}
+import { 
+  Project, 
+  ProjectFormData,
+  fetchProjects,
+  fetchProjectById,
+  createProject,
+  updateProject,
+  deleteProject
+} from './projects';
 
-// Update this type to match the ProjectFormValues structure
-export type ProjectFormData = ProjectFormValues;
-
-// Fetch all projects
-export const fetchProjects = async () => {
-  console.log("fetchProjects called");
-  
-  const { data, error } = await supabase
-    .from('projects')
-    .select('*')
-    .order('created_at', { ascending: false });
-  
-  if (error) {
-    console.error('Error fetching projects:', error);
-    throw error;
-  }
-  
-  console.log("Projects fetched:", data?.length || 0);
-  return data as Project[];
-};
-
-// Fetch a single project by ID
-export const fetchProjectById = async (id: number | string) => {
-  // Comprehensive input validation
-  console.log("fetchProjectById called with:", { id, type: typeof id });
-  
-  // Special case: check if ID is the string "new" (for new project route)
-  if (id === "new") {
-    const error = new Error(`Cannot fetch project with ID "new"`);
-    console.error(error);
-    throw error;
-  }
-  
-  // Validate ID is not undefined/null
-  if (id === undefined || id === null) {
-    const error = new Error(`Invalid project ID: undefined`);
-    console.error(error);
-    throw error;
-  }
-  
-  // Convert string ID to number if needed
-  const numericId = typeof id === 'string' ? parseInt(id, 10) : id;
-  
-  // Check if conversion resulted in a valid number
-  if (isNaN(numericId)) {
-    const error = new Error(`Invalid project ID (not a number): ${id}`);
-    console.error(error);
-    throw error;
-  }
-  
-  try {
-    console.log(`Making Supabase query for project with ID: ${numericId}`);
-    const { data, error } = await supabase
-      .from('projects')
-      .select('*')
-      .eq('id', numericId)
-      .maybeSingle();
-    
-    if (error) {
-      console.error(`Supabase returned an error for project ID ${numericId}:`, error);
-      throw error;
-    }
-    
-    if (!data) {
-      const notFoundError = new Error(`Project with ID ${numericId} not found in database`);
-      console.error(notFoundError);
-      throw notFoundError;
-    }
-    
-    console.log(`Successfully fetched project ${numericId}:`, data);
-    return data as Project;
-  } catch (err) {
-    console.error(`Failed to fetch project with ID ${numericId}:`, err);
-    throw err;
-  }
-};
-
-// Create a new project
-export const createProject = async (project: ProjectFormValues) => {
-  console.log("createProject called with:", project);
-  
-  try {
-    // Check if user is authenticated
-    const { data: sessionData } = await supabase.auth.getSession();
-    
-    if (!sessionData.session) {
-      const error = new Error('You must be logged in to create a project');
-      console.error(error);
-      throw error;
-    }
-    
-    // Extract only the fields that should be sent to the database
-    const projectData = {
-      name: project.name,
-      description: project.description,
-      status: project.status
-    };
-    
-    console.log("Submitting project data to Supabase:", projectData);
-    
-    const { data, error } = await supabase
-      .from('projects')
-      .insert([projectData])
-      .select()
-      .single();
-    
-    if (error) {
-      console.error('Error creating project:', error);
-      throw error;
-    }
-    
-    if (!data) {
-      const dataError = new Error('Project created but no data returned');
-      console.error(dataError);
-      throw dataError;
-    }
-    
-    console.log('Project created successfully:', data);
-    return data as Project;
-  } catch (err) {
-    console.error('Project creation failed:', err);
-    throw err;
-  }
-};
-
-// Update an existing project
-export const updateProject = async (id: number, updates: Partial<ProjectFormValues>) => {
-  console.log(`updateProject called for ID ${id} with:`, updates);
-  
-  // Extract only database fields from the updates
-  const projectUpdates = {
-    name: updates.name,
-    description: updates.description,
-    status: updates.status
-    // Add other fields as needed
-  };
-
-  try {
-    const { data, error } = await supabase
-      .from('projects')
-      .update(projectUpdates)
-      .eq('id', id)
-      .select()
-      .single();
-    
-    if (error) {
-      console.error(`Error updating project with id ${id}:`, error);
-      throw error;
-    }
-    
-    if (!data) {
-      const dataError = new Error(`Project with ID ${id} updated but no data returned`);
-      console.error(dataError);
-      throw dataError;
-    }
-    
-    console.log(`Successfully updated project ${id}:`, data);
-    return data as Project;
-  } catch (err) {
-    console.error(`Failed to update project with ID ${id}:`, err);
-    throw err;
-  }
-};
-
-// Delete a project
-export const deleteProject = async (id: number) => {
-  console.log(`deleteProject called for ID ${id}`);
-  
-  try {
-    const { error } = await supabase
-      .from('projects')
-      .delete()
-      .eq('id', id);
-    
-    if (error) {
-      console.error(`Error deleting project with id ${id}:`, error);
-      throw error;
-    }
-    
-    console.log(`Successfully deleted project ${id}`);
-    return true;
-  } catch (err) {
-    console.error(`Failed to delete project with ID ${id}:`, err);
-    throw err;
-  }
+export { 
+  Project, 
+  ProjectFormData,
+  fetchProjects,
+  fetchProjectById,
+  createProject,
+  updateProject,
+  deleteProject
 };

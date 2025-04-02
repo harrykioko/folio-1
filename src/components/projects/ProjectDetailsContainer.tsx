@@ -1,14 +1,14 @@
 
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { fetchProjectById, updateProject, deleteProject, Project } from "@/utils/supabaseProjects";
+import { fetchProjectById, updateProject, deleteProject, Project } from "@/utils/projects";
 import { ProjectFormValues } from "@/components/projects/form/ProjectFormSchema";
 import ProjectHeader from "@/components/projects/ProjectHeader";
 import ProjectModernLayout from "@/components/projects/layout/ProjectModernLayout";
 import ProjectDetailLoading from "@/components/projects/ProjectDetailLoading";
 import ProjectNotFound from "@/components/projects/ProjectNotFound";
 import NewProjectView from "@/components/projects/NewProjectView";
-import { createProject } from "@/utils/supabaseProjects";
+import { createProject } from "@/utils/projects";
 import { toast } from "sonner";
 
 const ProjectDetailsContainer: React.FC = () => {

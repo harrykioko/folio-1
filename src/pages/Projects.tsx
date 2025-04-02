@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus } from "lucide-react";
-import { fetchProjects, Project } from "@/utils/supabaseProjects";
+import { fetchProjects, Project } from "@/utils/projects";
 
 // Import our new components
 import SearchFilter from "@/components/projects/SearchFilter";
