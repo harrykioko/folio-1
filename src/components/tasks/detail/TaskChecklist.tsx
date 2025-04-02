@@ -4,76 +4,107 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
-import { Plus, X } from "lucide-react";
-
-interface ChecklistItem {
-  id: string;
-  title: string;
-  isComplete: boolean;
-}
+import { Plus, X, Loader2 } from "lucide-react";
+import { useSubtasks } from "@/hooks/useSubtasks";
 
 interface TaskChecklistProps {
   taskId: number;
 }
 
 const TaskChecklist: React.FC<TaskChecklistProps> = ({ taskId }) => {
-  // This will be replaced with actual data loading from API once backend is set up
-  const [items, setItems] = useState<ChecklistItem[]>([]);
+  const { 
+    subtasks, 
+    isLoading, 
+    error, 
+    getCompletionStats, 
+    addSubtask, 
+    toggleSubtaskCompletion, 
+    removeSubtask 
+  } = useSubtasks(taskId);
+  
   const [newItemTitle, setNewItemTitle] = useState("");
   const [isAddingItem, setIsAddingItem] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const completedCount = items.filter(item => item.isComplete).length;
-  const progressPercentage = items.length > 0 ? (completedCount / items.length) * 100 : 0;
+  const stats = getCompletionStats();
   
-  const handleAddItem = () => {
+  const handleAddItem = async () => {
     if (newItemTitle.trim()) {
-      const newItem: ChecklistItem = {
-        id: Date.now().toString(),
-        title: newItemTitle.trim(),
-        isComplete: false
-      };
-      
-      setItems([...items, newItem]);
-      setNewItemTitle("");
-      setIsAddingItem(false);
+      try {
+        setIsSubmitting(true);
+        await addSubtask({
+          title: newItemTitle.trim(),
+          is_complete: false
+        });
+        
+        setNewItemTitle("");
+        setIsAddingItem(false);
+      } catch (error) {
+        console.error("Failed to add subtask:", error);
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
   
-  const handleToggleComplete = (id: string) => {
-    setItems(
-      items.map(item => 
-        item.id === id ? { ...item, isComplete: !item.isComplete } : item
-      )
-    );
+  const handleToggleComplete = async (id: string, currentState: boolean) => {
+    try {
+      await toggleSubtaskCompletion(id, !currentState);
+    } catch (error) {
+      console.error("Failed to toggle subtask completion:", error);
+    }
   };
   
-  const handleRemoveItem = (id: string) => {
-    setItems(items.filter(item => item.id !== id));
+  const handleRemoveItem = async (id: string) => {
+    try {
+      await removeSubtask(id);
+    } catch (error) {
+      console.error("Failed to remove subtask:", error);
+    }
   };
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="flex justify-center py-8">
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="text-center text-muted-foreground py-8">
+        <p className="text-destructive mb-2">Failed to load checklist items</p>
+        <Button variant="outline" onClick={() => window.location.reload()}>Try Again</Button>
+      </div>
+    );
+  }
   
   return (
     <div className="space-y-4">
-      {items.length > 0 && (
+      {subtasks && subtasks.length > 0 && (
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span>{completedCount} of {items.length} completed</span>
-            <span>{Math.round(progressPercentage)}%</span>
+            <span>{stats.completed} of {stats.total} completed</span>
+            <span>{stats.percentage}%</span>
           </div>
-          <Progress value={progressPercentage} className="h-2" />
+          <Progress value={stats.percentage} className="h-2" />
         </div>
       )}
       
       <ul className="space-y-2">
-        {items.map(item => (
+        {subtasks?.map(item => (
           <li key={item.id} className="flex items-center gap-2 group">
             <Checkbox 
               id={`checklist-item-${item.id}`} 
-              checked={item.isComplete}
-              onCheckedChange={() => handleToggleComplete(item.id)}
+              checked={item.is_complete}
+              onCheckedChange={() => handleToggleComplete(item.id, item.is_complete)}
             />
             <label 
               htmlFor={`checklist-item-${item.id}`}
-              className={`flex-grow ${item.isComplete ? 'text-muted-foreground line-through' : ''}`}
+              className={`flex-grow ${item.is_complete ? 'text-muted-foreground line-through' : ''}`}
             >
               {item.title}
             </label>
@@ -103,14 +134,18 @@ const TaskChecklist: React.FC<TaskChecklistProps> = ({ taskId }) => {
               }
             }}
             autoFocus
+            disabled={isSubmitting}
           />
-          <Button onClick={handleAddItem}>Add</Button>
+          <Button onClick={handleAddItem} disabled={isSubmitting}>
+            {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Add"}
+          </Button>
           <Button 
             variant="ghost" 
             onClick={() => {
               setIsAddingItem(false);
               setNewItemTitle("");
             }}
+            disabled={isSubmitting}
           >
             Cancel
           </Button>
@@ -126,7 +161,7 @@ const TaskChecklist: React.FC<TaskChecklistProps> = ({ taskId }) => {
         </Button>
       )}
       
-      {items.length === 0 && !isAddingItem && (
+      {(!subtasks || subtasks.length === 0) && !isAddingItem && (
         <div className="text-center text-muted-foreground py-8">
           No checklist items yet. Add one to track subtasks or steps for completion.
         </div>

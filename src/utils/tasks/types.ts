@@ -1,4 +1,3 @@
-
 import type { Database } from "@/integrations/supabase/types";
 
 export type Task = {
@@ -23,4 +22,19 @@ export type TaskFormData = {
   priority: 'low' | 'medium' | 'high' | 'urgent';
   deadline?: string | null;
   status: 'todo' | 'in_progress' | 'completed';
+}
+
+export type Subtask = {
+  id: string;
+  task_id: number;
+  title: string;
+  is_complete: boolean;
+  due_date: string | null;
+  created_at: string;
+}
+
+export type SubtaskFormData = {
+  title: string;
+  is_complete?: boolean;
+  due_date?: string | null;
 }

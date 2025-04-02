@@ -1,6 +1,6 @@
 
 // Export types
-export type { Task, TaskFormData } from './types';
+export type { Task, TaskFormData, Subtask, SubtaskFormData } from './types';
 
 // Export query functions
 export { 
@@ -15,6 +15,14 @@ export {
   updateTask,
   deleteTask 
 } from './taskMutations';
+
+// Export subtask functions
+export {
+  fetchSubtasksByTaskId,
+  createSubtask,
+  updateSubtask,
+  deleteSubtask
+} from './subtaskMutations';
 
 // Export helper functions
 export { 
