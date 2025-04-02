@@ -23,7 +23,7 @@ const AccountOwnerField: React.FC<AccountOwnerFieldProps> = ({ control }) => {
           <FormLabel>Account Owner</FormLabel>
           <Select
             onValueChange={field.onChange}
-            value={field.value || ""}
+            value={field.value || "none"}
           >
             <FormControl>
               <SelectTrigger>

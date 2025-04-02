@@ -34,17 +34,17 @@ const TaskFilters: React.FC<TaskFiltersProps> = ({ filters, setFilters }) => {
         <div className="space-y-2">
           <label className="text-sm font-medium">Project</label>
           <Select
-            value={filters.project?.toString() || ""}
+            value={filters.project?.toString() || "all-projects"}
             onValueChange={(value) => setFilters({
               ...filters,
-              project: value ? parseInt(value, 10) : null
+              project: value === "all-projects" ? null : parseInt(value, 10)
             })}
           >
             <SelectTrigger>
               <SelectValue placeholder="All Projects" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Projects</SelectItem>
+              <SelectItem value="all-projects">All Projects</SelectItem>
               {projects?.map((project) => (
                 <SelectItem key={project.id} value={project.id.toString()}>
                   {project.name}
@@ -57,17 +57,17 @@ const TaskFilters: React.FC<TaskFiltersProps> = ({ filters, setFilters }) => {
         <div className="space-y-2">
           <label className="text-sm font-medium">Assignee</label>
           <Select
-            value={filters.assignee || ""}
+            value={filters.assignee || "all-assignees"}
             onValueChange={(value) => setFilters({
               ...filters,
-              assignee: value || null
+              assignee: value === "all-assignees" ? null : value
             })}
           >
             <SelectTrigger>
               <SelectValue placeholder="All Assignees" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Assignees</SelectItem>
+              <SelectItem value="all-assignees">All Assignees</SelectItem>
               {users?.map((user) => (
                 <SelectItem key={user.id} value={user.id}>
                   {user.full_name || user.email}
@@ -80,17 +80,17 @@ const TaskFilters: React.FC<TaskFiltersProps> = ({ filters, setFilters }) => {
         <div className="space-y-2">
           <label className="text-sm font-medium">Priority</label>
           <Select
-            value={filters.priority || ""}
+            value={filters.priority || "all-priorities"}
             onValueChange={(value) => setFilters({
               ...filters,
-              priority: value || null
+              priority: value === "all-priorities" ? null : value
             })}
           >
             <SelectTrigger>
               <SelectValue placeholder="All Priorities" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Priorities</SelectItem>
+              <SelectItem value="all-priorities">All Priorities</SelectItem>
               <SelectItem value="low">Low</SelectItem>
               <SelectItem value="medium">Medium</SelectItem>
               <SelectItem value="high">High</SelectItem>

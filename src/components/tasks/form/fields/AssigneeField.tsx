@@ -25,7 +25,7 @@ export const AssigneeField: React.FC<AssigneeFieldProps> = ({ form, users, isLoa
         ) : (
           <Select 
             onValueChange={field.onChange} 
-            defaultValue={field.value}
+            defaultValue={field.value || "unassigned"}
           >
             <FormControl>
               <SelectTrigger>

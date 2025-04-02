@@ -23,7 +23,7 @@ const AccountProjectField: React.FC<AccountProjectFieldProps> = ({ control }) =>
           <FormLabel>Associated Project</FormLabel>
           <Select
             onValueChange={field.onChange}
-            value={field.value || ""}
+            value={field.value || "none"}
           >
             <FormControl>
               <SelectTrigger>

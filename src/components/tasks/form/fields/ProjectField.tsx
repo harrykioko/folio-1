@@ -25,7 +25,7 @@ export const ProjectField: React.FC<ProjectFieldProps> = ({ form, projects, isLo
         ) : (
           <Select 
             onValueChange={field.onChange} 
-            defaultValue={field.value}
+            defaultValue={field.value || "none"}
           >
             <FormControl>
               <SelectTrigger>
@@ -33,6 +33,7 @@ export const ProjectField: React.FC<ProjectFieldProps> = ({ form, projects, isLo
               </SelectTrigger>
             </FormControl>
             <SelectContent>
+              <SelectItem value="none">No project</SelectItem>
               {projects.map((project) => (
                 <SelectItem key={project.id} value={project.id.toString()}>
                   {project.name}

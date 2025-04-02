@@ -62,7 +62,7 @@ const AppearanceForm = () => {
                   <FormLabel>Font Size</FormLabel>
                   <Select 
                     onValueChange={field.onChange} 
-                    value={field.value}
+                    value={field.value || "medium"}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -91,7 +91,7 @@ const AppearanceForm = () => {
                   <div className="mb-4">
                     <Select 
                       onValueChange={field.onChange} 
-                      value={field.value}
+                      value={field.value || "default"}
                     >
                       <FormControl>
                         <SelectTrigger>
