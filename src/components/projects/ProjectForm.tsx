@@ -38,16 +38,18 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   });
 
   const handleSubmit = async (data: ProjectFormValues) => {
+    console.log("Form submitted with data:", data);
     try {
       if (onSubmit) {
+        console.log("Calling provided onSubmit handler");
         await onSubmit(data);
-        return;
+      } else {
+        // If no onSubmit provided, we should navigate back - this shouldn't happen
+        // but provides a fallback
+        console.error("No form submission handler provided");
+        toast.error("Form submission handler not provided");
+        navigate("/projects");
       }
-      
-      // If no onSubmit provided, we should navigate back - this shouldn't happen
-      // but provides a fallback
-      toast.error("Form submission handler not provided");
-      navigate("/projects");
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error("Failed to save project. Please try again.");
@@ -95,7 +97,10 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             <Button variant="outline" type="button" onClick={() => navigate("/projects")}>
               Cancel
             </Button>
-            <Button type="submit" disabled={form.formState.isSubmitting}>
+            <Button 
+              type="submit" 
+              disabled={form.formState.isSubmitting || !form.formState.isValid}
+            >
               {isEditing ? "Update Project" : "Create Project"}
             </Button>
           </CardFooter>

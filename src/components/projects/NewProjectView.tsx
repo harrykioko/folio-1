@@ -15,6 +15,16 @@ const NewProjectView: React.FC<NewProjectViewProps> = ({ onSubmit }) => {
   
   console.log("Rendering NewProjectView component");
   
+  const handleSubmit = async (data: ProjectFormValues) => {
+    console.log("NewProjectView - handling form submit:", data);
+    try {
+      await onSubmit(data);
+    } catch (error) {
+      console.error("Error in NewProjectView submission:", error);
+      // Error will be handled by the form component
+    }
+  };
+  
   return (
     <div className="max-w-4xl mx-auto">
       <div className="mb-6 flex flex-col gap-2">
@@ -34,7 +44,7 @@ const NewProjectView: React.FC<NewProjectViewProps> = ({ onSubmit }) => {
           Fill out the form below to create a new project.
         </p>
       </div>
-      <ProjectForm onSubmit={onSubmit} />
+      <ProjectForm onSubmit={handleSubmit} />
     </div>
   );
 };
