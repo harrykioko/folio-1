@@ -21,11 +21,16 @@ const ProjectTechnicalFields: React.FC<ProjectTechnicalFieldsProps> = ({ form })
         name="githubRepo"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="flex items-center gap-2">
+            <FormLabel htmlFor="project-github-repo" className="flex items-center gap-2">
               <GithubIcon className="h-4 w-4" /> GitHub Repository
             </FormLabel>
             <FormControl>
-              <Input placeholder="https://github.com/username/repo" {...field} />
+              <Input 
+                id="project-github-repo" 
+                placeholder="https://github.com/username/repo" 
+                {...field} 
+                name="githubRepo"
+              />
             </FormControl>
             <FormDescription>Link to the project's GitHub repository</FormDescription>
             <FormMessage />
@@ -38,14 +43,16 @@ const ProjectTechnicalFields: React.FC<ProjectTechnicalFieldsProps> = ({ form })
         name="domains"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="flex items-center gap-2">
+            <FormLabel htmlFor="project-domains" className="flex items-center gap-2">
               <Globe className="h-4 w-4" /> Domains
             </FormLabel>
             <FormControl>
               <Textarea 
+                id="project-domains"
                 placeholder="Enter domains, one per line (e.g., example.com)"
                 className="min-h-[80px]" 
-                {...field} 
+                {...field}
+                name="domains"
               />
             </FormControl>
             <FormDescription>Enter each domain on a new line</FormDescription>

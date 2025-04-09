@@ -21,11 +21,16 @@ const ProjectSocialFields: React.FC<ProjectSocialFieldsProps> = ({ form }) => {
           name="twitter"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="flex items-center gap-2">
+              <FormLabel htmlFor="project-twitter" className="flex items-center gap-2">
                 <Twitter className="h-4 w-4" /> Twitter
               </FormLabel>
               <FormControl>
-                <Input placeholder="@username" {...field} />
+                <Input 
+                  id="project-twitter"
+                  placeholder="@username" 
+                  {...field}
+                  name="twitter"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -37,11 +42,16 @@ const ProjectSocialFields: React.FC<ProjectSocialFieldsProps> = ({ form }) => {
           name="instagram"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="flex items-center gap-2">
+              <FormLabel htmlFor="project-instagram" className="flex items-center gap-2">
                 <Instagram className="h-4 w-4" /> Instagram
               </FormLabel>
               <FormControl>
-                <Input placeholder="@username" {...field} />
+                <Input 
+                  id="project-instagram"
+                  placeholder="@username" 
+                  {...field}
+                  name="instagram"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -53,11 +63,16 @@ const ProjectSocialFields: React.FC<ProjectSocialFieldsProps> = ({ form }) => {
           name="linkedin"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="flex items-center gap-2">
+              <FormLabel htmlFor="project-linkedin" className="flex items-center gap-2">
                 <Linkedin className="h-4 w-4" /> LinkedIn
               </FormLabel>
               <FormControl>
-                <Input placeholder="linkedin.com/company/name" {...field} />
+                <Input 
+                  id="project-linkedin"
+                  placeholder="linkedin.com/company/name" 
+                  {...field}
+                  name="linkedin"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

@@ -2,7 +2,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { Project } from "./types";
 import { ProjectFormValues } from "@/components/projects/form/ProjectFormSchema";
-import { format } from "date-fns";
+import { format, isValid, parse } from "date-fns";
 
 // Create a new project
 export const createProject = async (project: ProjectFormValues) => {
@@ -23,12 +23,25 @@ export const createProject = async (project: ProjectFormValues) => {
     let dueDate = null;
     
     try {
+      // Safely format dates without using dynamic evaluation
       if (project.startDate) {
-        startDate = format(new Date(project.startDate), 'yyyy-MM-dd');
+        // Parse the date string directly without eval
+        const parsedStartDate = new Date(project.startDate);
+        if (isValid(parsedStartDate)) {
+          startDate = format(parsedStartDate, 'yyyy-MM-dd');
+        } else {
+          throw new Error('Invalid start date format');
+        }
       }
       
       if (project.dueDate) {
-        dueDate = format(new Date(project.dueDate), 'yyyy-MM-dd');
+        // Parse the date string directly without eval
+        const parsedDueDate = new Date(project.dueDate);
+        if (isValid(parsedDueDate)) {
+          dueDate = format(parsedDueDate, 'yyyy-MM-dd');
+        } else {
+          throw new Error('Invalid due date format');
+        }
       }
     } catch (dateError) {
       console.error('Error formatting dates:', dateError);
@@ -81,11 +94,23 @@ export const updateProject = async (id: number, updates: Partial<ProjectFormValu
   
   try {
     if (updates.startDate) {
-      startDate = format(new Date(updates.startDate), 'yyyy-MM-dd');
+      // Parse the date string directly without eval
+      const parsedStartDate = new Date(updates.startDate);
+      if (isValid(parsedStartDate)) {
+        startDate = format(parsedStartDate, 'yyyy-MM-dd');
+      } else {
+        throw new Error('Invalid start date format');
+      }
     }
     
     if (updates.dueDate) {
-      dueDate = format(new Date(updates.dueDate), 'yyyy-MM-dd');
+      // Parse the date string directly without eval
+      const parsedDueDate = new Date(updates.dueDate);
+      if (isValid(parsedDueDate)) {
+        dueDate = format(parsedDueDate, 'yyyy-MM-dd');
+      } else {
+        throw new Error('Invalid due date format');
+      }
     }
   } catch (dateError) {
     console.error('Error formatting dates for update:', dateError);

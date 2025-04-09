@@ -27,8 +27,21 @@ const NewProjectView: React.FC<NewProjectViewProps> = ({ onSubmit }) => {
     
     try {
       setIsSubmitting(true);
-      await onSubmit(data);
+      
+      // Ensure dates are properly formatted before submission
+      const formattedData = {
+        ...data,
+        startDate: data.startDate ? data.startDate.toString() : '',
+        dueDate: data.dueDate ? data.dueDate.toString() : ''
+      };
+      
+      await onSubmit(formattedData);
       toast.success("Project created successfully");
+      
+      // Add a slight delay before navigation to ensure toast is visible
+      setTimeout(() => {
+        navigate("/projects");
+      }, 500);
     } catch (error) {
       console.error("Error in NewProjectView submission:", error);
       toast.error("Failed to create project. Please try again.");

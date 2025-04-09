@@ -20,9 +20,9 @@ const ProjectBasicInfoFields: React.FC<ProjectBasicInfoFieldsProps> = ({ form })
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Project Name*</FormLabel>
+              <FormLabel htmlFor="project-name">Project Name*</FormLabel>
               <FormControl>
-                <Input placeholder="Enter project name" {...field} />
+                <Input id="project-name" placeholder="Enter project name" {...field} name="name" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -35,11 +35,17 @@ const ProjectBasicInfoFields: React.FC<ProjectBasicInfoFieldsProps> = ({ form })
             name="startDate"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Start Date*</FormLabel>
+                <FormLabel htmlFor="project-start-date">Start Date*</FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Calendar className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input className="pl-9" type="date" {...field} />
+                    <Input 
+                      id="project-start-date"
+                      className="pl-9" 
+                      type="date" 
+                      {...field} 
+                      name="startDate" 
+                    />
                   </div>
                 </FormControl>
                 <FormMessage />
@@ -52,11 +58,17 @@ const ProjectBasicInfoFields: React.FC<ProjectBasicInfoFieldsProps> = ({ form })
             name="dueDate"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Due Date*</FormLabel>
+                <FormLabel htmlFor="project-due-date">Due Date*</FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Calendar className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input className="pl-9" type="date" {...field} />
+                    <Input 
+                      id="project-due-date"
+                      className="pl-9" 
+                      type="date" 
+                      {...field} 
+                      name="dueDate" 
+                    />
                   </div>
                 </FormControl>
                 <FormMessage />
@@ -71,12 +83,14 @@ const ProjectBasicInfoFields: React.FC<ProjectBasicInfoFieldsProps> = ({ form })
         name="description"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Description*</FormLabel>
+            <FormLabel htmlFor="project-description">Description*</FormLabel>
             <FormControl>
               <Textarea 
+                id="project-description"
                 placeholder="Describe the project and its goals"
                 className="min-h-[120px]" 
                 {...field} 
+                name="description"
               />
             </FormControl>
             <FormMessage />
