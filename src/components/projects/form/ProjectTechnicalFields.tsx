@@ -27,6 +27,7 @@ const ProjectTechnicalFields: React.FC<ProjectTechnicalFieldsProps> = ({ form })
             <FormControl>
               <Input 
                 id="project-github-repo" 
+                name="githubRepo"
                 placeholder="https://github.com/username/repo" 
                 {...field} 
               />
@@ -48,6 +49,7 @@ const ProjectTechnicalFields: React.FC<ProjectTechnicalFieldsProps> = ({ form })
             <FormControl>
               <Textarea 
                 id="project-domains"
+                name="domains"
                 placeholder="Enter domains, one per line (e.g., example.com)"
                 className="min-h-[80px]" 
                 {...field}

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
+import { format } from "date-fns";
 
 interface NewProjectViewProps {
   onSubmit: (data: ProjectFormValues) => Promise<void>;
@@ -28,7 +29,8 @@ const NewProjectView: React.FC<NewProjectViewProps> = ({ onSubmit }) => {
     try {
       setIsSubmitting(true);
       
-      // No need to format dates here as that's handled in the mutations file
+      // Ensure data structure is correct, but don't manipulate dates here
+      // as they're already in string format from the form inputs
       await onSubmit(data);
       toast.success("Project created successfully");
       

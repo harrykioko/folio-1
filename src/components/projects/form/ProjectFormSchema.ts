@@ -17,9 +17,12 @@ export const projectSchema = z.object({
   // Skip validation if either date is missing
   if (!data.startDate || !data.dueDate) return true;
   
-  // Parse dates for comparison
+  // Parse dates for comparison - use explicit Date constructor instead of eval-based methods
   const startDate = new Date(data.startDate);
   const dueDate = new Date(data.dueDate);
+  
+  // Ensure both dates are valid before comparison
+  if (isNaN(startDate.getTime()) || isNaN(dueDate.getTime())) return true;
   
   // Ensure start date is before or equal to due date
   return startDate <= dueDate;
@@ -30,15 +33,24 @@ export const projectSchema = z.object({
 
 export type ProjectFormValues = z.infer<typeof projectSchema>;
 
-export const getDefaultValues = () => ({
-  name: "",
-  description: "",
-  status: "ideation" as const,
-  startDate: new Date().toISOString().split("T")[0],
-  dueDate: "",
-  githubRepo: "",
-  domains: "",
-  twitter: "",
-  instagram: "",
-  linkedin: "",
-});
+export const getDefaultValues = () => {
+  // Use explicit string formatting instead of any potential eval-based methods
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  const formattedDate = `${year}-${month}-${day}`;
+  
+  return {
+    name: "",
+    description: "",
+    status: "ideation" as const,
+    startDate: formattedDate,
+    dueDate: "",
+    githubRepo: "",
+    domains: "",
+    twitter: "",
+    instagram: "",
+    linkedin: "",
+  };
+};

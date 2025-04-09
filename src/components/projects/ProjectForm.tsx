@@ -39,6 +39,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
     mode: "onChange" // Enable validation on change for better user experience
   });
 
+  console.log("ProjectForm rendered with defaultValues:", defaultValues);
+
   const handleSubmit = async (data: ProjectFormValues) => {
     console.log("Form submitted with data:", data);
     
@@ -107,7 +109,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             </Button>
             <Button 
               type="submit" 
-              disabled={isSubmitting || !form.formState.isValid}
+              disabled={isSubmitting}
             >
               {isSubmitting ? (
                 <>
