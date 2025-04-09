@@ -28,14 +28,8 @@ const NewProjectView: React.FC<NewProjectViewProps> = ({ onSubmit }) => {
     try {
       setIsSubmitting(true);
       
-      // Ensure dates are properly formatted before submission
-      const formattedData = {
-        ...data,
-        startDate: data.startDate ? data.startDate.toString() : '',
-        dueDate: data.dueDate ? data.dueDate.toString() : ''
-      };
-      
-      await onSubmit(formattedData);
+      // No need to format dates here as that's handled in the mutations file
+      await onSubmit(data);
       toast.success("Project created successfully");
       
       // Add a slight delay before navigation to ensure toast is visible

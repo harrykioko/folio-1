@@ -29,7 +29,6 @@ const ProjectSocialFields: React.FC<ProjectSocialFieldsProps> = ({ form }) => {
                   id="project-twitter"
                   placeholder="@username" 
                   {...field}
-                  name="twitter"
                 />
               </FormControl>
               <FormMessage />
@@ -50,7 +49,6 @@ const ProjectSocialFields: React.FC<ProjectSocialFieldsProps> = ({ form }) => {
                   id="project-instagram"
                   placeholder="@username" 
                   {...field}
-                  name="instagram"
                 />
               </FormControl>
               <FormMessage />
@@ -71,7 +69,6 @@ const ProjectSocialFields: React.FC<ProjectSocialFieldsProps> = ({ form }) => {
                   id="project-linkedin"
                   placeholder="linkedin.com/company/name" 
                   {...field}
-                  name="linkedin"
                 />
               </FormControl>
               <FormMessage />

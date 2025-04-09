@@ -22,7 +22,11 @@ const ProjectBasicInfoFields: React.FC<ProjectBasicInfoFieldsProps> = ({ form })
             <FormItem>
               <FormLabel htmlFor="project-name">Project Name*</FormLabel>
               <FormControl>
-                <Input id="project-name" placeholder="Enter project name" {...field} name="name" />
+                <Input 
+                  id="project-name" 
+                  placeholder="Enter project name" 
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -43,8 +47,7 @@ const ProjectBasicInfoFields: React.FC<ProjectBasicInfoFieldsProps> = ({ form })
                       id="project-start-date"
                       className="pl-9" 
                       type="date" 
-                      {...field} 
-                      name="startDate" 
+                      {...field}
                     />
                   </div>
                 </FormControl>
@@ -66,8 +69,7 @@ const ProjectBasicInfoFields: React.FC<ProjectBasicInfoFieldsProps> = ({ form })
                       id="project-due-date"
                       className="pl-9" 
                       type="date" 
-                      {...field} 
-                      name="dueDate" 
+                      {...field}
                     />
                   </div>
                 </FormControl>
@@ -89,8 +91,7 @@ const ProjectBasicInfoFields: React.FC<ProjectBasicInfoFieldsProps> = ({ form })
                 id="project-description"
                 placeholder="Describe the project and its goals"
                 className="min-h-[120px]" 
-                {...field} 
-                name="description"
+                {...field}
               />
             </FormControl>
             <FormMessage />

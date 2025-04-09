@@ -29,7 +29,6 @@ const ProjectTechnicalFields: React.FC<ProjectTechnicalFieldsProps> = ({ form })
                 id="project-github-repo" 
                 placeholder="https://github.com/username/repo" 
                 {...field} 
-                name="githubRepo"
               />
             </FormControl>
             <FormDescription>Link to the project's GitHub repository</FormDescription>
@@ -52,7 +51,6 @@ const ProjectTechnicalFields: React.FC<ProjectTechnicalFieldsProps> = ({ form })
                 placeholder="Enter domains, one per line (e.g., example.com)"
                 className="min-h-[80px]" 
                 {...field}
-                name="domains"
               />
             </FormControl>
             <FormDescription>Enter each domain on a new line</FormDescription>

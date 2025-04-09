@@ -2,7 +2,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { Project } from "./types";
 import { ProjectFormValues } from "@/components/projects/form/ProjectFormSchema";
-import { format, isValid, parse } from "date-fns";
+import { format, isValid, parseISO } from "date-fns";
 
 // Create a new project
 export const createProject = async (project: ProjectFormValues) => {
@@ -25,8 +25,7 @@ export const createProject = async (project: ProjectFormValues) => {
     try {
       // Safely format dates without using dynamic evaluation
       if (project.startDate) {
-        // Parse the date string directly without eval
-        const parsedStartDate = new Date(project.startDate);
+        const parsedStartDate = parseISO(project.startDate);
         if (isValid(parsedStartDate)) {
           startDate = format(parsedStartDate, 'yyyy-MM-dd');
         } else {
@@ -35,8 +34,7 @@ export const createProject = async (project: ProjectFormValues) => {
       }
       
       if (project.dueDate) {
-        // Parse the date string directly without eval
-        const parsedDueDate = new Date(project.dueDate);
+        const parsedDueDate = parseISO(project.dueDate);
         if (isValid(parsedDueDate)) {
           dueDate = format(parsedDueDate, 'yyyy-MM-dd');
         } else {
@@ -52,7 +50,7 @@ export const createProject = async (project: ProjectFormValues) => {
     const projectData = {
       name: project.name,
       description: project.description,
-      status: project.status,
+      status: project.status || 'ideation',
       startDate: startDate,
       dueDate: dueDate
     };
@@ -94,8 +92,7 @@ export const updateProject = async (id: number, updates: Partial<ProjectFormValu
   
   try {
     if (updates.startDate) {
-      // Parse the date string directly without eval
-      const parsedStartDate = new Date(updates.startDate);
+      const parsedStartDate = parseISO(updates.startDate);
       if (isValid(parsedStartDate)) {
         startDate = format(parsedStartDate, 'yyyy-MM-dd');
       } else {
@@ -104,8 +101,7 @@ export const updateProject = async (id: number, updates: Partial<ProjectFormValu
     }
     
     if (updates.dueDate) {
-      // Parse the date string directly without eval
-      const parsedDueDate = new Date(updates.dueDate);
+      const parsedDueDate = parseISO(updates.dueDate);
       if (isValid(parsedDueDate)) {
         dueDate = format(parsedDueDate, 'yyyy-MM-dd');
       } else {
