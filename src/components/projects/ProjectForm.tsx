@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
@@ -22,6 +22,7 @@ interface ProjectFormProps {
   isEditing?: boolean;
   projectId?: number;
   onSubmit?: (data: ProjectFormValues) => Promise<void>;
+  isSubmitting?: boolean;
 }
 
 const ProjectForm: React.FC<ProjectFormProps> = ({
@@ -29,6 +30,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   isEditing = false,
   projectId,
   onSubmit,
+  isSubmitting = false,
 }) => {
   const navigate = useNavigate();
   const form = useForm<ProjectFormValues>({
@@ -39,6 +41,12 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
 
   const handleSubmit = async (data: ProjectFormValues) => {
     console.log("Form submitted with data:", data);
+    
+    if (isSubmitting) {
+      console.log("Submission already in progress, skipping form handler");
+      return;
+    }
+    
     try {
       if (onSubmit) {
         console.log("Calling provided onSubmit handler");
@@ -52,7 +60,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      toast.error("Failed to save project. Please try again.");
+      // Error handling is now done in the parent component
     }
   };
 
@@ -99,9 +107,16 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             </Button>
             <Button 
               type="submit" 
-              disabled={form.formState.isSubmitting || !form.formState.isValid}
+              disabled={isSubmitting || !form.formState.isValid}
             >
-              {isEditing ? "Update Project" : "Create Project"}
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {isEditing ? "Updating..." : "Creating..."}
+                </>
+              ) : (
+                isEditing ? "Update Project" : "Create Project"
+              )}
             </Button>
           </CardFooter>
         </Card>

@@ -1,10 +1,11 @@
 
-import React from "react";
+import React, { useState } from "react";
 import ProjectForm from "@/components/projects/ProjectForm";
 import { ProjectFormValues } from "@/components/projects/form/ProjectFormSchema";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
+import { toast } from "sonner";
 
 interface NewProjectViewProps {
   onSubmit: (data: ProjectFormValues) => Promise<void>;
@@ -12,16 +13,27 @@ interface NewProjectViewProps {
 
 const NewProjectView: React.FC<NewProjectViewProps> = ({ onSubmit }) => {
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   console.log("Rendering NewProjectView component");
   
   const handleSubmit = async (data: ProjectFormValues) => {
     console.log("NewProjectView - handling form submit:", data);
+    
+    if (isSubmitting) {
+      console.log("Submission already in progress, skipping");
+      return;
+    }
+    
     try {
+      setIsSubmitting(true);
       await onSubmit(data);
+      toast.success("Project created successfully");
     } catch (error) {
       console.error("Error in NewProjectView submission:", error);
-      // Error will be handled by the form component
+      toast.error("Failed to create project. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
   
@@ -44,7 +56,10 @@ const NewProjectView: React.FC<NewProjectViewProps> = ({ onSubmit }) => {
           Fill out the form below to create a new project.
         </p>
       </div>
-      <ProjectForm onSubmit={handleSubmit} />
+      <ProjectForm 
+        onSubmit={handleSubmit}
+        isSubmitting={isSubmitting}
+      />
     </div>
   );
 };

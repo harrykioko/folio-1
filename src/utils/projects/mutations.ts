@@ -18,9 +18,22 @@ export const createProject = async (project: ProjectFormValues) => {
       throw error;
     }
     
-    // Format dates properly for database storage
-    const startDate = project.startDate ? format(new Date(project.startDate), 'yyyy-MM-dd') : null;
-    const dueDate = project.dueDate ? format(new Date(project.dueDate), 'yyyy-MM-dd') : null;
+    // Format dates safely for database storage
+    let startDate = null;
+    let dueDate = null;
+    
+    try {
+      if (project.startDate) {
+        startDate = format(new Date(project.startDate), 'yyyy-MM-dd');
+      }
+      
+      if (project.dueDate) {
+        dueDate = format(new Date(project.dueDate), 'yyyy-MM-dd');
+      }
+    } catch (dateError) {
+      console.error('Error formatting dates:', dateError);
+      throw new Error('Invalid date format. Please check your date entries.');
+    }
     
     // Extract only the fields that should be sent to the database
     const projectData = {
@@ -62,9 +75,22 @@ export const createProject = async (project: ProjectFormValues) => {
 export const updateProject = async (id: number, updates: Partial<ProjectFormValues>) => {
   console.log(`updateProject called for ID ${id} with:`, updates);
   
-  // Format dates if they exist
-  const startDate = updates.startDate ? format(new Date(updates.startDate), 'yyyy-MM-dd') : undefined;
-  const dueDate = updates.dueDate ? format(new Date(updates.dueDate), 'yyyy-MM-dd') : undefined;
+  // Format dates safely if they exist
+  let startDate = undefined;
+  let dueDate = undefined;
+  
+  try {
+    if (updates.startDate) {
+      startDate = format(new Date(updates.startDate), 'yyyy-MM-dd');
+    }
+    
+    if (updates.dueDate) {
+      dueDate = format(new Date(updates.dueDate), 'yyyy-MM-dd');
+    }
+  } catch (dateError) {
+    console.error('Error formatting dates for update:', dateError);
+    throw new Error('Invalid date format for update. Please check your date entries.');
+  }
   
   // Extract only database fields from the updates
   const projectUpdates = {
