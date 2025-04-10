@@ -1,5 +1,5 @@
-
 import { supabase } from "@/integrations/supabase/client";
+import { fetchPromptsByProjectId as fetchPromptsByProjectIdQuery } from "@/utils/prompts/queries";
 
 export interface Prompt {
   id: number;
@@ -13,7 +13,11 @@ export interface Prompt {
   user_id?: string;
 }
 
-export const fetchPromptsByProjectId = async (projectId: number): Promise<Prompt[]> => {
+// Re-export the fetchPromptsByProjectId function from queries
+export const fetchPromptsByProjectId = fetchPromptsByProjectIdQuery;
+
+// Keeping the mock implementation for backward compatibility
+export const getMockPromptsByProjectId = async (projectId: number): Promise<Prompt[]> => {
   // For now, we'll use mock data
   const mockPrompts: Prompt[] = [
     {
@@ -47,19 +51,6 @@ export const fetchPromptsByProjectId = async (projectId: number): Promise<Prompt
       tags: ["marketing", "product"]
     }
   ];
-  
-  // In a real app, we would use Supabase to fetch data
-  // const { data, error } = await supabase
-  //   .from('prompts')
-  //   .select('*')
-  //   .eq('project_id', projectId);
-  
-  // if (error) {
-  //   console.error('Error fetching prompts:', error);
-  //   throw error;
-  // }
-  
-  // return data as Prompt[];
   
   // Return mock data for now
   // Only return prompts for the requested project

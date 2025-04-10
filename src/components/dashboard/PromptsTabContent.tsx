@@ -6,7 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, Sparkles, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { fetchPrompts } from "@/utils/prompts";
+import { fetchPrompts } from "@/utils/prompts/queries";
+import { Prompt } from "@/utils/prompts/types";
 
 const PromptsTabContent: React.FC = () => {
   const { data: prompts, isLoading, error } = useQuery({
@@ -34,7 +35,7 @@ const PromptsTabContent: React.FC = () => {
     );
   }
 
-  if (!prompts || prompts.length === 0) {
+  if (!prompts || (prompts as Prompt[]).length === 0) {
     return (
       <div className="space-y-4">
         <div className="flex items-center justify-between">
@@ -61,7 +62,7 @@ const PromptsTabContent: React.FC = () => {
   }
 
   // Take only the 4 most recent prompts
-  const recentPrompts = prompts.slice(0, 4);
+  const recentPrompts = (prompts as Prompt[]).slice(0, 4);
 
   return (
     <div className="space-y-4">

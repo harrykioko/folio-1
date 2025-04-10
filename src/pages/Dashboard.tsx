@@ -10,7 +10,8 @@ import {
   ActivityCard 
 } from "@/components/dashboard";
 import { useQuery } from "@tanstack/react-query";
-import { fetchPrompts } from "@/utils/prompts";
+import { fetchPrompts } from "@/utils/prompts/queries";
+import { Prompt } from "@/utils/prompts/types";
 
 const Dashboard: React.FC = () => {
   const { projects, isLoading: projectsLoading } = useProjects();
@@ -26,7 +27,7 @@ const Dashboard: React.FC = () => {
   const projectCount = projects?.length || 0;
   const taskCount = tasks?.length || 0;
   const accountCount = accounts?.length || 0;
-  const promptCount = prompts?.length || 0;
+  const promptCount = (prompts as Prompt[] | undefined)?.length || 0;
 
   return (
     <div className="space-y-6 animate-fade-in">
