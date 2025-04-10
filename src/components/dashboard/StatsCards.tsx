@@ -13,6 +13,7 @@ interface StatsCardsProps {
   projectsLoading: boolean;
   tasksLoading: boolean;
   accountsLoading: boolean;
+  promptsLoading: boolean;
 }
 
 const StatsCards: React.FC<StatsCardsProps> = ({
@@ -23,6 +24,7 @@ const StatsCards: React.FC<StatsCardsProps> = ({
   projectsLoading,
   tasksLoading,
   accountsLoading,
+  promptsLoading,
 }) => {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -83,9 +85,9 @@ const StatsCards: React.FC<StatsCardsProps> = ({
           <Lightbulb className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{promptCount}</div>
+          <div className="text-2xl font-bold">{promptsLoading ? "..." : promptCount}</div>
           <p className="text-xs text-muted-foreground">
-            +26 this month
+            {promptCount > 0 ? `${Math.min(promptCount, 26)} added this month` : "No prompts yet"}
           </p>
         </CardContent>
         <CardFooter className="p-2">
