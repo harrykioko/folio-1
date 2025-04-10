@@ -63,12 +63,13 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
     } catch (error) {
       console.error("Error submitting form:", error);
       // Error handling is now done in the parent component
+      throw error; // Re-throw so the parent can handle it
     }
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6" id="project-form">
         <Card>
           <CardHeader>
             <CardTitle>{isEditing ? "Edit Project" : "Create New Project"}</CardTitle>
@@ -110,6 +111,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             <Button 
               type="submit" 
               disabled={isSubmitting}
+              id="submit-project"
+              name="submit-project"
             >
               {isSubmitting ? (
                 <>

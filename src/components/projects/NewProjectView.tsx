@@ -4,9 +4,9 @@ import ProjectForm from "@/components/projects/ProjectForm";
 import { ProjectFormValues } from "@/components/projects/form/ProjectFormSchema";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
-import { format } from "date-fns";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface NewProjectViewProps {
   onSubmit: (data: ProjectFormValues) => Promise<void>;
@@ -15,6 +15,7 @@ interface NewProjectViewProps {
 const NewProjectView: React.FC<NewProjectViewProps> = ({ onSubmit }) => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
   
   console.log("Rendering NewProjectView component");
   
@@ -25,6 +26,9 @@ const NewProjectView: React.FC<NewProjectViewProps> = ({ onSubmit }) => {
       console.log("Submission already in progress, skipping");
       return;
     }
+    
+    // Clear any previous errors
+    setFormError(null);
     
     try {
       setIsSubmitting(true);
@@ -40,6 +44,7 @@ const NewProjectView: React.FC<NewProjectViewProps> = ({ onSubmit }) => {
       }, 500);
     } catch (error) {
       console.error("Error in NewProjectView submission:", error);
+      setFormError(error instanceof Error ? error.message : "An unexpected error occurred");
       toast.error("Failed to create project. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -47,7 +52,7 @@ const NewProjectView: React.FC<NewProjectViewProps> = ({ onSubmit }) => {
   };
   
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto animate-fade-in">
       <div className="mb-6 flex flex-col gap-2">
         <div>
           <Button 
@@ -65,6 +70,14 @@ const NewProjectView: React.FC<NewProjectViewProps> = ({ onSubmit }) => {
           Fill out the form below to create a new project.
         </p>
       </div>
+      
+      {formError && (
+        <Alert variant="destructive" className="mb-6">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{formError}</AlertDescription>
+        </Alert>
+      )}
+      
       <ProjectForm 
         onSubmit={handleSubmit}
         isSubmitting={isSubmitting}

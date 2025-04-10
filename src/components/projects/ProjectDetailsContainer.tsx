@@ -113,6 +113,7 @@ const ProjectDetailsContainer: React.FC = () => {
     } catch (err) {
       console.error("Error creating project:", err);
       toast.error("Failed to create project");
+      throw err; // Re-throw so the NewProjectView can handle it
     }
   };
 
@@ -169,8 +170,8 @@ const ProjectDetailsContainer: React.FC = () => {
         description={project.description || ""}
         status={project.status}
         projectId={project.id}
-        startDate={project.startDate || new Date().toISOString()}
-        dueDate={project.dueDate || new Date().toISOString()}
+        startDate={project.start_date || new Date().toISOString()}
+        dueDate={project.due_date || new Date().toISOString()}
         setIsEditDialogOpen={setIsEditDialogOpen}
         setIsDeleteDialogOpen={setIsDeleteDialogOpen}
       />
