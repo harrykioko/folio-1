@@ -31,6 +31,27 @@ const ProjectDetailsContainer: React.FC = () => {
   const [error, setError] = useState<Error | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+  const handleCreate = async (data: ProjectFormValues) => {
+    console.log("Creating new project with data:", data);
+    try {
+      const newProject = await createProject(data);
+      console.log("Project created successfully:", newProject);
+      toast.success("Project created successfully");
+      
+      // Navigate to the new project's details page
+      if (newProject && newProject.id) {
+        navigate(`/projects/${newProject.id}`);
+      } else {
+        console.error("Created project is missing ID");
+        toast.error("Project created but couldn't retrieve ID");
+      }
+    } catch (err) {
+      console.error("Error creating project:", err);
+      toast.error("Failed to create project");
+      throw err; // Re-throw so the NewProjectView can handle it
+    }
+  };
   
   // CRITICAL: Check for "new" project route FIRST, before any param validation
   if (isNewProject) {
@@ -101,27 +122,6 @@ const ProjectDetailsContainer: React.FC = () => {
     } catch (err) {
       console.error("Error updating project:", err);
       toast.error("Failed to update project");
-    }
-  };
-
-  const handleCreate = async (data: ProjectFormValues) => {
-    console.log("Creating new project with data:", data);
-    try {
-      const newProject = await createProject(data);
-      console.log("Project created successfully:", newProject);
-      toast.success("Project created successfully");
-      
-      // Navigate to the new project's details page
-      if (newProject && newProject.id) {
-        navigate(`/projects/${newProject.id}`);
-      } else {
-        console.error("Created project is missing ID");
-        toast.error("Project created but couldn't retrieve ID");
-      }
-    } catch (err) {
-      console.error("Error creating project:", err);
-      toast.error("Failed to create project");
-      throw err; // Re-throw so the NewProjectView can handle it
     }
   };
 
