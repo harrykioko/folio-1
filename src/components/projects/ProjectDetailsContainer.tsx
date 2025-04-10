@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { fetchProjectById, updateProject, deleteProject, Project, createProject } from "@/utils/projects";
 import { ProjectFormValues } from "@/components/projects/form/ProjectFormSchema";
 import ProjectHeader from "@/components/projects/ProjectHeader";
@@ -13,28 +13,36 @@ import { toast } from "sonner";
 const ProjectDetailsContainer: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   
-  // ✅ Block premature renders before router is ready
-  if (typeof id === "undefined") {
-    console.log("Route param not yet available — skipping render");
-    return null;
-  }
+  // Improved detection of "new" project route
+  const isNewProject = id === "new" || location.pathname === "/projects/new";
+  
+  // Extra debug logging to track the issue
+  console.log("🔍 ProjectDetailsContainer - Initial Render:", { 
+    id, 
+    isNewProject, 
+    pathname: location.pathname,
+    currentPath: window.location.pathname 
+  });
   
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-
-  // Determine whether this is a new project or an existing one
-  const isNewProject = id === "new";
   
-  // Extra debug logging to track the issue
-  console.log("ProjectDetailsContainer - Initial Render:", { 
-    id, 
-    isNewProject, 
-    currentPath: window.location.pathname 
-  });
+  // CRITICAL: Check for "new" project route FIRST, before any param validation
+  if (isNewProject) {
+    console.log("✅ Rendering NewProjectView");
+    return <NewProjectView onSubmit={handleCreate} />;
+  }
+  
+  // ✅ Block premature renders before router is ready
+  if (typeof id === "undefined") {
+    console.log("Route param not yet available — skipping render");
+    return null;
+  }
   
   useEffect(() => {
     // For "new" projects, we don't need to fetch anything
@@ -137,12 +145,6 @@ const ProjectDetailsContainer: React.FC = () => {
     errorMessage: error?.message,
     hasProject: !!project 
   });
-
-  // CRITICAL: Check for "new" project page FIRST before any other render conditions
-  if (isNewProject) {
-    console.log("✅ Rendering NewProjectView");
-    return <NewProjectView onSubmit={handleCreate} />;
-  }
   
   // Then handle loading state
   if (loading) {
