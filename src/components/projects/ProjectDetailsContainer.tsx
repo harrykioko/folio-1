@@ -170,8 +170,8 @@ const ProjectDetailsContainer: React.FC = () => {
         description={project.description || ""}
         status={project.status}
         projectId={project.id}
-        startDate={project.start_date || new Date().toISOString()}
-        dueDate={project.due_date || new Date().toISOString()}
+        startDate={project.startDate || new Date().toISOString()}
+        dueDate={project.dueDate || new Date().toISOString()}
         setIsEditDialogOpen={setIsEditDialogOpen}
         setIsDeleteDialogOpen={setIsDeleteDialogOpen}
       />
