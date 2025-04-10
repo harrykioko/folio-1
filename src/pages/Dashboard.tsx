@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,10 +5,22 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BarChart2, CheckSquare, Clock, FolderGit, Lightbulb, Plus, Sparkles, Users } from "lucide-react";
+import { FileText, FolderClosed, Lightbulb, Plus, Sparkles, UserCircle, Users, CheckSquare, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useProjects } from "@/hooks/useProjects";
+import { useTasks } from "@/hooks/useTasks";
+import { useAccounts } from "@/hooks/useAccounts";
 
 const Dashboard: React.FC = () => {
+  const { projects, isLoading: projectsLoading } = useProjects();
+  const { tasks, isLoading: tasksLoading } = useTasks();
+  const { accounts, isLoading: accountsLoading } = useAccounts();
+  
+  const projectCount = projects?.length || 0;
+  const taskCount = tasks?.length || 0;
+  const accountCount = accounts?.length || 0;
+  const promptCount = 132;
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
@@ -22,55 +33,74 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Overview Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Projects</CardTitle>
-            <FolderGit className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Projects</CardTitle>
+            <FolderClosed className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">12</div>
+            <div className="text-2xl font-bold">{projectsLoading ? "..." : projectCount}</div>
             <p className="text-xs text-muted-foreground">
               +2 from last month
             </p>
           </CardContent>
+          <CardFooter className="p-2">
+            <Button variant="ghost" size="sm" className="w-full" asChild>
+              <Link to="/projects">View All Projects</Link>
+            </Button>
+          </CardFooter>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Tasks</CardTitle>
+            <CardTitle className="text-sm font-medium">Tasks</CardTitle>
             <CheckSquare className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">24</div>
+            <div className="text-2xl font-bold">{tasksLoading ? "..." : taskCount}</div>
             <p className="text-xs text-muted-foreground">
               8 due this week
             </p>
           </CardContent>
+          <CardFooter className="p-2">
+            <Button variant="ghost" size="sm" className="w-full" asChild>
+              <Link to="/tasks">View All Tasks</Link>
+            </Button>
+          </CardFooter>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Team Members</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Accounts</CardTitle>
+            <UserCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">7</div>
+            <div className="text-2xl font-bold">{accountsLoading ? "..." : accountCount}</div>
             <p className="text-xs text-muted-foreground">
               +1 this month
             </p>
           </CardContent>
+          <CardFooter className="p-2">
+            <Button variant="ghost" size="sm" className="w-full" asChild>
+              <Link to="/accounts">View All Accounts</Link>
+            </Button>
+          </CardFooter>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">AI Prompts</CardTitle>
+            <CardTitle className="text-sm font-medium">Prompts</CardTitle>
             <Lightbulb className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">132</div>
+            <div className="text-2xl font-bold">{promptCount}</div>
             <p className="text-xs text-muted-foreground">
               +26 this month
             </p>
           </CardContent>
+          <CardFooter className="p-2">
+            <Button variant="ghost" size="sm" className="w-full" asChild>
+              <Link to="/prompts">View All Prompts</Link>
+            </Button>
+          </CardFooter>
         </Card>
       </div>
 
@@ -93,7 +123,6 @@ const Dashboard: React.FC = () => {
           </div>
           
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {/* Project cards */}
             {[
               { id: 1, name: "Project Alpha", description: "AI-powered content generation platform", progress: 75, team: 4 },
               { id: 2, name: "Dashboard X", description: "Analytics dashboard for marketing teams", progress: 45, team: 3 },
@@ -223,7 +252,6 @@ const Dashboard: React.FC = () => {
         </TabsContent>
       </Tabs>
 
-      {/* Recent Activity */}
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold">Recent Activity</h2>
