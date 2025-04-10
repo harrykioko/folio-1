@@ -33,18 +33,28 @@ const NewProjectView: React.FC<NewProjectViewProps> = ({ onSubmit }) => {
     try {
       setIsSubmitting(true);
       
-      // Ensure data structure is correct, but don't manipulate dates here
-      // as they're already in string format from the form inputs
+      // Log submission data for debugging
+      console.log("Form submission data:", {
+        name: data.name,
+        description: data.description,
+        startDate: data.startDate,
+        dueDate: data.dueDate,
+        status: data.status
+      });
+      
       await onSubmit(data);
+      console.log("Project creation succeeded");
       toast.success("Project created successfully");
       
-      // Add a slight delay before navigation to ensure toast is visible
+      // Navigate after a slight delay to ensure toast visibility
       setTimeout(() => {
         navigate("/projects");
       }, 500);
     } catch (error) {
       console.error("Error in NewProjectView submission:", error);
-      setFormError(error instanceof Error ? error.message : "An unexpected error occurred");
+      const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
+      console.error("Detailed error:", errorMessage);
+      setFormError(errorMessage);
       toast.error("Failed to create project. Please try again.");
     } finally {
       setIsSubmitting(false);

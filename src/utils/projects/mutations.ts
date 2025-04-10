@@ -10,7 +10,12 @@ export const createProject = async (project: ProjectFormValues) => {
   
   try {
     // Check if user is authenticated
-    const { data: sessionData } = await supabase.auth.getSession();
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError) {
+      console.error("Session error:", sessionError);
+      throw new Error(`Authentication error: ${sessionError.message}`);
+    }
     
     if (!sessionData.session) {
       const error = new Error('You must be logged in to create a project');
@@ -20,6 +25,7 @@ export const createProject = async (project: ProjectFormValues) => {
     
     // Get user ID from session for RLS
     const userId = sessionData.session.user.id;
+    console.log("Creating project for user ID:", userId);
     
     // Format dates safely for database storage
     let startDate = null;
@@ -68,8 +74,8 @@ export const createProject = async (project: ProjectFormValues) => {
       .single();
     
     if (error) {
-      console.error('Error creating project:', error);
-      throw error;
+      console.error('Supabase error creating project:', error);
+      throw new Error(`Database error: ${error.message}`);
     }
     
     if (!data) {
@@ -79,7 +85,16 @@ export const createProject = async (project: ProjectFormValues) => {
     }
     
     console.log('Project created successfully:', data);
-    return data as Project;
+    
+    // Transform to match our expected Project type
+    const createdProject: Project = {
+      ...data,
+      // Map the database column names to our frontend property names
+      startDate: data.start_date || undefined,
+      dueDate: data.due_date || undefined
+    };
+    
+    return createdProject;
   } catch (err) {
     console.error('Project creation failed:', err);
     throw err;

@@ -12,6 +12,9 @@ export type Project = {
   progress?: number;
   startDate?: string;
   dueDate?: string;
+  // Database columns that might come back from Supabase
+  start_date?: string;
+  due_date?: string;
   team?: number;
   domains?: string[];
   hasGithub?: boolean;
