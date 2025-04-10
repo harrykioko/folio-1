@@ -18,6 +18,9 @@ export const createProject = async (project: ProjectFormValues) => {
       throw error;
     }
     
+    // Get user ID from session for RLS
+    const userId = sessionData.session.user.id;
+    
     // Format dates safely for database storage
     let startDate = null;
     let dueDate = null;
@@ -46,13 +49,14 @@ export const createProject = async (project: ProjectFormValues) => {
       throw new Error('Invalid date format. Please check your date entries.');
     }
     
-    // Extract only the fields that should be sent to the database
+    // Extract and map fields with correct naming convention for database
     const projectData = {
       name: project.name,
       description: project.description,
       status: project.status || 'ideation',
-      startDate: startDate,
-      dueDate: dueDate
+      start_date: startDate,
+      due_date: dueDate,
+      created_by: userId // Add created_by field for RLS
     };
     
     console.log("Submitting project data to Supabase:", projectData);
@@ -113,13 +117,13 @@ export const updateProject = async (id: number, updates: Partial<ProjectFormValu
     throw new Error('Invalid date format for update. Please check your date entries.');
   }
   
-  // Extract only database fields from the updates
+  // Extract and map fields with correct naming convention for database
   const projectUpdates = {
     name: updates.name,
     description: updates.description,
     status: updates.status,
-    startDate: startDate,
-    dueDate: dueDate
+    start_date: startDate,
+    due_date: dueDate
   };
 
   try {
