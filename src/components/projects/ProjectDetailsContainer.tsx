@@ -140,7 +140,7 @@ const ProjectDetailsContainer: React.FC = () => {
 
   // CRITICAL: Check for "new" project page FIRST before any other render conditions
   if (isNewProject) {
-    console.log("Rendering NewProjectView");
+    console.log("✅ Rendering NewProjectView");
     return <NewProjectView onSubmit={handleCreate} />;
   }
   
